@@ -1,3 +1,4 @@
+import { cache } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export type Message = {
@@ -39,7 +40,7 @@ export type Profile = {
   role: Role;
 };
 
-export async function getProfile(
+export const getProfile = cache(async function getProfile(
   supabase: SupabaseClient,
   userId: string,
 ): Promise<Profile | null> {
@@ -49,7 +50,7 @@ export async function getProfile(
     .eq("id", userId)
     .maybeSingle();
   return (data as Profile | null) ?? null;
-}
+});
 
 export async function getUserConversation(
   supabase: SupabaseClient,
@@ -156,7 +157,7 @@ export async function getMentorRatingsSummary(
   return { avg, count, ratings };
 }
 
-export async function getUnreadCount(
+export const getUnreadCount = cache(async function getUnreadCount(
   supabase: SupabaseClient,
   userId: string,
 ): Promise<number> {
@@ -176,7 +177,7 @@ export async function getUnreadCount(
     .eq("read", false)
     .neq("sender_id", userId);
   return count ?? 0;
-}
+});
 
 export type UserChatPreview = {
   conversationId: string;

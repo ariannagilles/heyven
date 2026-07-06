@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import ChatView from "@/components/ChatView";
 import { createClient } from "@/lib/supabase/server";
+import { avatarDataUri } from "@/lib/avatar";
 import {
   getProfile,
   getConversationById,
@@ -37,6 +38,7 @@ export default async function MentorChatPage({
         conversationId={conversation.id}
         meId={user.id}
         otherNickname={userProfile?.nickname ?? "anonimo"}
+        otherAvatarSrc={avatarDataUri(userProfile?.nickname ?? "anonimo")}
         otherRoleLabel="utente"
         initialMessages={messages}
         initialClosed={conversation.status === "closed"}

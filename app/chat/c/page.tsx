@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import ChatView from "@/components/ChatView";
 import { createClient } from "@/lib/supabase/server";
+import { avatarDataUri } from "@/lib/avatar";
 import {
   getProfile,
   getUserConversation,
@@ -34,6 +35,7 @@ export default async function UserChatPage() {
         conversationId={conversation.id}
         meId={user.id}
         otherNickname={mentorProfile?.nickname ?? "mentore"}
+        otherAvatarSrc={avatarDataUri(mentorProfile?.nickname ?? "mentore")}
         otherRoleLabel="il tuo mentore"
         initialMessages={messages}
         initialClosed={conversation.status === "closed"}

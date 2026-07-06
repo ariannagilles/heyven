@@ -11,12 +11,23 @@ export const dynamic = "force-dynamic";
 export default async function HomePage() {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  const items = user ? await fetchUnifiedHomeFeed(supabase, user.id) : [];
 
-  const profile = user ? await getProfile(supabase, user.id) : null;
+  let items: Awaited<ReturnType<typeof fetchUnifiedHomeFeed>> = [];
+  let profile: Awaited<ReturnType<typeof getProfile>> = null;
+  let chatPreview: Awaited<ReturnType<typeof getUserChatPreview>> = null;
+
+  if (user) {
+    [items, profile] = await Promise.all([
+      fetchUnifiedHomeFeed(supabase, user.id),
+      getProfile(supabase, user.id),
+    ]);
+
+    if (profile?.role === "user") {
+      chatPreview = await getUserChatPreview(supabase, user.id);
+    }
+  }
+
   const isUser = profile?.role === "user";
-  const chatPreview =
-    user && isUser ? await getUserChatPreview(supabase, user.id) : null;
 
   return (
     <>
