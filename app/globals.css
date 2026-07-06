@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-petrolio: #1a3a3a;
+  --color-crema: #f5ead7;
+}
+
+html, body {
+  background-color: var(--color-crema);
+  color: var(--color-petrolio);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "ss01", "cv11";
+}
+
+::selection {
+  background: #1a3a3a;
+  color: #f5ead7;
+}
+
+input, textarea, button, select {
+  font: inherit;
+}
+
+textarea {
+  resize: vertical;
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .btn-primary {
+    @apply btn bg-petrolio text-crema hover:bg-petrolio-600;
+  }
+  .btn-ghost {
+    @apply btn bg-transparent text-petrolio hover:bg-petrolio/5;
+  }
+  .btn-outline {
+    @apply btn border border-petrolio/20 text-petrolio hover:bg-petrolio/5;
+  }
+  .field {
+    @apply w-full rounded-2xl border border-petrolio/15 bg-white/60 px-4 py-3 text-petrolio placeholder:text-petrolio/40 focus:outline-none focus:border-petrolio/40 focus:bg-white;
+  }
+  .card {
+    @apply rounded-3xl bg-white/70 border border-petrolio/10 shadow-soft;
+  }
+  .chip {
+    @apply inline-flex items-center rounded-full text-petrolio text-xs font-medium px-2.5 py-1;
+    background-color: rgba(26, 58, 58, 0.08);
+  }
+}
