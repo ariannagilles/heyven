@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import Avatar from "@/components/Avatar";
+import ReportButton from "@/components/ReportButton";
 import QuestionForm from "./QuestionForm";
 import { createClient } from "@/lib/supabase/server";
 import { getQuestions } from "@/lib/space-content";
@@ -36,6 +37,7 @@ export default async function DomandeTab({
                 <span className="font-medium text-petrolio">@{q.nickname}</span>
                 <span aria-hidden>·</span>
                 <time dateTime={q.created_at}>{timeAgo(q.created_at)}</time>
+                <ReportButton targetType="question" targetId={q.id} className="ml-auto shrink-0" />
               </header>
               <p className="text-petrolio leading-relaxed whitespace-pre-wrap">
                 {q.content}

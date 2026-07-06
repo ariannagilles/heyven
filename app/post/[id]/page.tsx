@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import MeTooButton from "@/components/MeTooButton";
+import ReportButton from "@/components/ReportButton";
 import ReplyForm from "./ReplyForm";
 import { createClient } from "@/lib/supabase/server";
 import { SPACE_BY_SLUG } from "@/lib/spaces";
@@ -18,21 +19,27 @@ type Reply = {
 
 export default async function PostDetailPage({ params }: { params: { id: string } }) {
   const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  const { data: post } = await supabase
+  const { data: post, error: postError } = await supabase
     .from("posts")
     .select(
-      "id, content, created_at, space_slug, profiles(nickname), me_too(count)",
+      "id, content, created_at, space_slug, profiles!posts_author_id_fkey(nickname), me_too(count)",
     )
     .eq("id", params.id)
     .maybeSingle();
+
+  if (postError) {
+    throw new Error(postError.message);
+  }
 
   if (!post) notFound();
 
   const { data: replies } = await supabase
     .from("replies")
-    .select("id, content, created_at, profiles(nickname)")
+    .select("id, content, created_at, profiles!replies_author_id_fkey(nickname)")
     .eq("post_id", params.id)
     .order("created_at", { ascending: true });
 
@@ -74,6 +81,7 @@ export default async function PostDetailPage({ params }: { params: { id: string 
             </Link>
             <span aria-hidden>·</span>
             <time dateTime={p.created_at}>{timeAgo(p.created_at)}</time>
+            <ReportButton targetType="post" targetId={p.id} className="ml-auto shrink-0" />
           </header>
 
           <p className="whitespace-pre-wrap text-petrolio leading-relaxed text-[15px]">
@@ -102,6 +110,7 @@ export default async function PostDetailPage({ params }: { params: { id: string 
                     <span className="font-medium text-petrolio">@{r.profiles?.nickname ?? "anonimo"}</span>
                     <span aria-hidden>·</span>
                     <time dateTime={r.created_at}>{timeAgo(r.created_at)}</time>
+                    <ReportButton targetType="reply" targetId={r.id} className="ml-auto shrink-0" />
                   </header>
                   <p className="whitespace-pre-wrap text-petrolio leading-relaxed">{r.content}</p>
                 </li>

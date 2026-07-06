@@ -44,8 +44,7 @@ export default function NewPostForm({ initialSpace }: { initialSpace: string }) 
       setError(insErr?.message ?? "Qualcosa non ha funzionato. Riprova.");
       return;
     }
-    router.replace(`/post/${data.id}`);
-    router.refresh();
+    router.push(`/post/${data.id}`);
   }
 
   return (

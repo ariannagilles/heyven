@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import Avatar from "@/components/Avatar";
+import ReportButton from "@/components/ReportButton";
 import StoryReactionButton from "@/components/StoryReactionButton";
 import StoryForm from "./StoryForm";
 import { createClient } from "@/lib/supabase/server";
@@ -36,6 +37,7 @@ export default async function StorieTab({
                 <span className="font-medium text-petrolio">@{s.nickname}</span>
                 <span aria-hidden>·</span>
                 <time dateTime={s.created_at}>{timeAgo(s.created_at)}</time>
+                <ReportButton targetType="story" targetId={s.id} className="ml-auto shrink-0" />
               </header>
               {s.title && (
                 <h3 className="text-lg font-semibold mb-2">{s.title}</h3>

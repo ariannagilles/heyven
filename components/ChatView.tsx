@@ -40,16 +40,19 @@ export default function ChatView({
   const [closeError, setCloseError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Mark as read whenever new messages from the other party arrive.
-  useEffect(() => {
-    if (closed) return;
-    void supabase
+  function markIncomingAsRead() {
+    return supabase
       .from("messages")
       .update({ read: true })
       .eq("conversation_id", conversationId)
       .eq("read", false)
       .neq("sender_id", meId);
-  }, [supabase, conversationId, meId, messages.length, closed]);
+  }
+
+  // Mark as read whenever new messages from the other party arrive (also if closed).
+  useEffect(() => {
+    void markIncomingAsRead();
+  }, [supabase, conversationId, meId, messages.length]);
 
   // Realtime: incoming messages on this conversation.
   useEffect(() => {
@@ -155,6 +158,7 @@ export default function ChatView({
   async function confirmClose() {
     setCloseError(null);
     setClosing(true);
+    await markIncomingAsRead();
     const { error } = await supabase.rpc("close_conversation", {
       p_conversation_id: conversationId,
     });

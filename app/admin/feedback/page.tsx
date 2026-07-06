@@ -46,7 +46,7 @@ export default async function AdminFeedbackPage({
   let query = supabase
     .from("feedbacks")
     .select(
-      "id, user_id, type, content, current_page, created_at, profiles(nickname)",
+      "id, user_id, type, content, current_page, created_at, profiles!feedbacks_user_id_fkey(nickname)",
     )
     .order("created_at", { ascending: false })
     .limit(200);

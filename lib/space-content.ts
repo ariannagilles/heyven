@@ -24,7 +24,7 @@ export async function getQuestions(
 ): Promise<QuestionRow[]> {
   const { data } = await supabase
     .from("questions")
-    .select("id, content, created_at, profiles(nickname), question_replies(count)")
+    .select("id, content, created_at, profiles!questions_author_id_fkey(nickname), question_replies(count)")
     .eq("space_slug", spaceSlug)
     .order("created_at", { ascending: false });
 
@@ -59,7 +59,7 @@ export async function getQuestion(
 ): Promise<QuestionDetail | null> {
   const { data } = await supabase
     .from("questions")
-    .select("id, space_slug, content, created_at, profiles(nickname)")
+    .select("id, space_slug, content, created_at, profiles!questions_author_id_fkey(nickname)")
     .eq("id", qid)
     .maybeSingle();
   if (!data) return null;
@@ -93,7 +93,7 @@ export async function getQuestionReplies(
 ): Promise<QuestionReply[]> {
   const { data } = await supabase
     .from("question_replies")
-    .select("id, content, created_at, profiles(nickname)")
+    .select("id, content, created_at, profiles!question_replies_author_id_fkey(nickname)")
     .eq("question_id", qid)
     .order("created_at", { ascending: true });
   return ((data as unknown as RawReply[]) ?? []).map((r) => ({
@@ -133,7 +133,7 @@ export async function getStories(
   const { data } = await supabase
     .from("stories")
     .select(
-      "id, title, content, created_at, profiles(nickname), story_reactions(count)",
+      "id, title, content, created_at, profiles!stories_author_id_fkey(nickname), story_reactions(count)",
     )
     .eq("space_slug", spaceSlug)
     .order("created_at", { ascending: false });

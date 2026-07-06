@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Avatar from "./Avatar";
 import MeTooButton from "./MeTooButton";
+import ReportButton from "./ReportButton";
 import StoryReactionButton from "./StoryReactionButton";
 import type { MixedFeedItem as Item } from "@/lib/unified-feed";
 import { SPACE_BY_SLUG } from "@/lib/spaces";
@@ -32,6 +33,17 @@ export default function MixedFeedItem({ item }: { item: Item }) {
         </Link>
         <span aria-hidden>·</span>
         <time dateTime={item.created_at}>{timeAgo(item.created_at)}</time>
+        <ReportButton
+          targetType={
+            item.kind === "sfogo"
+              ? "post"
+              : item.kind === "domanda"
+                ? "question"
+                : "story"
+          }
+          targetId={item.id}
+          className="ml-auto shrink-0"
+        />
       </header>
 
       {item.kind === "storia" && item.title && (

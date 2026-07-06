@@ -160,9 +160,19 @@ export async function getUnreadCount(
   supabase: SupabaseClient,
   userId: string,
 ): Promise<number> {
+  const { data: conversations } = await supabase
+    .from("conversations")
+    .select("id")
+    .eq("status", "active")
+    .or(`user_id.eq.${userId},mentor_id.eq.${userId}`);
+
+  const ids = (conversations ?? []).map((c) => c.id);
+  if (ids.length === 0) return 0;
+
   const { count } = await supabase
     .from("messages")
     .select("id", { count: "exact", head: true })
+    .in("conversation_id", ids)
     .eq("read", false)
     .neq("sender_id", userId);
   return count ?? 0;

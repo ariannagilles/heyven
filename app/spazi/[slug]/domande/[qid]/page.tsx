@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import Avatar from "@/components/Avatar";
+import ReportButton from "@/components/ReportButton";
 import ReplyForm from "./ReplyForm";
 import { createClient } from "@/lib/supabase/server";
 import { SPACE_BY_SLUG } from "@/lib/spaces";
@@ -41,6 +42,7 @@ export default async function QuestionDetailPage({
           <span className="font-medium text-petrolio">@{question.nickname}</span>
           <span aria-hidden>·</span>
           <time dateTime={question.created_at}>{timeAgo(question.created_at)}</time>
+          <ReportButton targetType="question" targetId={question.id} className="ml-auto shrink-0" />
         </header>
         <p className="text-[15px] text-petrolio leading-relaxed whitespace-pre-wrap">
           {question.content}
@@ -65,6 +67,11 @@ export default async function QuestionDetailPage({
                   <span className="font-medium text-petrolio">@{r.nickname}</span>
                   <span aria-hidden>·</span>
                   <time dateTime={r.created_at}>{timeAgo(r.created_at)}</time>
+                  <ReportButton
+                    targetType="question_reply"
+                    targetId={r.id}
+                    className="ml-auto shrink-0"
+                  />
                 </header>
                 <p className="text-petrolio leading-relaxed whitespace-pre-wrap">
                   {r.content}

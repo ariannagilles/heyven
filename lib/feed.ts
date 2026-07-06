@@ -21,7 +21,7 @@ export async function fetchFeed(
   let query = supabase
     .from("posts")
     .select(
-      "id, content, created_at, space_slug, profiles(nickname), replies(count), me_too(count)",
+      "id, content, created_at, space_slug, profiles!posts_author_id_fkey(nickname), replies(count), me_too(count)",
     )
     .order("created_at", { ascending: false })
     .limit(limit);

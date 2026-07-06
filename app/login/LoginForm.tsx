@@ -9,6 +9,7 @@ export default function LoginForm() {
   const router = useRouter();
   const search = useSearchParams();
   const next = search.get("next") || "/";
+  const resetOk = search.get("reset") === "ok";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -35,6 +36,12 @@ export default function LoginForm() {
       <h1 className="text-2xl font-semibold mb-1">Bentornatə</h1>
       <p className="text-petrolio/70 text-sm mb-6">Accedi a heyven con la tua email.</p>
 
+      {resetOk && (
+        <p className="text-sm text-petrolio bg-crema-200/60 rounded-xl px-3 py-2 mb-4">
+          Password aggiornata. Ora puoi accedere con la nuova password.
+        </p>
+      )}
+
       <form onSubmit={onSubmit} className="space-y-3 card p-5">
         <label className="block">
           <span className="text-xs font-medium text-petrolio/70">Email</span>
@@ -57,6 +64,12 @@ export default function LoginForm() {
             autoComplete="current-password"
             required
           />
+          <Link
+            href="/reset-password/richiesta"
+            className="inline-block mt-1.5 text-xs text-petrolio/60 hover:text-petrolio underline underline-offset-2"
+          >
+            Password dimenticata?
+          </Link>
         </label>
 
         {error && <p className="text-sm text-red-700 bg-red-50 rounded-xl px-3 py-2">{error}</p>}

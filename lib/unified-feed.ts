@@ -72,21 +72,21 @@ export async function fetchUnifiedHomeFeed(
     supabase
       .from("posts")
       .select(
-        "id, space_slug, content, created_at, profiles(nickname), replies(count), me_too(count)",
+        "id, space_slug, content, created_at, profiles!posts_author_id_fkey(nickname), replies(count), me_too(count)",
       )
       .order("created_at", { ascending: false })
       .limit(perTypeLimit),
     supabase
       .from("questions")
       .select(
-        "id, space_slug, content, created_at, profiles(nickname), question_replies(count)",
+        "id, space_slug, content, created_at, profiles!questions_author_id_fkey(nickname), question_replies(count)",
       )
       .order("created_at", { ascending: false })
       .limit(perTypeLimit),
     supabase
       .from("stories")
       .select(
-        "id, space_slug, title, content, created_at, profiles(nickname), story_reactions(count)",
+        "id, space_slug, title, content, created_at, profiles!stories_author_id_fkey(nickname), story_reactions(count)",
       )
       .order("created_at", { ascending: false })
       .limit(perTypeLimit),

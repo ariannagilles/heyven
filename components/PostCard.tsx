@@ -1,5 +1,6 @@
 import Link from "next/link";
 import MeTooButton from "./MeTooButton";
+import ReportButton from "./ReportButton";
 import Avatar from "./Avatar";
 import { SPACE_BY_SLUG } from "@/lib/spaces";
 import { timeAgo } from "@/lib/time";
@@ -28,6 +29,7 @@ export default function PostCard({ post }: { post: FeedPost }) {
         </Link>
         <span aria-hidden>·</span>
         <time dateTime={post.created_at}>{timeAgo(post.created_at)}</time>
+        <ReportButton targetType="post" targetId={post.id} className="ml-auto shrink-0" />
       </header>
 
       <Link href={`/post/${post.id}`} className="block">

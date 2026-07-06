@@ -2,9 +2,35 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { randomNickname } from "@/lib/nickname";
+
+type NicknameStatus = "idle" | "checking" | "available" | "taken" | "invalid";
+
+const NICKNAME_TAKEN_HINT = "Questo nickname è già in uso, provane un altro";
+const NICKNAME_RACE_ERROR =
+  "Questo nickname è già stato preso da qualcun altro, provane uno diverso";
+
+function isValidNickname(nick: string): boolean {
+  return (
+    nick.length >= 2 &&
+    nick.length <= 24 &&
+    /^[a-zA-Z0-9._-]+$/.test(nick)
+  );
+}
+
+function isDatabaseNicknameError(message: string): boolean {
+  const m = message.toLowerCase();
+  return (
+    m.includes("duplicate key") ||
+    m.includes("unique constraint") ||
+    m.includes("profiles_nickname") ||
+    m.includes("database error saving new user") ||
+    (m.includes("nickname") &&
+      (m.includes("duplicate") || m.includes("unique") || m.includes("already")))
+  );
+}
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -13,9 +39,47 @@ export default function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [nickname, setNickname] = useState("");
+  const [nicknameStatus, setNicknameStatus] = useState<NicknameStatus>("idle");
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const nick = nickname.trim();
+
+    if (!nick) {
+      setNicknameStatus("idle");
+      return;
+    }
+
+    if (!isValidNickname(nick)) {
+      setNicknameStatus("invalid");
+      return;
+    }
+
+    setNicknameStatus("checking");
+    const timer = setTimeout(async () => {
+      const supabase = createClient();
+      const { data, error: rpcError } = await supabase.rpc("nickname_available", {
+        p_nickname: nick,
+      });
+
+      if (rpcError) {
+        setNicknameStatus("idle");
+        return;
+      }
+
+      setNicknameStatus(data === true ? "available" : "taken");
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [nickname]);
+
+  const submitDisabled =
+    loading ||
+    nicknameStatus === "checking" ||
+    nicknameStatus === "taken" ||
+    nicknameStatus === "invalid";
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -23,12 +87,12 @@ export default function RegisterForm() {
     setInfo(null);
 
     const nick = nickname.trim();
-    if (nick.length < 2 || nick.length > 24) {
-      setError("Il nickname deve avere tra 2 e 24 caratteri.");
+    if (!isValidNickname(nick)) {
+      setError("Il nickname deve avere tra 2 e 24 caratteri e usare solo lettere, numeri, . _ -");
       return;
     }
-    if (!/^[a-zA-Z0-9._-]+$/.test(nick)) {
-      setError("Il nickname può contenere solo lettere, numeri, . _ -");
+    if (nicknameStatus === "taken") {
+      setError(NICKNAME_TAKEN_HINT);
       return;
     }
     if (password.length < 6) {
@@ -38,15 +102,20 @@ export default function RegisterForm() {
 
     setLoading(true);
     const supabase = createClient();
-    const { data, error } = await supabase.auth.signUp({
+    const { data, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
       options: { data: { nickname: nick } },
     });
     setLoading(false);
 
-    if (error) {
-      setError(error.message);
+    if (signUpError) {
+      if (isDatabaseNicknameError(signUpError.message)) {
+        setError(NICKNAME_RACE_ERROR);
+        setNicknameStatus("taken");
+      } else {
+        setError(signUpError.message);
+      }
       return;
     }
     if (data.session) {
@@ -89,6 +158,12 @@ export default function RegisterForm() {
             autoComplete="off"
             required
           />
+          {nicknameStatus === "taken" && (
+            <p className="mt-1.5 text-xs text-petrolio/60">{NICKNAME_TAKEN_HINT}</p>
+          )}
+          {nicknameStatus === "checking" && nickname.trim().length > 0 && isValidNickname(nickname.trim()) && (
+            <p className="mt-1.5 text-xs text-petrolio/50">Verifica disponibilità…</p>
+          )}
         </label>
         <label className="block">
           <span className="text-xs font-medium text-petrolio/70">Email</span>
@@ -117,7 +192,7 @@ export default function RegisterForm() {
         {error && <p className="text-sm text-red-700 bg-red-50 rounded-xl px-3 py-2">{error}</p>}
         {info && <p className="text-sm text-petrolio bg-crema-200/60 rounded-xl px-3 py-2">{info}</p>}
 
-        <button type="submit" className="btn-primary w-full" disabled={loading}>
+        <button type="submit" className="btn-primary w-full" disabled={submitDisabled}>
           {loading ? "Creazione…" : "Crea il mio spazio"}
         </button>
       </form>

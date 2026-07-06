@@ -30,6 +30,11 @@ export default async function AdminPage() {
   const mentors = (rows ?? []) as MentorRow[];
   const flaggedCount = mentors.filter((m) => m.is_flagged).length;
 
+  const { count: pendingReportsCount } = await supabase
+    .from("reports")
+    .select("*", { count: "exact", head: true })
+    .eq("reviewed", false);
+
   return (
     <>
       <Navbar />
@@ -50,9 +55,19 @@ export default async function AdminPage() {
                 )}
               </p>
             </div>
-            <Link href="/admin/feedback" className="btn-outline text-sm shrink-0">
-              Feedback
-            </Link>
+            <div className="flex items-center gap-2 shrink-0">
+              <Link href="/admin/reports" className="btn-outline text-sm relative">
+                Segnalazioni
+                {(pendingReportsCount ?? 0) > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 inline-flex items-center justify-center min-w-[1.25rem] h-5 rounded-full bg-red-600 text-crema text-[10px] font-semibold px-1">
+                    {pendingReportsCount}
+                  </span>
+                )}
+              </Link>
+              <Link href="/admin/feedback" className="btn-outline text-sm">
+                Feedback
+              </Link>
+            </div>
           </div>
         </header>
 
