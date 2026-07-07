@@ -18,7 +18,9 @@ export default async function DomandeTab({
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`/login?next=/spazi/${params.slug}/domande`);
 
-  const questions = await getQuestions(supabase, params.slug);
+  const { items: questions } = await getQuestions(supabase, params.slug, {
+    limit: 1000,
+  });
 
   return (
     <div className="space-y-4">

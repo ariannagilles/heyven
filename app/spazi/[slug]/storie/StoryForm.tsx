@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { recordActiveEngagement } from "@/lib/active-engagement";
 
 const TITLE_MAX = 200;
 
@@ -48,6 +49,7 @@ export default function StoryForm({ spaceSlug }: { spaceSlug: string }) {
     setTitle("");
     setContent("");
     setExpanded(false);
+    recordActiveEngagement();
     router.refresh();
   }
 

@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { revalidatePathAction } from "@/lib/revalidate-path";
+import { recordActiveEngagement } from "@/lib/active-engagement";
 
 type Props = {
   postId: string;
@@ -57,6 +58,7 @@ export default function MeTooButton({ postId, initialCount, initialActive }: Pro
         setActive(false);
         setCount((c) => c - 1);
       } else {
+        recordActiveEngagement();
         await revalidatePathAction(pathname);
         startTransition(() => router.refresh());
       }

@@ -1,28 +1,19 @@
+"use client";
+
 import Link from "next/link";
-import MeTooButton from "./MeTooButton";
-import ReportButton from "./ReportButton";
-import Avatar from "./Avatar";
+import MeTooButton from "@/components/MeTooButton";
+import ReportButton from "@/components/ReportButton";
+import { AvatarImage } from "@/components/AvatarImage";
+import type { FeedPost } from "@/components/PostCard";
 import { SPACE_BY_SLUG } from "@/lib/spaces";
 import { timeAgo } from "@/lib/time";
 
-export type FeedPost = {
-  id: string;
-  content: string;
-  created_at: string;
-  space_slug: string;
-  nickname: string;
-  replyCount: number;
-  meTooCount: number;
-  meToo: boolean;
-  avatarSrc: string;
-};
-
-export default function PostCard({ post }: { post: FeedPost }) {
+export default function PostCardClient({ post }: { post: FeedPost }) {
   const space = SPACE_BY_SLUG[post.space_slug];
   return (
     <article className="card p-5">
       <header className="flex items-center gap-2 text-xs text-petrolio/60 mb-3">
-        <Avatar nickname={post.nickname} size={32} />
+        <AvatarImage src={post.avatarSrc} nickname={post.nickname} size={32} />
         <span className="font-medium text-petrolio">@{post.nickname}</span>
         <span aria-hidden>·</span>
         <Link href={`/spazi/${post.space_slug}`} className="chip hover:bg-petrolio/15">

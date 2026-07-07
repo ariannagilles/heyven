@@ -4,6 +4,7 @@ import { FormEvent, useState, useTransition } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { revalidatePathAction } from "@/lib/revalidate-path";
+import { recordActiveEngagement } from "@/lib/active-engagement";
 
 const MAX = 2000;
 
@@ -43,6 +44,7 @@ export default function ReplyForm({ postId }: { postId: string }) {
       return;
     }
     setContent("");
+    recordActiveEngagement();
     await revalidatePathAction(pathname);
     startTransition(() => router.refresh());
   }

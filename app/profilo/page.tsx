@@ -54,13 +54,23 @@ export default async function ProfilePage({
 
   const tab: Tab = isTab(searchParams.tab) ? searchParams.tab : "sfoghi";
 
-  const [stats, joinedAt, sfoghi, domande, storie] = await Promise.all([
+  const [stats, joinedAt, sfoghiRes, domandeRes, storieRes] = await Promise.all([
     getUserStats(supabase, user.id),
     getJoinedAt(supabase, user.id),
-    tab === "sfoghi" ? getOwnPosts(supabase, user.id) : Promise.resolve([]),
-    tab === "domande" ? getOwnQuestions(supabase, user.id) : Promise.resolve([]),
-    tab === "storie" ? getOwnStories(supabase, user.id) : Promise.resolve([]),
+    tab === "sfoghi"
+      ? getOwnPosts(supabase, user.id, { limit: 1000 })
+      : Promise.resolve({ items: [] }),
+    tab === "domande"
+      ? getOwnQuestions(supabase, user.id, { limit: 1000 })
+      : Promise.resolve({ items: [] }),
+    tab === "storie"
+      ? getOwnStories(supabase, user.id, { limit: 1000 })
+      : Promise.resolve({ items: [] }),
   ]);
+
+  const sfoghi = sfoghiRes.items;
+  const domande = domandeRes.items;
+  const storie = storieRes.items;
 
   const role: Role = profile.role;
   const isMentor = role === "mentor";

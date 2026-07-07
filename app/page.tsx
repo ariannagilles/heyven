@@ -12,15 +12,17 @@ export default async function HomePage() {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  let items: Awaited<ReturnType<typeof fetchUnifiedHomeFeed>> = [];
+  let items: Awaited<ReturnType<typeof fetchUnifiedHomeFeed>>["items"] = [];
   let profile: Awaited<ReturnType<typeof getProfile>> = null;
   let chatPreview: Awaited<ReturnType<typeof getUserChatPreview>> = null;
 
   if (user) {
-    [items, profile] = await Promise.all([
-      fetchUnifiedHomeFeed(supabase, user.id),
+    const [feed, profileResult] = await Promise.all([
+      fetchUnifiedHomeFeed(supabase, user.id, { limit: 50 }),
       getProfile(supabase, user.id),
     ]);
+    items = feed.items;
+    profile = profileResult;
 
     if (profile?.role === "user") {
       chatPreview = await getUserChatPreview(supabase, user.id);

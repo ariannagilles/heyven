@@ -1,4 +1,11 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import {
+  applyFeedCursor,
+  PAGE_SIZE,
+  pageFromRows,
+  type PageOpts,
+  type PageResult,
+} from "@/lib/pagination";
 
 // ----- QUESTIONS ---------------------------------------------
 
@@ -21,20 +28,31 @@ type RawQuestion = {
 export async function getQuestions(
   supabase: SupabaseClient,
   spaceSlug: string,
-): Promise<QuestionRow[]> {
-  const { data } = await supabase
-    .from("questions")
-    .select("id, content, created_at, profiles!questions_author_id_fkey(nickname), question_replies(count)")
-    .eq("space_slug", spaceSlug)
-    .order("created_at", { ascending: false });
+  opts: PageOpts = {},
+): Promise<PageResult<QuestionRow>> {
+  const limit = opts.limit ?? PAGE_SIZE;
 
-  return ((data as unknown as RawQuestion[]) ?? []).map((q) => ({
+  let query = supabase
+    .from("questions")
+    .select(
+      "id, content, created_at, profiles!questions_author_id_fkey(nickname), question_replies(count)",
+    )
+    .eq("space_slug", spaceSlug)
+    .order("created_at", { ascending: false })
+    .order("id", { ascending: false })
+    .limit(limit + 1);
+  query = applyFeedCursor(query, opts.cursor);
+
+  const { data } = await query;
+  const mapped = ((data as unknown as RawQuestion[]) ?? []).map((q) => ({
     id: q.id,
     content: q.content,
     created_at: q.created_at,
     nickname: q.profiles?.nickname ?? "anonimo",
     reply_count: q.question_replies?.[0]?.count ?? 0,
   }));
+
+  return pageFromRows(mapped, limit);
 }
 
 export type QuestionDetail = {
@@ -129,15 +147,22 @@ export async function getStories(
   supabase: SupabaseClient,
   spaceSlug: string,
   userId: string,
-): Promise<StoryRow[]> {
-  const { data } = await supabase
+  opts: PageOpts = {},
+): Promise<PageResult<StoryRow>> {
+  const limit = opts.limit ?? PAGE_SIZE;
+
+  let query = supabase
     .from("stories")
     .select(
       "id, title, content, created_at, profiles!stories_author_id_fkey(nickname), story_reactions(count)",
     )
     .eq("space_slug", spaceSlug)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .order("id", { ascending: false })
+    .limit(limit + 1);
+  query = applyFeedCursor(query, opts.cursor);
 
+  const { data } = await query;
   const rows = (data as unknown as RawStory[]) ?? [];
   const ids = rows.map((s) => s.id);
 
@@ -153,7 +178,7 @@ export async function getStories(
     );
   }
 
-  return rows.map((s) => ({
+  const mapped = rows.map((s) => ({
     id: s.id,
     title: s.title,
     content: s.content,
@@ -162,4 +187,6 @@ export async function getStories(
     reaction_count: s.story_reactions?.[0]?.count ?? 0,
     has_reacted: mineSet.has(s.id),
   }));
+
+  return pageFromRows(mapped, limit);
 }

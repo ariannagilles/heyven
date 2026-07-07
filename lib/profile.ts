@@ -1,4 +1,11 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import {
+  applyFeedCursor,
+  PAGE_SIZE,
+  pageFromRows,
+  type PageOpts,
+  type PageResult,
+} from "@/lib/pagination";
 
 export type UserStats = {
   posts_count: number;
@@ -44,13 +51,21 @@ type RawOwnPost = {
 export async function getOwnPosts(
   supabase: SupabaseClient,
   userId: string,
-): Promise<OwnPostRow[]> {
-  const { data } = await supabase
+  opts: PageOpts = {},
+): Promise<PageResult<OwnPostRow>> {
+  const limit = opts.limit ?? PAGE_SIZE;
+
+  let query = supabase
     .from("posts")
     .select("id, space_slug, content, created_at, replies(count), me_too(count)")
     .eq("author_id", userId)
-    .order("created_at", { ascending: false });
-  return ((data as unknown as RawOwnPost[]) ?? []).map((p) => ({
+    .order("created_at", { ascending: false })
+    .order("id", { ascending: false })
+    .limit(limit + 1);
+  query = applyFeedCursor(query, opts.cursor);
+
+  const { data } = await query;
+  const mapped = ((data as unknown as RawOwnPost[]) ?? []).map((p) => ({
     id: p.id,
     space_slug: p.space_slug,
     content: p.content,
@@ -58,6 +73,8 @@ export async function getOwnPosts(
     reply_count: p.replies?.[0]?.count ?? 0,
     me_too_count: p.me_too?.[0]?.count ?? 0,
   }));
+
+  return pageFromRows(mapped, limit);
 }
 
 export type OwnQuestionRow = {
@@ -79,19 +96,29 @@ type RawOwnQuestion = {
 export async function getOwnQuestions(
   supabase: SupabaseClient,
   userId: string,
-): Promise<OwnQuestionRow[]> {
-  const { data } = await supabase
+  opts: PageOpts = {},
+): Promise<PageResult<OwnQuestionRow>> {
+  const limit = opts.limit ?? PAGE_SIZE;
+
+  let query = supabase
     .from("questions")
     .select("id, space_slug, content, created_at, question_replies(count)")
     .eq("author_id", userId)
-    .order("created_at", { ascending: false });
-  return ((data as unknown as RawOwnQuestion[]) ?? []).map((q) => ({
+    .order("created_at", { ascending: false })
+    .order("id", { ascending: false })
+    .limit(limit + 1);
+  query = applyFeedCursor(query, opts.cursor);
+
+  const { data } = await query;
+  const mapped = ((data as unknown as RawOwnQuestion[]) ?? []).map((q) => ({
     id: q.id,
     space_slug: q.space_slug,
     content: q.content,
     created_at: q.created_at,
     reply_count: q.question_replies?.[0]?.count ?? 0,
   }));
+
+  return pageFromRows(mapped, limit);
 }
 
 export type OwnStoryRow = {
@@ -115,13 +142,21 @@ type RawOwnStory = {
 export async function getOwnStories(
   supabase: SupabaseClient,
   userId: string,
-): Promise<OwnStoryRow[]> {
-  const { data } = await supabase
+  opts: PageOpts = {},
+): Promise<PageResult<OwnStoryRow>> {
+  const limit = opts.limit ?? PAGE_SIZE;
+
+  let query = supabase
     .from("stories")
     .select("id, space_slug, title, content, created_at, story_reactions(count)")
     .eq("author_id", userId)
-    .order("created_at", { ascending: false });
-  return ((data as unknown as RawOwnStory[]) ?? []).map((s) => ({
+    .order("created_at", { ascending: false })
+    .order("id", { ascending: false })
+    .limit(limit + 1);
+  query = applyFeedCursor(query, opts.cursor);
+
+  const { data } = await query;
+  const mapped = ((data as unknown as RawOwnStory[]) ?? []).map((s) => ({
     id: s.id,
     space_slug: s.space_slug,
     title: s.title,
@@ -129,6 +164,8 @@ export async function getOwnStories(
     created_at: s.created_at,
     reaction_count: s.story_reactions?.[0]?.count ?? 0,
   }));
+
+  return pageFromRows(mapped, limit);
 }
 
 export type MemberSince = { joinedAt: string };

@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { recordActiveEngagement } from "@/lib/active-engagement";
 import SpaceSelector from "@/components/SpaceSelector";
 
 const TITLE_MAX = 200;
@@ -49,6 +50,7 @@ export default function NewStoryForm({ initialSpace }: { initialSpace: string })
       setError(insErr.message);
       return;
     }
+    recordActiveEngagement();
     router.replace(`/spazi/${space}/storie`);
     router.refresh();
   }

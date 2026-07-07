@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { recordActiveEngagement } from "@/lib/active-engagement";
 
 const MAX = 500;
 
@@ -38,6 +39,7 @@ export default function QuestionForm({ spaceSlug }: { spaceSlug: string }) {
       return;
     }
     setContent("");
+    recordActiveEngagement();
     router.refresh();
   }
 

@@ -1,4 +1,12 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import {
+  applyFeedCursor,
+  compareFeedItems,
+  PAGE_SIZE,
+  pageFromRows,
+  type PageOpts,
+  type PageResult,
+} from "@/lib/pagination";
 
 export type MixedFeedItem =
   | {
@@ -65,38 +73,51 @@ type RawStory = {
 export async function fetchUnifiedHomeFeed(
   supabase: SupabaseClient,
   userId: string,
-  perTypeLimit = 30,
-  totalLimit = 50,
-): Promise<MixedFeedItem[]> {
+  opts: PageOpts = {},
+): Promise<PageResult<MixedFeedItem>> {
+  const limit = opts.limit ?? PAGE_SIZE;
+  const perTypeFetch = limit + 1;
+
+  let postsQuery = supabase
+    .from("posts")
+    .select(
+      "id, space_slug, content, created_at, profiles!posts_author_id_fkey(nickname), replies(count), me_too(count)",
+    )
+    .order("created_at", { ascending: false })
+    .order("id", { ascending: false })
+    .limit(perTypeFetch);
+  postsQuery = applyFeedCursor(postsQuery, opts.cursor);
+
+  let questionsQuery = supabase
+    .from("questions")
+    .select(
+      "id, space_slug, content, created_at, profiles!questions_author_id_fkey(nickname), question_replies(count)",
+    )
+    .order("created_at", { ascending: false })
+    .order("id", { ascending: false })
+    .limit(perTypeFetch);
+  questionsQuery = applyFeedCursor(questionsQuery, opts.cursor);
+
+  let storiesQuery = supabase
+    .from("stories")
+    .select(
+      "id, space_slug, title, content, created_at, profiles!stories_author_id_fkey(nickname), story_reactions(count)",
+    )
+    .order("created_at", { ascending: false })
+    .order("id", { ascending: false })
+    .limit(perTypeFetch);
+  storiesQuery = applyFeedCursor(storiesQuery, opts.cursor);
+
   const [postsRes, questionsRes, storiesRes] = await Promise.all([
-    supabase
-      .from("posts")
-      .select(
-        "id, space_slug, content, created_at, profiles!posts_author_id_fkey(nickname), replies(count), me_too(count)",
-      )
-      .order("created_at", { ascending: false })
-      .limit(perTypeLimit),
-    supabase
-      .from("questions")
-      .select(
-        "id, space_slug, content, created_at, profiles!questions_author_id_fkey(nickname), question_replies(count)",
-      )
-      .order("created_at", { ascending: false })
-      .limit(perTypeLimit),
-    supabase
-      .from("stories")
-      .select(
-        "id, space_slug, title, content, created_at, profiles!stories_author_id_fkey(nickname), story_reactions(count)",
-      )
-      .order("created_at", { ascending: false })
-      .limit(perTypeLimit),
+    postsQuery,
+    questionsQuery,
+    storiesQuery,
   ]);
 
   const rawPosts = (postsRes.data as unknown as RawPost[]) ?? [];
   const rawQuestions = (questionsRes.data as unknown as RawQuestion[]) ?? [];
   const rawStories = (storiesRes.data as unknown as RawStory[]) ?? [];
 
-  // Fetch user's me_too and story_reactions for the visible items
   const postIds = rawPosts.map((p) => p.id);
   const storyIds = rawStories.map((s) => s.id);
 
@@ -124,7 +145,7 @@ export async function fetchUnifiedHomeFeed(
     ((myStoryReactRes.data ?? []) as { story_id: string }[]).map((r) => r.story_id),
   );
 
-  const items: MixedFeedItem[] = [
+  const merged: MixedFeedItem[] = [
     ...rawPosts.map<MixedFeedItem>((p) => ({
       kind: "sfogo",
       id: p.id,
@@ -158,6 +179,6 @@ export async function fetchUnifiedHomeFeed(
     })),
   ];
 
-  items.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
-  return items.slice(0, totalLimit);
+  merged.sort(compareFeedItems);
+  return pageFromRows(merged, limit);
 }

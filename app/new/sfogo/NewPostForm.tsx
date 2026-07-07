@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { recordActiveEngagement } from "@/lib/active-engagement";
 import SpaceSelector from "@/components/SpaceSelector";
 
 const MAX = 500;
@@ -44,6 +45,7 @@ export default function NewPostForm({ initialSpace }: { initialSpace: string }) 
       setError(insErr?.message ?? "Qualcosa non ha funzionato. Riprova.");
       return;
     }
+    recordActiveEngagement();
     router.push(`/post/${data.id}`);
   }
 

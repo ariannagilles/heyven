@@ -18,7 +18,9 @@ export default async function StorieTab({
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`/login?next=/spazi/${params.slug}/storie`);
 
-  const stories = await getStories(supabase, params.slug, user.id);
+  const { items: stories } = await getStories(supabase, params.slug, user.id, {
+    limit: 1000,
+  });
 
   return (
     <div className="space-y-4">
