@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { revalidatePathAction } from "@/lib/revalidate-path";
 
 type Props = {
   storyId: string;
@@ -16,6 +17,7 @@ export default function StoryReactionButton({
   initialActive,
 }: Props) {
   const router = useRouter();
+  const pathname = usePathname();
   const [count, setCount] = useState(initialCount);
   const [active, setActive] = useState(initialActive);
   const [busy, setBusy] = useState(false);
@@ -46,6 +48,9 @@ export default function StoryReactionButton({
       if (error) {
         setActive(true);
         setCount((c) => c + 1);
+      } else {
+        await revalidatePathAction(pathname);
+        startTransition(() => router.refresh());
       }
     } else {
       const { error } = await supabase
@@ -54,11 +59,13 @@ export default function StoryReactionButton({
       if (error) {
         setActive(false);
         setCount((c) => c - 1);
+      } else {
+        await revalidatePathAction(pathname);
+        startTransition(() => router.refresh());
       }
     }
 
     setBusy(false);
-    startTransition(() => router.refresh());
   }
 
   return (

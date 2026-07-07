@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getProfile, getUnreadCount, type Role } from "@/lib/chat";
+import { getUnreadNotificationsCount } from "@/lib/notifications";
 import Avatar from "./Avatar";
 
 export default async function Navbar() {
@@ -10,12 +11,16 @@ export default async function Navbar() {
   let nickname: string | null = null;
   let role: Role = "user";
   let unread = 0;
+  let unreadNotifications = 0;
 
   if (user) {
     const profile = await getProfile(supabase, user.id);
     nickname = profile?.nickname ?? null;
     role = profile?.role ?? "user";
-    unread = await getUnreadCount(supabase, user.id);
+    [unread, unreadNotifications] = await Promise.all([
+      getUnreadCount(supabase, user.id),
+      getUnreadNotificationsCount(supabase),
+    ]);
   }
 
   const chatHref =
@@ -52,6 +57,17 @@ export default async function Navbar() {
             </Link>
 
             <Link
+              href="/notifiche"
+              aria-label="Notifiche"
+              title="Notifiche"
+              className="relative inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm bg-petrolio/5 text-petrolio hover:bg-petrolio/10"
+            >
+              <BellIcon />
+              <span className="hidden sm:inline">notifiche</span>
+              <CountBadge count={unreadNotifications} label="notifiche non lette" />
+            </Link>
+
+            <Link
               href={chatHref}
               aria-label={chatLabel}
               title={chatLabel}
@@ -59,11 +75,8 @@ export default async function Navbar() {
             >
               {role === "admin" ? <ShieldIcon /> : <ChatIcon />}
               <span className="hidden sm:inline">{chatShortLabel}</span>
-              {role !== "admin" && unread > 0 && (
-                <span
-                  aria-label={`${unread} nuovi messaggi`}
-                  className="absolute -top-0.5 -right-0.5 block w-2.5 h-2.5 rounded-full bg-red-500 ring-2 ring-crema"
-                />
+              {role !== "admin" && (
+                <CountBadge count={unread} label="nuovi messaggi" />
               )}
             </Link>
 
@@ -95,6 +108,31 @@ export default async function Navbar() {
         )}
       </div>
     </header>
+  );
+}
+
+function CountBadge({ count, label }: { count: number; label: string }) {
+  if (count <= 0) return null;
+  const text = count > 99 ? "99+" : String(count);
+  return (
+    <span
+      aria-label={`${count} ${label}`}
+      className="absolute -top-1 -right-1 min-w-[1.125rem] h-[1.125rem] px-1 flex items-center justify-center rounded-full bg-red-500 text-[10px] font-semibold text-white leading-none ring-2 ring-crema tabular-nums"
+    >
+      {text}
+    </span>
+  );
+}
+
+function BellIcon() {
+  return (
+    <svg
+      width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden
+    >
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+    </svg>
   );
 }
 

@@ -1,13 +1,16 @@
 "use client";
 
-import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
+import { FormEvent, useState, useTransition } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { revalidatePathAction } from "@/lib/revalidate-path";
 
 const MAX = 2000;
 
 export default function ReplyForm({ questionId }: { questionId: string }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const [, startTransition] = useTransition();
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +41,8 @@ export default function ReplyForm({ questionId }: { questionId: string }) {
       return;
     }
     setContent("");
-    router.refresh();
+    await revalidatePathAction(pathname);
+    startTransition(() => router.refresh());
   }
 
   return (
