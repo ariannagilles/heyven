@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { avatarDataUri } from "@/lib/avatar";
 import {
   applyFeedCursor,
   PAGE_SIZE,
@@ -15,6 +16,7 @@ export type QuestionRow = {
   created_at: string;
   nickname: string;
   reply_count: number;
+  avatarSrc: string;
 };
 
 type RawQuestion = {
@@ -44,13 +46,17 @@ export async function getQuestions(
   query = applyFeedCursor(query, opts.cursor);
 
   const { data } = await query;
-  const mapped = ((data as unknown as RawQuestion[]) ?? []).map((q) => ({
-    id: q.id,
-    content: q.content,
-    created_at: q.created_at,
-    nickname: q.profiles?.nickname ?? "anonimo",
-    reply_count: q.question_replies?.[0]?.count ?? 0,
-  }));
+  const mapped = ((data as unknown as RawQuestion[]) ?? []).map((q) => {
+    const nickname = q.profiles?.nickname ?? "anonimo";
+    return {
+      id: q.id,
+      content: q.content,
+      created_at: q.created_at,
+      nickname,
+      reply_count: q.question_replies?.[0]?.count ?? 0,
+      avatarSrc: avatarDataUri(nickname),
+    };
+  });
 
   return pageFromRows(mapped, limit);
 }
@@ -132,6 +138,7 @@ export type StoryRow = {
   nickname: string;
   reaction_count: number;
   has_reacted: boolean;
+  avatarSrc: string;
 };
 
 type RawStory = {
@@ -178,15 +185,19 @@ export async function getStories(
     );
   }
 
-  const mapped = rows.map((s) => ({
-    id: s.id,
-    title: s.title,
-    content: s.content,
-    created_at: s.created_at,
-    nickname: s.profiles?.nickname ?? "anonimo",
-    reaction_count: s.story_reactions?.[0]?.count ?? 0,
-    has_reacted: mineSet.has(s.id),
-  }));
+  const mapped = rows.map((s) => {
+    const nickname = s.profiles?.nickname ?? "anonimo";
+    return {
+      id: s.id,
+      title: s.title,
+      content: s.content,
+      created_at: s.created_at,
+      nickname,
+      reaction_count: s.story_reactions?.[0]?.count ?? 0,
+      has_reacted: mineSet.has(s.id),
+      avatarSrc: avatarDataUri(nickname),
+    };
+  });
 
   return pageFromRows(mapped, limit);
 }

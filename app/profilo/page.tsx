@@ -3,6 +3,12 @@ import { redirect } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Avatar from "@/components/Avatar";
 import Stars from "@/components/Stars";
+import ProfileOwnList, {
+  mapOwnPost,
+  mapOwnQuestion,
+  mapOwnStory,
+  type ProfileTab,
+} from "@/components/ProfileOwnList";
 import ProfileSettings from "./ProfileSettings";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -18,8 +24,6 @@ import {
   getJoinedAt,
   getClosedConversationsCountForMentor,
 } from "@/lib/profile";
-import { SPACE_BY_SLUG } from "@/lib/spaces";
-import { timeAgo } from "@/lib/time";
 
 export const dynamic = "force-dynamic";
 
@@ -34,7 +38,7 @@ function formatJoined(iso: string | null): string {
   return `${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
 }
 
-type Tab = "sfoghi" | "domande" | "storie";
+type Tab = ProfileTab;
 
 function isTab(v: string | undefined): v is Tab {
   return v === "sfoghi" || v === "domande" || v === "storie";
@@ -57,20 +61,24 @@ export default async function ProfilePage({
   const [stats, joinedAt, sfoghiRes, domandeRes, storieRes] = await Promise.all([
     getUserStats(supabase, user.id),
     getJoinedAt(supabase, user.id),
-    tab === "sfoghi"
-      ? getOwnPosts(supabase, user.id, { limit: 1000 })
-      : Promise.resolve({ items: [] }),
-    tab === "domande"
-      ? getOwnQuestions(supabase, user.id, { limit: 1000 })
-      : Promise.resolve({ items: [] }),
-    tab === "storie"
-      ? getOwnStories(supabase, user.id, { limit: 1000 })
-      : Promise.resolve({ items: [] }),
+    tab === "sfoghi" ? getOwnPosts(supabase, user.id) : null,
+    tab === "domande" ? getOwnQuestions(supabase, user.id) : null,
+    tab === "storie" ? getOwnStories(supabase, user.id) : null,
   ]);
 
-  const sfoghi = sfoghiRes.items;
-  const domande = domandeRes.items;
-  const storie = storieRes.items;
+  const tabFeed =
+    tab === "sfoghi"
+      ? sfoghiRes
+      : tab === "domande"
+        ? domandeRes
+        : storieRes;
+
+  const profileItems =
+    tab === "sfoghi"
+      ? (sfoghiRes?.items ?? []).map(mapOwnPost)
+      : tab === "domande"
+        ? (domandeRes?.items ?? []).map(mapOwnQuestion)
+        : (storieRes?.items ?? []).map(mapOwnStory);
 
   const role: Role = profile.role;
   const isMentor = role === "mentor";
@@ -175,45 +183,19 @@ export default async function ProfilePage({
         </nav>
 
         {/* TAB CONTENT */}
-        {tab === "sfoghi" && (
-          <OwnList
-            empty="Non hai ancora pubblicato sfoghi."
-            items={sfoghi.map((p) => ({
-              key: p.id,
-              href: `/post/${p.id}`,
-              spaceSlug: p.space_slug,
-              created_at: p.created_at,
-              snippet: p.content,
-              interactions: `${p.me_too_count} anch'io · ${p.reply_count} rispost${p.reply_count === 1 ? "a" : "e"}`,
-            }))}
-          />
-        )}
-        {tab === "domande" && (
-          <OwnList
-            empty="Non hai ancora fatto domande."
-            items={domande.map((q) => ({
-              key: q.id,
-              href: `/spazi/${q.space_slug}/domande/${q.id}`,
-              spaceSlug: q.space_slug,
-              created_at: q.created_at,
-              snippet: q.content,
-              interactions: `${q.reply_count} rispost${q.reply_count === 1 ? "a" : "e"}`,
-            }))}
-          />
-        )}
-        {tab === "storie" && (
-          <OwnList
-            empty="Non hai ancora condiviso storie."
-            items={storie.map((s) => ({
-              key: s.id,
-              href: `/spazi/${s.space_slug}/storie`,
-              spaceSlug: s.space_slug,
-              created_at: s.created_at,
-              snippet: s.title || s.content,
-              interactions: `${s.reaction_count} anch'io`,
-            }))}
-          />
-        )}
+        <ProfileOwnList
+          tab={tab}
+          empty={
+            tab === "sfoghi"
+              ? "Non hai ancora pubblicato sfoghi."
+              : tab === "domande"
+                ? "Non hai ancora fatto domande."
+                : "Non hai ancora condiviso storie."
+          }
+          initialItems={profileItems}
+          initialNextCursor={tabFeed?.nextCursor ?? null}
+          initialHasMore={tabFeed?.hasMore ?? false}
+        />
 
         {/* SETTINGS */}
         <ProfileSettings userId={user.id} currentNickname={profile.nickname} />
@@ -228,49 +210,5 @@ function Stat({ label, value }: { label: string; value: number }) {
       <div className="text-2xl font-semibold tabular-nums">{value}</div>
       <div className="text-xs text-petrolio/60 mt-0.5">{label}</div>
     </div>
-  );
-}
-
-type OwnItem = {
-  key: string;
-  href: string;
-  spaceSlug: string;
-  created_at: string;
-  snippet: string;
-  interactions: string;
-};
-
-function OwnList({ items, empty }: { items: OwnItem[]; empty: string }) {
-  if (items.length === 0) {
-    return (
-      <div className="card p-8 text-center text-petrolio/70">{empty}</div>
-    );
-  }
-  return (
-    <ul className="space-y-3">
-      {items.map((i) => {
-        const space = SPACE_BY_SLUG[i.spaceSlug];
-        return (
-          <li key={i.key}>
-            <Link
-              href={i.href}
-              className="card block p-4 hover:bg-white transition"
-            >
-              <header className="flex items-center gap-2 text-xs text-petrolio/60 mb-2 flex-wrap">
-                <span className="chip">
-                  {space?.emoji} {space?.name ?? i.spaceSlug}
-                </span>
-                <span aria-hidden>·</span>
-                <time dateTime={i.created_at}>{timeAgo(i.created_at)}</time>
-              </header>
-              <p className="text-petrolio leading-relaxed line-clamp-3">
-                {i.snippet}
-              </p>
-              <p className="text-xs text-petrolio/60 mt-2">{i.interactions}</p>
-            </Link>
-          </li>
-        );
-      })}
-    </ul>
   );
 }

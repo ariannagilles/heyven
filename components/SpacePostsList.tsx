@@ -1,10 +1,10 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import PostCardClient from "@/components/PostCardClient";
 import BreakReminderBanner from "@/components/infinite-scroll/BreakReminderBanner";
 import InfiniteListFooter from "@/components/infinite-scroll/InfiniteListFooter";
-import { useInfiniteScroll } from "@/components/infinite-scroll/useInfiniteScroll";
+import { usePaginatedFeed } from "@/components/infinite-scroll/usePaginatedFeed";
 import { loadMoreSpacePosts } from "@/lib/feed-actions";
 import type { FeedCursor } from "@/lib/pagination";
 import type { FeedPost } from "@/components/PostCard";
@@ -22,33 +22,16 @@ export default function SpacePostsList({
   initialNextCursor,
   initialHasMore,
 }: SpacePostsListProps) {
-  const [items, setItems] = useState(initialItems);
-  const [cursor, setCursor] = useState(initialNextCursor);
-  const [hasMore, setHasMore] = useState(initialHasMore);
-  const [isLoading, setIsLoading] = useState(false);
+  const loadMoreFn = useCallback(
+    (cursor: FeedCursor) => loadMoreSpacePosts(spaceSlug, cursor),
+    [spaceSlug],
+  );
 
-  const loadMore = useCallback(async () => {
-    if (isLoading || !hasMore || !cursor) return;
-
-    setIsLoading(true);
-    try {
-      const result = await loadMoreSpacePosts(spaceSlug, cursor);
-      setItems((prev) => {
-        const seen = new Set(prev.map((p) => p.id));
-        const fresh = result.items.filter((p) => !seen.has(p.id));
-        return [...prev, ...fresh];
-      });
-      setCursor(result.nextCursor);
-      setHasMore(result.hasMore);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [cursor, hasMore, isLoading, spaceSlug]);
-
-  const sentinelRef = useInfiniteScroll({
-    onLoadMore: loadMore,
-    hasMore,
-    isLoading,
+  const { items, isLoading, hasMore, sentinelRef } = usePaginatedFeed({
+    initialItems,
+    initialNextCursor,
+    initialHasMore,
+    loadMore: loadMoreFn,
   });
 
   if (items.length === 0) {

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
-import MixedFeedItem from "@/components/MixedFeedItem";
+import HomeFeedList from "@/components/HomeFeedList";
 import { createClient } from "@/lib/supabase/server";
 import { fetchUnifiedHomeFeed } from "@/lib/unified-feed";
 import { getProfile, getUserChatPreview } from "@/lib/chat";
@@ -12,16 +12,16 @@ export default async function HomePage() {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  let items: Awaited<ReturnType<typeof fetchUnifiedHomeFeed>>["items"] = [];
+  let feed: Awaited<ReturnType<typeof fetchUnifiedHomeFeed>> | null = null;
   let profile: Awaited<ReturnType<typeof getProfile>> = null;
   let chatPreview: Awaited<ReturnType<typeof getUserChatPreview>> = null;
 
   if (user) {
-    const [feed, profileResult] = await Promise.all([
-      fetchUnifiedHomeFeed(supabase, user.id, { limit: 50 }),
+    const [feedResult, profileResult] = await Promise.all([
+      fetchUnifiedHomeFeed(supabase, user.id),
       getProfile(supabase, user.id),
     ]);
-    items = feed.items;
+    feed = feedResult;
     profile = profileResult;
 
     if (profile?.role === "user") {
@@ -37,7 +37,7 @@ export default async function HomePage() {
       <main className="mx-auto max-w-2xl px-4 py-6 space-y-4">
         {isUser && <MentorCard preview={chatPreview} />}
 
-        {items.length === 0 ? (
+        {!feed || feed.items.length === 0 ? (
           <div className="card p-8 text-center">
             <p className="text-petrolio/80">Ancora nulla qui.</p>
             <p className="text-sm text-petrolio/60 mt-1">
@@ -48,13 +48,11 @@ export default async function HomePage() {
             </Link>
           </div>
         ) : (
-          <ul className="space-y-4">
-            {items.map((it) => (
-              <li key={`${it.kind}-${it.id}`}>
-                <MixedFeedItem item={it} />
-              </li>
-            ))}
-          </ul>
+          <HomeFeedList
+            initialItems={feed.items}
+            initialNextCursor={feed.nextCursor}
+            initialHasMore={feed.hasMore}
+          />
         )}
       </main>
     </>
