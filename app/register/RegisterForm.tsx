@@ -566,9 +566,15 @@ export default function RegisterForm() {
 
   if (phase === "splash") {
     return (
-      <main className="flex min-h-dvh items-center justify-center bg-[#04342C]">
-        <img src="/logo-white.png" alt="heyven" className="w-44" />
-      </main>
+      <div className="flex min-h-dvh items-center justify-center bg-[#04342C]">
+        <img
+          src="/logo-white.png"
+          alt="heyven"
+          width={180}
+          height={80}
+          style={{ objectFit: "contain" }}
+        />
+      </div>
     );
   }
 
