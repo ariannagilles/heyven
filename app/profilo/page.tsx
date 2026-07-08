@@ -3,12 +3,13 @@ import { redirect } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Avatar from "@/components/Avatar";
 import Stars from "@/components/Stars";
-import ProfileOwnList, {
+import ProfileOwnList from "@/components/ProfileOwnList";
+import {
   mapOwnPost,
   mapOwnQuestion,
   mapOwnStory,
   type ProfileTab,
-} from "@/components/ProfileOwnList";
+} from "@/lib/profile-list";
 import ProfileSettings from "./ProfileSettings";
 import { createClient } from "@/lib/supabase/server";
 import {

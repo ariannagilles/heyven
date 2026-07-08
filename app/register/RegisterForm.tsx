@@ -35,21 +35,21 @@ const INTRO_SLIDES = [
     badgeText: "Senza maschera",
     badgeClass:
       "bg-gradient-to-b from-[#fbd48a] to-[#e8a93d] text-[#04342C] shadow-inner",
-    description: "Anonimo, sicuro, senza giudizio.",
+    description: "Uno spazio anonimo, tutto tuo, per le cose che non riesci a dire ad alta voce.",
     Illustration: SlideOneIllustration,
   },
   {
     badgeText: "Il tuo spazio ti aspetta",
     badgeClass:
       "bg-gradient-to-b from-[#fbd48a] to-[#e8a93d] text-[#04342C] shadow-inner",
-    description: "Ti portiamo dove ci sono persone che capiscono.",
+    description: "Otto spazi tematici. Ognuno è un posto dove non devi spiegarti da zero.",
     Illustration: SlideTwoIllustration,
   },
   {
     badgeText: "Una voce che conosce la strada",
     badgeClass:
       "bg-gradient-to-b from-[#fbd48a] to-[#e8a93d] text-[#04342C] shadow-inner",
-    description: "Chi ti somiglia e chi ti ascolta, sempre.",
+    description: "Una community che capisce e un Mentore che accompagna.",
     Illustration: SlideThreeIllustration,
   },
 ] as const;
@@ -566,7 +566,7 @@ export default function RegisterForm() {
 
   if (phase === "splash") {
     return (
-      <div className="flex min-h-dvh items-center justify-center bg-[#04342C]">
+      <div className="min-h-dvh bg-[#04342C] flex items-center justify-center">
         <img
           src="/logo-white.png"
           alt="heyven"
