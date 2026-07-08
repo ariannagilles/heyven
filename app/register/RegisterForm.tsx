@@ -567,7 +567,7 @@ export default function RegisterForm() {
   if (phase === "splash") {
     return (
       <main className="flex min-h-dvh items-center justify-center bg-[#04342C]">
-        <img src="/logo-white.png" alt="heyven" className="w-40" />
+        <img src="/logo-white.png" alt="heyven" className="w-44" />
       </main>
     );
   }
