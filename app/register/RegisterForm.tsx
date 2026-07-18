@@ -447,12 +447,19 @@ export default function RegisterForm() {
   const [selectedDuration, setSelectedDuration] = useState<string | null>(null);
   const [step2Loading, setStep2Loading] = useState(false);
   const [step2Error, setStep2Error] = useState<string | null>(null);
+  const hasPrefilledNickname = useRef(false);
 
   useEffect(() => {
     if (phase === "splash") {
       const t = setTimeout(() => setPhase("intro"), 2000);
       return () => clearTimeout(t);
     }
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase !== "step1" || hasPrefilledNickname.current) return;
+    hasPrefilledNickname.current = true;
+    setNickname((current) => (current.trim() ? current : randomNickname()));
   }, [phase]);
 
   useEffect(() => {
@@ -616,20 +623,6 @@ export default function RegisterForm() {
           className="mt-6 rounded-3xl border border-white/60 bg-white/50 p-5 shadow-sm"
         >
           <div className="space-y-4">
-            <GlassInput
-              label="Indirizzo email"
-              hint="Usata solo per recuperare l'accesso. Non sarà mai visibile ad altri."
-            >
-              <input
-                type="email"
-                className={inputClassName}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                autoComplete="email"
-                required
-              />
-            </GlassInput>
-
             <GlassInput label="Nickname anonimo">
               <div className="mb-2 flex justify-end">
                 <button
@@ -659,6 +652,20 @@ export default function RegisterForm() {
                 isValidNickname(nickname.trim()) && (
                   <p className="mt-1.5 text-xs text-[#7A9188]">Verifica disponibilità…</p>
                 )}
+            </GlassInput>
+
+            <GlassInput
+              label="Indirizzo email"
+              hint="Usata solo per recuperare l'accesso. Non sarà mai visibile ad altri."
+            >
+              <input
+                type="email"
+                className={inputClassName}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+                required
+              />
             </GlassInput>
 
             <GlassInput label="Password">
