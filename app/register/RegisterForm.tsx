@@ -335,17 +335,17 @@ function IntroPhase({
   const currentSlide = INTRO_SLIDES[slideIndex];
 
   return (
-    <main className="flex min-h-dvh flex-col bg-[#FAEEDA]">
+    <main className="flex h-dvh flex-col overflow-hidden bg-[#FAEEDA]">
       <img
         src="/logo-green.png"
         alt="heyven"
-        className="mx-auto w-28 pt-12"
+        className="mx-auto w-20 shrink-0 pt-8"
       />
 
-      <div className="flex flex-1 flex-col">
+      <div className="flex min-h-0 flex-1 flex-col justify-between">
         <div
           ref={viewportRef}
-          className="mt-6 h-64 w-full touch-pan-y overflow-hidden"
+          className="mt-2 h-48 w-full shrink-0 touch-pan-y overflow-hidden"
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
@@ -371,15 +371,15 @@ function IntroPhase({
           </div>
         </div>
 
-        <h1 className="mt-8 px-8 text-center text-2xl font-bold text-[#04342C] transition-all duration-300">
+        <h1 className="mt-4 px-8 text-center text-2xl font-bold text-[#04342C] transition-all duration-300">
           {introTitles[slideIndex]}
         </h1>
 
-        <p className="mt-3 px-8 text-center text-base leading-relaxed text-[#4A6158]">
+        <p className="mt-2 px-8 text-center text-base leading-relaxed text-[#4A6158]">
           {currentSlide.description}
         </p>
 
-        <div className="mt-8 flex items-center justify-center gap-2">
+        <div className="mt-4 flex shrink-0 items-center justify-center gap-2">
           {INTRO_SLIDES.map((_, index) => (
             <div
               key={introTitles[index]}
@@ -394,7 +394,7 @@ function IntroPhase({
         </div>
       </div>
 
-      <div className="mt-auto px-6 pb-8">
+      <div className="mt-auto shrink-0 px-6 pb-6">
         <button
           type="button"
           onClick={goNext}
@@ -425,15 +425,17 @@ function StepShell({
   children: React.ReactNode;
 }) {
   return (
-    <main className="flex min-h-dvh flex-col bg-[#FAEEDA] px-6 pb-10">
-      <div className="mx-auto w-full max-w-md">
-        <img
-          src="/logo-green.png"
-          alt="heyven"
-          className="mx-auto w-24 pt-12"
-        />
-        <ProgressBar step={progress} />
-        {children}
+    <main className="flex h-dvh flex-col overflow-hidden bg-[#FAEEDA] px-6">
+      <div className="mx-auto flex h-full w-full max-w-md min-h-0 flex-col">
+        <div className="shrink-0 pt-8">
+          <img
+            src="/logo-green.png"
+            alt="heyven"
+            className="mx-auto w-20"
+          />
+          <ProgressBar step={progress} />
+        </div>
+        <div className="min-h-0 flex-1 overflow-y-auto pb-6">{children}</div>
       </div>
     </main>
   );
@@ -672,12 +674,14 @@ export default function RegisterForm() {
 
   if (phase === "splash") {
     return (
-      <div className="flex min-h-dvh items-center justify-center bg-[#FAEEDA]">
+      <div className="flex min-h-dvh items-center justify-center bg-[#04342C]">
         <img
-          src="/logo-green.png"
-          alt="Heyven"
-          className="h-auto w-[180px]"
+          src="/logo-white.png"
+          alt="heyven"
+          width={180}
+          height={80}
           style={{ objectFit: "contain" }}
+          className="animate-[fadeInScale_1.4s_ease-out_forwards]"
         />
       </div>
     );
@@ -700,7 +704,7 @@ export default function RegisterForm() {
       <StepShell progress={1}>
         <h1 className="mt-6 text-2xl font-semibold text-[#04342C]">Crea il tuo rifugio</h1>
         <p className="mt-2 text-sm leading-relaxed text-[#4A6158]">
-          Il nickname è l&apos;unico nome visibile. Nessuno saprà chi sei davvero.
+          Il primo passo è anonimo.
         </p>
 
         <form
@@ -729,6 +733,9 @@ export default function RegisterForm() {
                 autoComplete="off"
                 required
               />
+              <p className="mt-1.5 text-xs text-[#7A9188]">
+                Il nickname è l&apos;unico nome visibile. Nessuno saprà chi sei davvero.
+              </p>
               {nicknameStatus === "taken" && (
                 <p className="mt-1.5 text-xs text-[#7A9188]">{NICKNAME_TAKEN_HINT}</p>
               )}
@@ -865,7 +872,7 @@ export default function RegisterForm() {
     return (
       <StepShell progress={3}>
         <h1 className="mt-6 text-2xl font-semibold text-[#04342C]">
-          Come ti senti in questo periodo?
+          Trova il tuo spazio
         </h1>
         <p className="mt-2 text-sm leading-relaxed text-[#4A6158]">
           Non serve avere le parole giuste. Scegli quello che ti sembra più vicino.
