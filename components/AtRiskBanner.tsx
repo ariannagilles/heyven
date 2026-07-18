@@ -3,18 +3,15 @@ import Link from "next/link";
 export default function AtRiskBanner() {
   return (
     <aside
-      className="mb-4 rounded-2xl border border-amber-200/80 bg-amber-50/90 px-4 py-3.5 text-[15px] leading-relaxed text-petrolio"
+      className="mb-3 rounded-lg border border-amber-200/50 bg-amber-50/[0.08] px-3 py-2 text-xs leading-relaxed text-petrolio/75"
       role="note"
     >
-      <p>
-        Quello che hai scritto conta, e non devi restare da solo con questo. Se
-        te la senti, qui c&apos;è chi risponde subito.
-      </p>
+      <p>Hai scritto qualcosa di importante. Qui c&apos;è chi può ascoltarti.</p>
       <Link
-        href="/aiuto"
-        className="mt-2 inline-block text-sm font-medium text-petrolio underline underline-offset-2 hover:text-petrolio/80"
+        href="/chat"
+        className="mt-1 inline-block text-xs font-medium text-petrolio/65 underline underline-offset-2 hover:text-petrolio transition"
       >
-        Vedi i numeri di aiuto
+        Parlane con un Mentore
       </Link>
     </aside>
   );
