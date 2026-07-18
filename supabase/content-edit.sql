@@ -32,8 +32,34 @@ create policy "stories_update_self" on public.stories
   using (auth.uid() = author_id)
   with check (auth.uid() = author_id);
 
--- 3. Trigger BEFORE UPDATE: blocca modifiche a colonne non editabili.
---    Consentite: content, title (stories), at_risk, updated_at.
+-- 3. Trigger BEFORE UPDATE: imposta updated_at a ogni modifica (non alla creazione).
+create or replace function public.set_content_updated_at()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
+
+drop trigger if exists posts_set_updated_at on public.posts;
+create trigger posts_set_updated_at
+  before update on public.posts
+  for each row execute function public.set_content_updated_at();
+
+drop trigger if exists questions_set_updated_at on public.questions;
+create trigger questions_set_updated_at
+  before update on public.questions
+  for each row execute function public.set_content_updated_at();
+
+drop trigger if exists stories_set_updated_at on public.stories;
+create trigger stories_set_updated_at
+  before update on public.stories
+  for each row execute function public.set_content_updated_at();
+
+-- 4. Trigger BEFORE UPDATE: blocca modifiche a colonne non editabili.
+--    Consentite dal client: content, title (stories), at_risk. updated_at è gestito dal trigger sopra.
 create or replace function public.protect_content_columns_on_update()
 returns trigger
 language plpgsql

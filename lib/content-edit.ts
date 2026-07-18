@@ -23,13 +23,11 @@ export async function updateTextContent(
   id: string,
   payload: TextContentUpdate,
 ): Promise<ContentUpdateResult> {
-  const updated_at = new Date().toISOString();
   const { data, error } = await supabase
     .from(table)
     .update({
       content: payload.content,
       at_risk: payload.at_risk,
-      updated_at,
     })
     .eq("id", id)
     .select("updated_at")
@@ -44,14 +42,12 @@ export async function updateStoryContent(
   id: string,
   payload: StoryContentUpdate,
 ): Promise<ContentUpdateResult> {
-  const updated_at = new Date().toISOString();
   const { data, error } = await supabase
     .from("stories")
     .update({
       content: payload.content,
       title: payload.title,
       at_risk: payload.at_risk,
-      updated_at,
     })
     .eq("id", id)
     .select("updated_at")
