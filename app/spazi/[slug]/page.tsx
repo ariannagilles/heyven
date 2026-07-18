@@ -23,6 +23,7 @@ export default async function PostTab({
   return (
     <SpacePostsList
       spaceSlug={params.slug}
+      viewerId={user.id}
       initialItems={items}
       initialNextCursor={nextCursor}
       initialHasMore={hasMore}

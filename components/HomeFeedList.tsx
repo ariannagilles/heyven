@@ -9,12 +9,14 @@ import { loadMoreHomeFeed } from "@/lib/feed-actions";
 import type { MixedFeedItem, UnifiedFeedCursor } from "@/lib/unified-feed";
 
 type HomeFeedListProps = {
+  viewerId: string;
   initialItems: MixedFeedItem[];
   initialNextCursor: UnifiedFeedCursor | null;
   initialHasMore: boolean;
 };
 
 export default function HomeFeedList({
+  viewerId,
   initialItems,
   initialNextCursor,
   initialHasMore,
@@ -40,7 +42,7 @@ export default function HomeFeedList({
       <ul className="space-y-4">
         {items.map((item) => (
           <li key={`${item.kind}-${item.id}`}>
-            <MixedFeedItemClient item={item} />
+            <MixedFeedItemClient item={item} viewerId={viewerId} />
           </li>
         ))}
       </ul>

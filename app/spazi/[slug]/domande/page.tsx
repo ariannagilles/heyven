@@ -22,6 +22,7 @@ export default async function DomandeTab({
       <QuestionForm spaceSlug={params.slug} />
       <SpaceQuestionsList
         spaceSlug={params.slug}
+        viewerId={user.id}
         initialItems={items}
         initialNextCursor={nextCursor}
         initialHasMore={hasMore}

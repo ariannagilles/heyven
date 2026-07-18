@@ -1,22 +1,37 @@
 "use client";
 
-import Link from "next/link";
-import MeTooButton from "@/components/MeTooButton";
-import ReportButton from "@/components/ReportButton";
+import AtRiskBanner from "@/components/AtRiskBanner";
 import ContentEditForm from "@/components/ContentEditForm";
 import ContentMetaTime from "@/components/ContentMetaTime";
 import EditContentButton from "@/components/EditContentButton";
-import { AvatarImage } from "@/components/AvatarImage";
+import MeTooButton from "@/components/MeTooButton";
+import ReportButton from "@/components/ReportButton";
 import { useEditableContent } from "@/components/useEditableContent";
-import type { FeedPost } from "@/components/PostCard";
+import Link from "next/link";
 import { SPACE_BY_SLUG } from "@/lib/spaces";
 
 type Props = {
-  post: FeedPost;
-  viewerId: string;
+  post: {
+    id: string;
+    author_id: string;
+    content: string;
+    created_at: string;
+    updated_at: string | null;
+    space_slug: string;
+    at_risk: boolean;
+    nickname: string;
+  };
+  viewerId: string | null;
+  meTooCount: number;
+  userMeToo: boolean;
 };
 
-export default function PostCardClient({ post, viewerId }: Props) {
+export default function PostDetailArticle({
+  post,
+  viewerId,
+  meTooCount,
+  userMeToo,
+}: Props) {
   const space = SPACE_BY_SLUG[post.space_slug];
   const editable = useEditableContent({
     table: "posts",
@@ -28,10 +43,14 @@ export default function PostCardClient({ post, viewerId }: Props) {
     contentMaxLength: 500,
   });
 
+  const showAtRiskBanner = Boolean(
+    viewerId && post.at_risk && viewerId === post.author_id,
+  );
+
   return (
-    <article className="card p-5">
+    <article className="card p-6">
+      {showAtRiskBanner && <AtRiskBanner />}
       <header className="flex items-center gap-2 text-xs text-petrolio/60 mb-3">
-        <AvatarImage src={post.avatarSrc} nickname={post.nickname} size={32} />
         <span className="font-medium text-petrolio">@{post.nickname}</span>
         <span aria-hidden>·</span>
         <Link href={`/spazi/${post.space_slug}`} className="chip hover:bg-petrolio/15">
@@ -59,28 +78,18 @@ export default function PostCardClient({ post, viewerId }: Props) {
           onCancel={editable.cancelEdit}
         />
       ) : (
-        <Link href={`/post/${post.id}`} className="block">
-          <p className="whitespace-pre-wrap text-petrolio leading-relaxed line-clamp-6">
-            {editable.content}
-          </p>
-        </Link>
+        <p className="whitespace-pre-wrap text-petrolio leading-relaxed text-[15px]">
+          {editable.content}
+        </p>
       )}
 
       {!editable.editing && (
-        <footer className="mt-4 flex items-center gap-2">
+        <footer className="mt-5">
           <MeTooButton
             postId={post.id}
-            initialCount={post.meTooCount}
-            initialActive={post.meToo}
+            initialCount={meTooCount}
+            initialActive={userMeToo}
           />
-          <Link
-            href={`/post/${post.id}`}
-            className="inline-flex items-center gap-1.5 rounded-full bg-petrolio/5 text-petrolio px-3 py-1.5 text-sm hover:bg-petrolio/10"
-          >
-            <span aria-hidden>💬</span>
-            <span>risposte</span>
-            <span className="tabular-nums opacity-80">{post.replyCount}</span>
-          </Link>
         </footer>
       )}
     </article>

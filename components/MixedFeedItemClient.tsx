@@ -1,23 +1,45 @@
 "use client";
 
 import Link from "next/link";
-import { AvatarImage } from "@/components/AvatarImage";
+import ContentEditForm from "@/components/ContentEditForm";
+import ContentMetaTime from "@/components/ContentMetaTime";
+import EditContentButton from "@/components/EditContentButton";
 import MeTooButton from "@/components/MeTooButton";
 import ReportButton from "@/components/ReportButton";
 import StoryReactionButton from "@/components/StoryReactionButton";
-import type { MixedFeedItem as Item } from "@/lib/unified-feed";
+import { AvatarImage } from "@/components/AvatarImage";
+import { useEditableContent } from "@/components/useEditableContent";
+import type { MixedFeedItem } from "@/lib/unified-feed";
 import { SPACE_BY_SLUG } from "@/lib/spaces";
-import { timeAgo } from "@/lib/time";
 
-const KIND_META: Record<Item["kind"], { emoji: string; label: string }> = {
+const KIND_META: Record<MixedFeedItem["kind"], { emoji: string; label: string }> = {
   sfogo: { emoji: "🌊", label: "Sfogo" },
   domanda: { emoji: "❓", label: "Domanda" },
   storia: { emoji: "📖", label: "Storia" },
 };
 
-export default function MixedFeedItemClient({ item }: { item: Item }) {
+type Props = {
+  item: MixedFeedItem;
+  viewerId: string | null;
+};
+
+export default function MixedFeedItemClient({ item, viewerId }: Props) {
   const space = SPACE_BY_SLUG[item.space_slug];
   const meta = KIND_META[item.kind];
+
+  const editable = useEditableContent({
+    table: item.kind === "sfogo" ? "posts" : item.kind === "domanda" ? "questions" : "stories",
+    id: item.id,
+    authorId: item.author_id,
+    viewerId,
+    initialContent: item.content,
+    initialTitle: item.kind === "storia" ? item.title : null,
+    initialUpdatedAt: item.updated_at,
+    contentMaxLength: item.kind === "storia" ? undefined : 500,
+  });
+
+  const reportTargetType =
+    item.kind === "sfogo" ? "post" : item.kind === "domanda" ? "question" : "story";
 
   return (
     <article className="card p-5">
@@ -34,83 +56,105 @@ export default function MixedFeedItemClient({ item }: { item: Item }) {
           {space?.name ?? item.space_slug}
         </Link>
         <span aria-hidden>·</span>
-        <time dateTime={item.created_at}>{timeAgo(item.created_at)}</time>
-        <ReportButton
-          targetType={
-            item.kind === "sfogo"
-              ? "post"
-              : item.kind === "domanda"
-                ? "question"
-                : "story"
-          }
-          targetId={item.id}
-          className="ml-auto shrink-0"
-        />
+        <ContentMetaTime createdAt={item.created_at} updatedAt={editable.updatedAt} />
+        <div className="ml-auto shrink-0 flex items-center gap-0.5">
+          {editable.canEdit && !editable.editing && (
+            <EditContentButton onClick={editable.startEdit} />
+          )}
+          <ReportButton targetType={reportTargetType} targetId={item.id} />
+        </div>
       </header>
 
-      {item.kind === "storia" && item.title && (
-        <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
-      )}
-
-      {item.kind === "sfogo" ? (
-        <Link href={`/post/${item.id}`} className="block">
-          <p className="whitespace-pre-wrap text-petrolio leading-relaxed line-clamp-6">
-            {item.content}
-          </p>
-        </Link>
-      ) : item.kind === "domanda" ? (
-        <Link href={`/spazi/${item.space_slug}/domande/${item.id}`} className="block">
-          <p className="whitespace-pre-wrap text-petrolio leading-relaxed">
-            {item.content}
-          </p>
-        </Link>
+      {editable.editing ? (
+        <ContentEditForm
+          contentLabel={
+            item.kind === "sfogo"
+              ? "Il tuo sfogo"
+              : item.kind === "domanda"
+                ? "La tua domanda"
+                : "La tua storia"
+          }
+          content={editable.draftContent}
+          onContentChange={editable.setDraftContent}
+          contentMaxLength={item.kind === "storia" ? undefined : 500}
+          title={editable.draftTitle}
+          onTitleChange={editable.setDraftTitle}
+          showTitle={item.kind === "storia"}
+          loading={editable.loading}
+          error={editable.error}
+          onSubmit={editable.saveEdit}
+          onCancel={editable.cancelEdit}
+          textareaClassName={item.kind === "storia" ? "min-h-[260px]" : "min-h-[160px]"}
+        />
       ) : (
-        <Link href={`/spazi/${item.space_slug}/storie`} className="block">
-          <p className="whitespace-pre-wrap text-petrolio leading-relaxed line-clamp-6">
-            {item.content}
-          </p>
-        </Link>
+        <>
+          {item.kind === "storia" && editable.title && (
+            <h3 className="text-lg font-semibold mb-2">{editable.title}</h3>
+          )}
+
+          {item.kind === "sfogo" ? (
+            <Link href={`/post/${item.id}`} className="block">
+              <p className="whitespace-pre-wrap text-petrolio leading-relaxed line-clamp-6">
+                {editable.content}
+              </p>
+            </Link>
+          ) : item.kind === "domanda" ? (
+            <Link href={`/spazi/${item.space_slug}/domande/${item.id}`} className="block">
+              <p className="whitespace-pre-wrap text-petrolio leading-relaxed">
+                {editable.content}
+              </p>
+            </Link>
+          ) : (
+            <Link href={`/spazi/${item.space_slug}/storie`} className="block">
+              <p className="whitespace-pre-wrap text-petrolio leading-relaxed line-clamp-6">
+                {editable.content}
+              </p>
+            </Link>
+          )}
+        </>
       )}
 
-      <footer className="mt-4 flex items-center gap-2 flex-wrap">
-        {item.kind === "sfogo" && (
-          <>
-            <MeTooButton
-              postId={item.id}
-              initialCount={item.me_too_count}
-              initialActive={item.me_too}
-            />
+      {!editable.editing && (
+        <footer className="mt-4 flex items-center gap-2 flex-wrap">
+          {item.kind === "sfogo" && (
+            <>
+              <MeTooButton
+                postId={item.id}
+                initialCount={item.me_too_count}
+                initialActive={item.me_too}
+              />
+              <Link
+                href={`/post/${item.id}`}
+                className="inline-flex items-center gap-1.5 rounded-full bg-petrolio/5 text-petrolio px-3 py-1.5 text-sm hover:bg-petrolio/10"
+              >
+                <span aria-hidden>💬</span>
+                <span>risposte</span>
+                <span className="tabular-nums opacity-80">{item.reply_count}</span>
+              </Link>
+            </>
+          )}
+          {item.kind === "domanda" && (
             <Link
-              href={`/post/${item.id}`}
+              href={`/spazi/${item.space_slug}/domande/${item.id}`}
               className="inline-flex items-center gap-1.5 rounded-full bg-petrolio/5 text-petrolio px-3 py-1.5 text-sm hover:bg-petrolio/10"
             >
               <span aria-hidden>💬</span>
-              <span>risposte</span>
-              <span className="tabular-nums opacity-80">{item.reply_count}</span>
+              <span>
+                {item.reply_count === 0
+                  ? "Rispondi"
+                  : `${item.reply_count} rispost${item.reply_count === 1 ? "a" : "e"}`}
+              </span>
             </Link>
-          </>
-        )}
-        {item.kind === "domanda" && (
-          <Link
-            href={`/spazi/${item.space_slug}/domande/${item.id}`}
-            className="inline-flex items-center gap-1.5 rounded-full bg-petrolio/5 text-petrolio px-3 py-1.5 text-sm hover:bg-petrolio/10"
-          >
-            <span aria-hidden>💬</span>
-            <span>
-              {item.reply_count === 0
-                ? "Rispondi"
-                : `${item.reply_count} rispost${item.reply_count === 1 ? "a" : "e"}`}
-            </span>
-          </Link>
-        )}
-        {item.kind === "storia" && (
-          <StoryReactionButton
-            storyId={item.id}
-            initialCount={item.reaction_count}
-            initialActive={item.has_reacted}
-          />
-        )}
-      </footer>
+          )}
+          {item.kind === "storia" && (
+            <StoryReactionButton
+              storyId={item.id}
+              initialCount={item.reaction_count}
+              initialActive={item.has_reacted}
+            />
+          )}
+        </footer>
+      )}
     </article>
   );
 }

@@ -11,6 +11,7 @@ import type { FeedPost } from "@/components/PostCard";
 
 type SpacePostsListProps = {
   spaceSlug: string;
+  viewerId: string;
   initialItems: FeedPost[];
   initialNextCursor: FeedCursor | null;
   initialHasMore: boolean;
@@ -18,6 +19,7 @@ type SpacePostsListProps = {
 
 export default function SpacePostsList({
   spaceSlug,
+  viewerId,
   initialItems,
   initialNextCursor,
   initialHasMore,
@@ -47,7 +49,7 @@ export default function SpacePostsList({
       <ul className="space-y-4">
         {items.map((post) => (
           <li key={post.id}>
-            <PostCardClient post={post} />
+            <PostCardClient post={post} viewerId={viewerId} />
           </li>
         ))}
       </ul>

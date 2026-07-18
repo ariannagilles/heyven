@@ -35,6 +35,7 @@ export type OwnPostRow = {
   space_slug: string;
   content: string;
   created_at: string;
+  updated_at: string | null;
   reply_count: number;
   me_too_count: number;
 };
@@ -44,6 +45,7 @@ type RawOwnPost = {
   space_slug: string;
   content: string;
   created_at: string;
+  updated_at: string | null;
   replies: { count: number }[] | null;
   me_too: { count: number }[] | null;
 };
@@ -57,7 +59,7 @@ export async function getOwnPosts(
 
   let query = supabase
     .from("posts")
-    .select("id, space_slug, content, created_at, replies(count), me_too(count)")
+    .select("id, space_slug, content, created_at, updated_at, replies(count), me_too(count)")
     .eq("author_id", userId)
     .order("created_at", { ascending: false })
     .order("id", { ascending: false })
@@ -70,6 +72,7 @@ export async function getOwnPosts(
     space_slug: p.space_slug,
     content: p.content,
     created_at: p.created_at,
+    updated_at: p.updated_at ?? null,
     reply_count: p.replies?.[0]?.count ?? 0,
     me_too_count: p.me_too?.[0]?.count ?? 0,
   }));
@@ -82,6 +85,7 @@ export type OwnQuestionRow = {
   space_slug: string;
   content: string;
   created_at: string;
+  updated_at: string | null;
   reply_count: number;
 };
 
@@ -90,6 +94,7 @@ type RawOwnQuestion = {
   space_slug: string;
   content: string;
   created_at: string;
+  updated_at: string | null;
   question_replies: { count: number }[] | null;
 };
 
@@ -102,7 +107,7 @@ export async function getOwnQuestions(
 
   let query = supabase
     .from("questions")
-    .select("id, space_slug, content, created_at, question_replies(count)")
+    .select("id, space_slug, content, created_at, updated_at, question_replies(count)")
     .eq("author_id", userId)
     .order("created_at", { ascending: false })
     .order("id", { ascending: false })
@@ -115,6 +120,7 @@ export async function getOwnQuestions(
     space_slug: q.space_slug,
     content: q.content,
     created_at: q.created_at,
+    updated_at: q.updated_at ?? null,
     reply_count: q.question_replies?.[0]?.count ?? 0,
   }));
 
@@ -127,6 +133,7 @@ export type OwnStoryRow = {
   title: string | null;
   content: string;
   created_at: string;
+  updated_at: string | null;
   reaction_count: number;
 };
 
@@ -136,6 +143,7 @@ type RawOwnStory = {
   title: string | null;
   content: string;
   created_at: string;
+  updated_at: string | null;
   story_reactions: { count: number }[] | null;
 };
 
@@ -148,7 +156,7 @@ export async function getOwnStories(
 
   let query = supabase
     .from("stories")
-    .select("id, space_slug, title, content, created_at, story_reactions(count)")
+    .select("id, space_slug, title, content, created_at, updated_at, story_reactions(count)")
     .eq("author_id", userId)
     .order("created_at", { ascending: false })
     .order("id", { ascending: false })
@@ -162,6 +170,7 @@ export async function getOwnStories(
     title: s.title,
     content: s.content,
     created_at: s.created_at,
+    updated_at: s.updated_at ?? null,
     reaction_count: s.story_reactions?.[0]?.count ?? 0,
   }));
 

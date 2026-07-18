@@ -3,12 +3,14 @@ import MeTooButton from "./MeTooButton";
 import ReportButton from "./ReportButton";
 import Avatar from "./Avatar";
 import { SPACE_BY_SLUG } from "@/lib/spaces";
-import { timeAgo } from "@/lib/time";
+import ContentMetaTime from "@/components/ContentMetaTime";
 
 export type FeedPost = {
   id: string;
+  author_id: string;
   content: string;
   created_at: string;
+  updated_at: string | null;
   space_slug: string;
   nickname: string;
   replyCount: number;
@@ -29,7 +31,7 @@ export default function PostCard({ post }: { post: FeedPost }) {
           {space?.name ?? post.space_slug}
         </Link>
         <span aria-hidden>·</span>
-        <time dateTime={post.created_at}>{timeAgo(post.created_at)}</time>
+        <ContentMetaTime createdAt={post.created_at} updatedAt={post.updated_at} />
         <ReportButton targetType="post" targetId={post.id} className="ml-auto shrink-0" />
       </header>
 

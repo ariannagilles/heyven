@@ -49,6 +49,7 @@ export default async function HomePage() {
           </div>
         ) : (
           <HomeFeedList
+            viewerId={user!.id}
             initialItems={feed.items}
             initialNextCursor={feed.nextCursor}
             initialHasMore={feed.hasMore}

@@ -24,7 +24,7 @@ import type {
   OwnStoryRow,
 } from "@/lib/profile";
 import { SPACE_BY_SLUG } from "@/lib/spaces";
-import { timeAgo } from "@/lib/time";
+import ContentMetaTime from "@/components/ContentMetaTime";
 
 type ProfileOwnListProps = {
   tab: ProfileTab;
@@ -105,7 +105,10 @@ export default function ProfileOwnList({
                     {space?.emoji} {space?.name ?? item.spaceSlug}
                   </span>
                   <span aria-hidden>·</span>
-                  <time dateTime={item.created_at}>{timeAgo(item.created_at)}</time>
+                  <ContentMetaTime
+                    createdAt={item.created_at}
+                    updatedAt={item.updated_at}
+                  />
                 </header>
                 <p className="text-petrolio leading-relaxed line-clamp-3">
                   {item.snippet}

@@ -1,12 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import AtRiskBanner from "@/components/AtRiskBanner";
 import Navbar from "@/components/Navbar";
-import MeTooButton from "@/components/MeTooButton";
+import PostDetailArticle from "@/components/PostDetailArticle";
 import ReportButton from "@/components/ReportButton";
 import ReplyForm from "./ReplyForm";
 import { createClient } from "@/lib/supabase/server";
-import { SPACE_BY_SLUG } from "@/lib/spaces";
 import { timeAgo } from "@/lib/time";
 
 export const dynamic = "force-dynamic";
@@ -27,7 +25,7 @@ export default async function PostDetailPage({ params }: { params: { id: string 
   const { data: post, error: postError } = await supabase
     .from("posts")
     .select(
-      "id, author_id, content, created_at, space_slug, at_risk, profiles!posts_author_id_fkey(nickname), me_too(count)",
+      "id, author_id, content, created_at, updated_at, space_slug, at_risk, profiles!posts_author_id_fkey(nickname), me_too(count)",
     )
     .eq("id", params.id)
     .maybeSingle();
@@ -60,15 +58,14 @@ export default async function PostDetailPage({ params }: { params: { id: string 
     author_id: string;
     content: string;
     created_at: string;
+    updated_at: string | null;
     space_slug: string;
     at_risk: boolean;
     profiles: { nickname: string } | null;
     me_too: { count: number }[] | null;
   };
-  const space = SPACE_BY_SLUG[p.space_slug];
   const meTooCount = p.me_too?.[0]?.count ?? 0;
   const nickname = p.profiles?.nickname ?? "anonimo";
-  const showAtRiskBanner = Boolean(user && p.at_risk && user.id === p.author_id);
 
   return (
     <>
@@ -76,27 +73,21 @@ export default async function PostDetailPage({ params }: { params: { id: string 
       <main className="mx-auto max-w-2xl px-4 py-6 space-y-6">
         <Link href="/" className="text-sm text-petrolio/60 hover:text-petrolio">← torna al feed</Link>
 
-        <article className="card p-6">
-          {showAtRiskBanner && <AtRiskBanner />}
-          <header className="flex items-center gap-2 text-xs text-petrolio/60 mb-3">
-            <span className="font-medium text-petrolio">@{nickname}</span>
-            <span aria-hidden>·</span>
-            <Link href={`/spazi/${p.space_slug}`} className="chip hover:bg-petrolio/15">
-              {space?.name ?? p.space_slug}
-            </Link>
-            <span aria-hidden>·</span>
-            <time dateTime={p.created_at}>{timeAgo(p.created_at)}</time>
-            <ReportButton targetType="post" targetId={p.id} className="ml-auto shrink-0" />
-          </header>
-
-          <p className="whitespace-pre-wrap text-petrolio leading-relaxed text-[15px]">
-            {p.content}
-          </p>
-
-          <footer className="mt-5">
-            <MeTooButton postId={p.id} initialCount={meTooCount} initialActive={userMeToo} />
-          </footer>
-        </article>
+        <PostDetailArticle
+          post={{
+            id: p.id,
+            author_id: p.author_id,
+            content: p.content,
+            created_at: p.created_at,
+            updated_at: p.updated_at ?? null,
+            space_slug: p.space_slug,
+            at_risk: p.at_risk,
+            nickname,
+          }}
+          viewerId={user?.id ?? null}
+          meTooCount={meTooCount}
+          userMeToo={userMeToo}
+        />
 
         <section className="space-y-3">
           <h2 className="text-sm font-medium text-petrolio/70 px-1">

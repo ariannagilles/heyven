@@ -12,8 +12,10 @@ import {
 
 export type QuestionRow = {
   id: string;
+  author_id: string;
   content: string;
   created_at: string;
+  updated_at: string | null;
   nickname: string;
   reply_count: number;
   avatarSrc: string;
@@ -21,8 +23,10 @@ export type QuestionRow = {
 
 type RawQuestion = {
   id: string;
+  author_id: string;
   content: string;
   created_at: string;
+  updated_at: string | null;
   profiles: { nickname: string } | null;
   question_replies: { count: number }[] | null;
 };
@@ -37,7 +41,7 @@ export async function getQuestions(
   let query = supabase
     .from("questions")
     .select(
-      "id, content, created_at, profiles!questions_author_id_fkey(nickname), question_replies(count)",
+      "id, author_id, content, created_at, updated_at, profiles!questions_author_id_fkey(nickname), question_replies(count)",
     )
     .eq("space_slug", spaceSlug)
     .order("created_at", { ascending: false })
@@ -50,8 +54,10 @@ export async function getQuestions(
     const nickname = q.profiles?.nickname ?? "anonimo";
     return {
       id: q.id,
+      author_id: q.author_id,
       content: q.content,
       created_at: q.created_at,
+      updated_at: q.updated_at ?? null,
       nickname,
       reply_count: q.question_replies?.[0]?.count ?? 0,
       avatarSrc: avatarDataUri(nickname),
@@ -67,6 +73,7 @@ export type QuestionDetail = {
   author_id: string;
   content: string;
   created_at: string;
+  updated_at: string | null;
   nickname: string;
   at_risk: boolean;
 };
@@ -77,6 +84,7 @@ type RawQuestionDetail = {
   author_id: string;
   content: string;
   created_at: string;
+  updated_at: string | null;
   at_risk: boolean;
   profiles: { nickname: string } | null;
 };
@@ -87,7 +95,7 @@ export async function getQuestion(
 ): Promise<QuestionDetail | null> {
   const { data } = await supabase
     .from("questions")
-    .select("id, space_slug, author_id, content, created_at, at_risk, profiles!questions_author_id_fkey(nickname)")
+    .select("id, space_slug, author_id, content, created_at, updated_at, at_risk, profiles!questions_author_id_fkey(nickname)")
     .eq("id", qid)
     .maybeSingle();
   if (!data) return null;
@@ -98,6 +106,7 @@ export async function getQuestion(
     author_id: q.author_id,
     content: q.content,
     created_at: q.created_at,
+    updated_at: q.updated_at ?? null,
     nickname: q.profiles?.nickname ?? "anonimo",
     at_risk: q.at_risk ?? false,
   };
@@ -142,6 +151,7 @@ export type StoryRow = {
   title: string | null;
   content: string;
   created_at: string;
+  updated_at: string | null;
   nickname: string;
   reaction_count: number;
   has_reacted: boolean;
@@ -155,6 +165,7 @@ type RawStory = {
   title: string | null;
   content: string;
   created_at: string;
+  updated_at: string | null;
   at_risk: boolean;
   profiles: { nickname: string } | null;
   story_reactions: { count: number }[] | null;
@@ -171,7 +182,7 @@ export async function getStories(
   let query = supabase
     .from("stories")
     .select(
-      "id, author_id, title, content, created_at, at_risk, profiles!stories_author_id_fkey(nickname), story_reactions(count)",
+      "id, author_id, title, content, created_at, updated_at, at_risk, profiles!stories_author_id_fkey(nickname), story_reactions(count)",
     )
     .eq("space_slug", spaceSlug)
     .order("created_at", { ascending: false })
@@ -203,6 +214,7 @@ export async function getStories(
       title: s.title,
       content: s.content,
       created_at: s.created_at,
+      updated_at: s.updated_at ?? null,
       nickname,
       reaction_count: s.story_reactions?.[0]?.count ?? 0,
       has_reacted: mineSet.has(s.id),

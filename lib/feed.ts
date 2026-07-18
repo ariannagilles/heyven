@@ -11,8 +11,10 @@ import {
 
 type RawPost = {
   id: string;
+  author_id: string;
   content: string;
   created_at: string;
+  updated_at: string | null;
   space_slug: string;
   profiles: { nickname: string } | null;
   replies: { count: number }[] | null;
@@ -29,7 +31,7 @@ export async function fetchFeed(
   let query = supabase
     .from("posts")
     .select(
-      "id, content, created_at, space_slug, profiles!posts_author_id_fkey(nickname), replies(count), me_too(count)",
+      "id, author_id, content, created_at, updated_at, space_slug, profiles!posts_author_id_fkey(nickname), replies(count), me_too(count)",
     )
     .order("created_at", { ascending: false })
     .order("id", { ascending: false })
@@ -58,8 +60,10 @@ export async function fetchFeed(
     const nickname = p.profiles?.nickname ?? "anonimo";
     return {
       id: p.id,
+      author_id: p.author_id,
       content: p.content,
       created_at: p.created_at,
+      updated_at: p.updated_at ?? null,
       space_slug: p.space_slug,
       nickname,
       replyCount: p.replies?.[0]?.count ?? 0,
