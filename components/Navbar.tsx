@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { avatarDataUri } from "@/lib/avatar";
 import { getProfile, getUnreadCount, type Role } from "@/lib/chat";
 import { getUnreadNotificationsCount } from "@/lib/notifications";
 import NavbarProfileMenu from "./NavbarProfileMenu";
-import UrgentHelpLink from "./UrgentHelpLink";
 
 export default async function Navbar() {
   const supabase = createClient();
@@ -91,9 +91,12 @@ export default async function Navbar() {
               <span className="hidden sm:inline">vai oltre</span>
             </Link>
 
-            <UrgentHelpLink className="hidden md:inline text-sm px-1 shrink-0" />
-
-            {nickname && <NavbarProfileMenu nickname={nickname} />}
+            {nickname && (
+              <NavbarProfileMenu
+                nickname={nickname}
+                avatarSrc={avatarDataUri(nickname)}
+              />
+            )}
           </nav>
         ) : (
           <Link href="/login" className="btn-primary text-sm">

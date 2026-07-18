@@ -2,13 +2,17 @@
 
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
-import Avatar from "./Avatar";
+import { AvatarImage } from "./AvatarImage";
 
 type NavbarProfileMenuProps = {
   nickname: string;
+  avatarSrc: string;
 };
 
-export default function NavbarProfileMenu({ nickname }: NavbarProfileMenuProps) {
+export default function NavbarProfileMenu({
+  nickname,
+  avatarSrc,
+}: NavbarProfileMenuProps) {
   const menuId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -81,7 +85,7 @@ export default function NavbarProfileMenu({ nickname }: NavbarProfileMenuProps) 
         aria-controls={open ? menuId : undefined}
         className="rounded-full ring-1 ring-petrolio/10 transition hover:ring-petrolio/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-petrolio/40"
       >
-        <Avatar nickname={nickname} size={32} />
+        <AvatarImage src={avatarSrc} nickname={nickname} size={32} />
       </button>
 
       {open && (
