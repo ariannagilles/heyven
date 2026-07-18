@@ -23,7 +23,6 @@ export const AT_RISK_PATTERNS = [
   "tagliarmi",
   "non ce la faccio più",
   "non ce la faccio piu",
-  "non ce la faccio",
   "addio per sempre",
   "ultimo messaggio",
   "non sarò più",
