@@ -21,7 +21,29 @@ const NICKNAME_TAKEN_HINT = "Questo nickname è già in uso, provane un altro";
 const NICKNAME_RACE_ERROR =
   "Questo nickname è già stato preso da qualcun altro, provane uno diverso";
 
-const EXTRA_SPACE = { slug: "non-lo-so", name: "Non lo so ancora", emoji: "❓" };
+const FEELING_LABELS: Record<string, string> = {
+  ansia: "Con il petto stretto, in allerta",
+  depressione: "Spento, senza energia",
+  dca: "In conflitto con cibo e corpo",
+  burnout: "Esausto, svuotato",
+  relazioni: "Ferito da qualcuno",
+  solitudine: "Solo, anche in mezzo agli altri",
+  lutto: "In lutto per una perdita",
+  identita: "Confuso su chi sono",
+};
+
+const EXTRA_FEELING_OPTIONS = [
+  {
+    slug: "vuole-aiutare",
+    label: "Sto bene, ma vorrei essere d'aiuto a qualcuno",
+    emoji: "💚",
+  },
+  {
+    slug: "non-lo-so",
+    label: "Non saprei descriverlo",
+    emoji: "❓",
+  },
+] as const;
 
 const DURATION_OPTIONS = [
   "Da poco",
@@ -84,6 +106,17 @@ function isValidNickname(nick: string): boolean {
     nick.length <= 24 &&
     /^[a-zA-Z0-9._-]+$/.test(nick)
   );
+}
+
+function isAtLeast18(dateStr: string): boolean {
+  if (!dateStr) return false;
+  const birth = new Date(dateStr);
+  const today = new Date();
+  const age = today.getFullYear() - birth.getFullYear();
+  const hasHadBirthdayThisYear =
+    today.getMonth() > birth.getMonth() ||
+    (today.getMonth() === birth.getMonth() && today.getDate() >= birth.getDate());
+  return hasHadBirthdayThisYear ? age >= 18 : age - 1 >= 18;
 }
 
 function isDatabaseNicknameError(message: string): boolean {
@@ -438,6 +471,7 @@ export default function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [nickname, setNickname] = useState("");
+  const [birthDate, setBirthDate] = useState("");
   const [nicknameStatus, setNicknameStatus] = useState<NicknameStatus>("idle");
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
@@ -513,6 +547,16 @@ export default function RegisterForm() {
       setError(NICKNAME_TAKEN_HINT);
       return;
     }
+    if (!birthDate) {
+      setError("Inserisci la tua data di nascita.");
+      return;
+    }
+    if (!isAtLeast18(birthDate)) {
+      setError(
+        "Heyven è pensato per un pubblico maggiorenne. Se sei in difficoltà, il Telefono Amico (02 2327 2327) è sempre disponibile per ascoltarti.",
+      );
+      return;
+    }
     if (password.length < 6) {
       setError("La password deve avere almeno 6 caratteri.");
       return;
@@ -538,6 +582,12 @@ export default function RegisterForm() {
     }
 
     if (data.session) {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        await supabase.from("profiles").update({ birth_date: birthDate }).eq("id", user.id);
+      }
       setPhase("step2");
     } else {
       setInfo("Ti abbiamo inviato una mail di conferma. Apri il link, poi torna qui e fai login.");
@@ -578,7 +628,11 @@ export default function RegisterForm() {
 
   async function onEnterHeyven() {
     let destination = next;
-    if (selectedSpace && selectedSpace !== "non-lo-so") {
+    if (
+      selectedSpace &&
+      selectedSpace !== "non-lo-so" &&
+      selectedSpace !== "vuole-aiutare"
+    ) {
       destination = `/spazi/${selectedSpace}`;
     }
     router.replace(destination);
@@ -654,6 +708,17 @@ export default function RegisterForm() {
                 )}
             </GlassInput>
 
+            <GlassInput label="Data di nascita">
+              <input
+                type="date"
+                className={inputClassName}
+                value={birthDate}
+                onChange={(e) => setBirthDate(e.target.value)}
+                autoComplete="bday"
+                required
+              />
+            </GlassInput>
+
             <GlassInput
               label="Indirizzo email"
               hint="Usata solo per recuperare l'accesso. Non sarà mai visibile ad altri."
@@ -682,7 +747,7 @@ export default function RegisterForm() {
           </div>
 
           {error && (
-            <p className="mt-4 rounded-2xl border border-[#04342C]/10 bg-white/60 px-3 py-2 text-sm text-[#04342C]">
+            <p className="mt-4 rounded-xl bg-[#D4EDE5] px-3 py-2 text-sm text-[#04342C]">
               {error}
             </p>
           )}
@@ -715,12 +780,21 @@ export default function RegisterForm() {
   }
 
   if (phase === "step2") {
-    const spaceOptions = [...SPACES.map((s) => ({ slug: s.slug, name: s.name, emoji: s.emoji })), EXTRA_SPACE];
+    const spaceOptions = [
+      ...SPACES.map((space) => ({
+        slug: space.slug,
+        emoji: space.emoji,
+        label: FEELING_LABELS[space.slug],
+      })),
+      ...EXTRA_FEELING_OPTIONS,
+    ];
     const canContinue = Boolean(selectedSpace && selectedDuration) && !step2Loading;
 
     return (
       <StepShell progress={2}>
-        <h1 className="mt-6 text-2xl font-semibold text-[#04342C]">Trova il tuo spazio</h1>
+        <h1 className="mt-6 text-2xl font-semibold text-[#04342C]">
+          Come ti senti in questo periodo?
+        </h1>
         <p className="mt-2 text-sm leading-relaxed text-[#4A6158]">
           Non serve avere le parole giuste. Scegli quello che ti sembra più vicino.
         </p>
@@ -744,7 +818,7 @@ export default function RegisterForm() {
                         : "rounded-full border border-[#04342C]/20 bg-white/40 px-4 py-2 text-sm text-[#4A6158]"
                     }
                   >
-                    {space.emoji} {space.name}
+                    {space.emoji} {space.label}
                   </button>
                 );
               })}
@@ -846,6 +920,16 @@ export default function RegisterForm() {
             voglio fare lo stesso.&rdquo;
           </p>
         </article>
+
+        {selectedSpace === "vuole-aiutare" && (
+          <div className="mt-3 rounded-2xl border border-[#04342C]/15 bg-white/50 p-4">
+            <p className="text-sm font-medium text-[#04342C]">Grazie di cuore 💚</p>
+            <p className="mt-1 text-sm leading-relaxed text-[#4A6158]">
+              Quando sarai più presente nella community, potrai candidarti come Mentore. Te lo
+              faremo sapere.
+            </p>
+          </div>
+        )}
       </div>
 
       <button
