@@ -8,7 +8,6 @@ import {
   useEffect,
   useRef,
   useState,
-  type PointerEvent as ReactPointerEvent,
 } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { randomNickname } from "@/lib/nickname";
@@ -254,35 +253,9 @@ function IntroPhase({
 
   const router = useRouter();
   const viewportRef = useRef<HTMLDivElement>(null);
-  const dragStartX = useRef<number | null>(null);
-  const dragging = useRef(false);
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [viewportWidth, setViewportWidth] = useState(0);
-
-  useEffect(() => {
-    const el = viewportRef.current;
-    if (!el) return;
-
-    const updateWidth = () => setViewportWidth(el.clientWidth);
-    updateWidth();
-
-    const observer = new ResizeObserver(updateWidth);
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  const slideWidth = Math.max(viewportWidth, 0);
-  const slideStride = slideWidth + INTRO_SLIDE_GAP;
-  const trackOffset = slideIndex * slideStride - dragOffset;
-
-  const goNext = useCallback(() => {
-    if (slideIndex < INTRO_SLIDES.length - 1) {
-      onSlideChange(slideIndex + 1);
-    } else {
-      onStart();
-    }
-  }, [onSlideChange, onStart, slideIndex]);
 
   const finishDrag = useCallback(
     (deltaX: number) => {
@@ -297,40 +270,125 @@ function IntroPhase({
     [onSlideChange, slideIndex],
   );
 
-  function onPointerDown(e: ReactPointerEvent<HTMLDivElement>) {
-    dragging.current = true;
-    dragStartX.current = e.clientX;
-    setIsDragging(true);
-    setDragOffset(0);
-    e.currentTarget.setPointerCapture(e.pointerId);
-  }
+  const finishDragRef = useRef(finishDrag);
+  finishDragRef.current = finishDrag;
 
-  function onPointerMove(e: ReactPointerEvent<HTMLDivElement>) {
-    if (!dragging.current || dragStartX.current == null) return;
-    setDragOffset(dragStartX.current - e.clientX);
-  }
+  useEffect(() => {
+    const el = viewportRef.current;
+    if (!el) return;
 
-  function onPointerUp(e: ReactPointerEvent<HTMLDivElement>) {
-    if (!dragging.current || dragStartX.current == null) return;
-    const deltaX = dragStartX.current - e.clientX;
-    dragging.current = false;
-    dragStartX.current = null;
-    setIsDragging(false);
-    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-      e.currentTarget.releasePointerCapture(e.pointerId);
+    const updateWidth = () => {
+      const measured = el.clientWidth;
+      setViewportWidth(measured > 0 ? measured : window.innerWidth);
+    };
+    updateWidth();
+
+    const observer = new ResizeObserver(updateWidth);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const el = viewportRef.current;
+    if (!el) return;
+
+    let startX: number | null = null;
+    let active = false;
+    let usingTouch = false;
+
+    const begin = (x: number) => {
+      active = true;
+      startX = x;
+      setIsDragging(true);
+      setDragOffset(0);
+    };
+
+    const move = (x: number) => {
+      if (!active || startX === null) return;
+      setDragOffset(startX - x);
+    };
+
+    const end = (x: number) => {
+      if (!active || startX === null) return;
+      const deltaX = startX - x;
+      active = false;
+      startX = null;
+      setIsDragging(false);
+      finishDragRef.current(deltaX);
+    };
+
+    const onPointerDown = (e: PointerEvent) => {
+      if (usingTouch || e.pointerType === "touch") return;
+      if (e.button !== 0) return;
+      begin(e.clientX);
+      el.setPointerCapture(e.pointerId);
+    };
+
+    const onPointerMove = (e: PointerEvent) => {
+      if (usingTouch || !el.hasPointerCapture(e.pointerId)) return;
+      move(e.clientX);
+    };
+
+    const onPointerUp = (e: PointerEvent) => {
+      if (usingTouch || !el.hasPointerCapture(e.pointerId)) return;
+      el.releasePointerCapture(e.pointerId);
+      end(e.clientX);
+    };
+
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length !== 1) return;
+      usingTouch = true;
+      begin(e.touches[0].clientX);
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (!active || e.touches.length !== 1 || startX === null) return;
+      const x = e.touches[0].clientX;
+      move(x);
+      if (Math.abs(startX - x) > 8) {
+        e.preventDefault();
+      }
+    };
+
+    const onTouchEnd = (e: TouchEvent) => {
+      if (!active) return;
+      const x = e.changedTouches[0]?.clientX ?? startX ?? 0;
+      end(x);
+      usingTouch = false;
+    };
+
+    el.addEventListener("pointerdown", onPointerDown);
+    el.addEventListener("pointermove", onPointerMove);
+    el.addEventListener("pointerup", onPointerUp);
+    el.addEventListener("pointercancel", onPointerUp);
+    el.addEventListener("touchstart", onTouchStart, { passive: true });
+    el.addEventListener("touchmove", onTouchMove, { passive: false });
+    el.addEventListener("touchend", onTouchEnd);
+    el.addEventListener("touchcancel", onTouchEnd);
+
+    return () => {
+      el.removeEventListener("pointerdown", onPointerDown);
+      el.removeEventListener("pointermove", onPointerMove);
+      el.removeEventListener("pointerup", onPointerUp);
+      el.removeEventListener("pointercancel", onPointerUp);
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchmove", onTouchMove);
+      el.removeEventListener("touchend", onTouchEnd);
+      el.removeEventListener("touchcancel", onTouchEnd);
+    };
+  }, []);
+
+  const slideWidth = Math.max(viewportWidth, 0);
+  const slideStride = slideWidth + INTRO_SLIDE_GAP;
+  const trackOffset = slideIndex * slideStride - dragOffset;
+
+  const goNext = useCallback(() => {
+    if (slideIndex < INTRO_SLIDES.length - 1) {
+      onSlideChange(slideIndex + 1);
+    } else {
+      onStart();
     }
-    finishDrag(deltaX);
-  }
-
-  function onPointerCancel(e: ReactPointerEvent<HTMLDivElement>) {
-    if (!dragging.current) return;
-    const deltaX =
-      dragStartX.current != null ? dragStartX.current - e.clientX : 0;
-    dragging.current = false;
-    dragStartX.current = null;
-    setIsDragging(false);
-    finishDrag(deltaX);
-  }
+  }, [onSlideChange, onStart, slideIndex]);
 
   const currentSlide = INTRO_SLIDES[slideIndex];
 
@@ -345,14 +403,11 @@ function IntroPhase({
       <div className="flex min-h-0 flex-1 flex-col justify-evenly">
         <div
           ref={viewportRef}
-          className="h-40 w-full shrink-0 touch-pan-y overflow-hidden"
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={onPointerUp}
-          onPointerCancel={onPointerCancel}
+          className="relative z-10 h-40 w-full shrink-0 touch-pan-y overflow-hidden select-none"
+          style={{ touchAction: "pan-y" }}
         >
           <div
-            className={`flex h-full ${isDragging ? "" : "transition-transform duration-300 ease-out"}`}
+            className={`pointer-events-none flex h-full ${isDragging ? "" : "transition-transform duration-300 ease-out"}`}
             style={{
               gap: INTRO_SLIDE_GAP,
               transform: `translateX(-${trackOffset}px)`,
@@ -361,7 +416,7 @@ function IntroPhase({
             {INTRO_SLIDES.map((slide, index) => (
               <div
                 key={introTitles[index]}
-                className="h-full shrink-0"
+                className="pointer-events-none h-full shrink-0"
                 style={{ width: slideWidth > 0 ? slideWidth : "100%" }}
                 aria-hidden={index !== slideIndex}
               >
@@ -371,11 +426,11 @@ function IntroPhase({
           </div>
         </div>
 
-        <h1 className="mt-2 px-8 text-center text-2xl font-bold text-[#04342C] transition-all duration-300">
+        <h1 className="pointer-events-none mt-2 px-8 text-center text-2xl font-bold text-[#04342C] transition-all duration-300">
           {introTitles[slideIndex]}
         </h1>
 
-        <p className="mt-1 px-8 text-center text-base leading-relaxed text-[#4A6158]">
+        <p className="pointer-events-none mt-1 px-8 text-center text-base leading-relaxed text-[#4A6158]">
           {currentSlide.description}
         </p>
       </div>
