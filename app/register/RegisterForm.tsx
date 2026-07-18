@@ -14,7 +14,7 @@ import { createClient } from "@/lib/supabase/client";
 import { randomNickname } from "@/lib/nickname";
 import { SPACES } from "@/lib/spaces";
 
-type Phase = "splash" | "intro" | "step1" | "step2" | "step3";
+type Phase = "splash" | "intro" | "step1" | "step1b" | "step2" | "step3";
 type NicknameStatus = "idle" | "checking" | "available" | "taken" | "invalid";
 
 const NICKNAME_TAKEN_HINT = "Questo nickname è già in uso, provane un altro";
@@ -131,10 +131,10 @@ function isDatabaseNicknameError(message: string): boolean {
   );
 }
 
-function ProgressBar({ step }: { step: 1 | 2 | 3 }) {
+function ProgressBar({ step }: { step: 1 | 2 | 3 | 4 }) {
   return (
     <div className="mt-6 flex gap-1.5">
-      {[1, 2, 3].map((segment) => (
+      {[1, 2, 3, 4].map((segment) => (
         <div
           key={segment}
           className={`h-[3px] flex-1 rounded-full ${
@@ -421,7 +421,7 @@ function StepShell({
   progress,
   children,
 }: {
-  progress: 1 | 2 | 3;
+  progress: 1 | 2 | 3 | 4;
   children: React.ReactNode;
 }) {
   return (
@@ -472,10 +472,13 @@ export default function RegisterForm() {
   const [password, setPassword] = useState("");
   const [nickname, setNickname] = useState("");
   const [birthDate, setBirthDate] = useState("");
+  const [city, setCity] = useState("");
   const [nicknameStatus, setNicknameStatus] = useState<NicknameStatus>("idle");
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [step1bLoading, setStep1bLoading] = useState(false);
+  const [step1bError, setStep1bError] = useState<string | null>(null);
 
   const [selectedSpace, setSelectedSpace] = useState<string | null>(null);
   const [selectedDuration, setSelectedDuration] = useState<string | null>(null);
@@ -547,16 +550,6 @@ export default function RegisterForm() {
       setError(NICKNAME_TAKEN_HINT);
       return;
     }
-    if (!birthDate) {
-      setError("Inserisci la tua data di nascita.");
-      return;
-    }
-    if (!isAtLeast18(birthDate)) {
-      setError(
-        "Heyven è pensato per un pubblico maggiorenne. Se sei in difficoltà, il Telefono Amico (02 2327 2327) è sempre disponibile per ascoltarti.",
-      );
-      return;
-    }
     if (password.length < 6) {
       setError("La password deve avere almeno 6 caratteri.");
       return;
@@ -582,16 +575,54 @@ export default function RegisterForm() {
     }
 
     if (data.session) {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) {
-        await supabase.from("profiles").update({ birth_date: birthDate }).eq("id", user.id);
-      }
-      setPhase("step2");
+      setPhase("step1b");
     } else {
       setInfo("Ti abbiamo inviato una mail di conferma. Apri il link, poi torna qui e fai login.");
     }
+  }
+
+  async function onContinueStep1b() {
+    setStep1bError(null);
+
+    if (!birthDate) {
+      setStep1bError("Inserisci la tua data di nascita.");
+      return;
+    }
+    if (!isAtLeast18(birthDate)) {
+      setStep1bError(
+        "Heyven è pensato per un pubblico maggiorenne. Se sei in difficoltà, il Telefono Amico (02 2327 2327) è sempre disponibile per ascoltarti.",
+      );
+      return;
+    }
+
+    setStep1bLoading(true);
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      setStep1bLoading(false);
+      setStep1bError("Sessione non trovata. Conferma l'email e accedi di nuovo.");
+      return;
+    }
+
+    const { error: updateError } = await supabase
+      .from("profiles")
+      .update({
+        birth_date: birthDate,
+        city: city.trim() || null,
+      })
+      .eq("id", user.id);
+
+    setStep1bLoading(false);
+
+    if (updateError) {
+      setStep1bError(updateError.message);
+      return;
+    }
+
+    setPhase("step2");
   }
 
   async function onContinueStep2() {
@@ -708,17 +739,6 @@ export default function RegisterForm() {
                 )}
             </GlassInput>
 
-            <GlassInput label="Data di nascita">
-              <input
-                type="date"
-                className={inputClassName}
-                value={birthDate}
-                onChange={(e) => setBirthDate(e.target.value)}
-                autoComplete="bday"
-                required
-              />
-            </GlassInput>
-
             <GlassInput
               label="Indirizzo email"
               hint="Usata solo per recuperare l'accesso. Non sarà mai visibile ad altri."
@@ -779,6 +799,58 @@ export default function RegisterForm() {
     );
   }
 
+  if (phase === "step1b") {
+    return (
+      <StepShell progress={2}>
+        <h1 className="mt-6 text-2xl font-semibold text-[#04342C]">Quasi fatto</h1>
+        <p className="mt-2 text-sm leading-relaxed text-[#4A6158]">
+          Due dettagli in più, poi si va avanti.
+        </p>
+
+        <div className="mt-6 space-y-4 rounded-3xl border border-white/60 bg-white/50 p-5 shadow-sm">
+          <GlassInput label="Data di nascita">
+            <input
+              type="date"
+              className={inputClassName}
+              value={birthDate}
+              onChange={(e) => setBirthDate(e.target.value)}
+              autoComplete="bday"
+              required
+            />
+          </GlassInput>
+
+          <GlassInput
+            label="In che città vivi?"
+            hint="Facoltativo — ci aiuta a mostrarti risorse vicino a te."
+          >
+            <input
+              type="text"
+              className={inputClassName}
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              autoComplete="address-level2"
+            />
+          </GlassInput>
+
+          {step1bError && (
+            <p className="rounded-xl bg-[#D4EDE5] px-3 py-2 text-sm text-[#04342C]">
+              {step1bError}
+            </p>
+          )}
+
+          <button
+            type="button"
+            onClick={onContinueStep1b}
+            disabled={step1bLoading}
+            className="w-full rounded-2xl bg-[#04342C] py-4 font-semibold text-[#FAEEDA] transition active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {step1bLoading ? "Salvataggio…" : "Continua →"}
+          </button>
+        </div>
+      </StepShell>
+    );
+  }
+
   if (phase === "step2") {
     const spaceOptions = [
       ...SPACES.map((space) => ({
@@ -791,7 +863,7 @@ export default function RegisterForm() {
     const canContinue = Boolean(selectedSpace && selectedDuration) && !step2Loading;
 
     return (
-      <StepShell progress={2}>
+      <StepShell progress={3}>
         <h1 className="mt-6 text-2xl font-semibold text-[#04342C]">
           Come ti senti in questo periodo?
         </h1>
@@ -870,7 +942,7 @@ export default function RegisterForm() {
   }
 
   return (
-    <StepShell progress={3}>
+    <StepShell progress={4}>
       <h1 className="mt-6 text-2xl font-semibold text-[#04342C]">Scopri chi c&apos;è</h1>
       <p className="mt-2 text-sm leading-relaxed text-[#4A6158]">
         Qualcuno ha già scritto quello che forse stavi cercando le parole per dire.
