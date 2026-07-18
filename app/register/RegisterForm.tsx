@@ -569,9 +569,8 @@ export default function RegisterForm() {
       <div className="min-h-dvh bg-[#04342C] flex items-center justify-center">
         <img
           src="/logo-white.png"
-          alt="heyven"
-          width={180}
-          height={80}
+          alt="Heyven"
+          className="w-[180px] h-auto"
           style={{ objectFit: "contain" }}
         />
       </div>

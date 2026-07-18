@@ -64,16 +64,20 @@ export async function getQuestions(
 export type QuestionDetail = {
   id: string;
   space_slug: string;
+  author_id: string;
   content: string;
   created_at: string;
   nickname: string;
+  at_risk: boolean;
 };
 
 type RawQuestionDetail = {
   id: string;
   space_slug: string;
+  author_id: string;
   content: string;
   created_at: string;
+  at_risk: boolean;
   profiles: { nickname: string } | null;
 };
 
@@ -83,7 +87,7 @@ export async function getQuestion(
 ): Promise<QuestionDetail | null> {
   const { data } = await supabase
     .from("questions")
-    .select("id, space_slug, content, created_at, profiles!questions_author_id_fkey(nickname)")
+    .select("id, space_slug, author_id, content, created_at, at_risk, profiles!questions_author_id_fkey(nickname)")
     .eq("id", qid)
     .maybeSingle();
   if (!data) return null;
@@ -91,9 +95,11 @@ export async function getQuestion(
   return {
     id: q.id,
     space_slug: q.space_slug,
+    author_id: q.author_id,
     content: q.content,
     created_at: q.created_at,
     nickname: q.profiles?.nickname ?? "anonimo",
+    at_risk: q.at_risk ?? false,
   };
 }
 
@@ -132,20 +138,24 @@ export async function getQuestionReplies(
 
 export type StoryRow = {
   id: string;
+  author_id: string;
   title: string | null;
   content: string;
   created_at: string;
   nickname: string;
   reaction_count: number;
   has_reacted: boolean;
+  at_risk: boolean;
   avatarSrc: string;
 };
 
 type RawStory = {
   id: string;
+  author_id: string;
   title: string | null;
   content: string;
   created_at: string;
+  at_risk: boolean;
   profiles: { nickname: string } | null;
   story_reactions: { count: number }[] | null;
 };
@@ -161,7 +171,7 @@ export async function getStories(
   let query = supabase
     .from("stories")
     .select(
-      "id, title, content, created_at, profiles!stories_author_id_fkey(nickname), story_reactions(count)",
+      "id, author_id, title, content, created_at, at_risk, profiles!stories_author_id_fkey(nickname), story_reactions(count)",
     )
     .eq("space_slug", spaceSlug)
     .order("created_at", { ascending: false })
@@ -189,12 +199,14 @@ export async function getStories(
     const nickname = s.profiles?.nickname ?? "anonimo";
     return {
       id: s.id,
+      author_id: s.author_id,
       title: s.title,
       content: s.content,
       created_at: s.created_at,
       nickname,
       reaction_count: s.story_reactions?.[0]?.count ?? 0,
       has_reacted: mineSet.has(s.id),
+      at_risk: s.at_risk ?? false,
       avatarSrc: avatarDataUri(nickname),
     };
   });

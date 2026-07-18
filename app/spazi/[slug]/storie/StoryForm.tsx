@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { detectAtRisk } from "@/lib/at-risk";
 import { recordActiveEngagement } from "@/lib/active-engagement";
 
 const TITLE_MAX = 200;
@@ -40,6 +41,7 @@ export default function StoryForm({ spaceSlug }: { spaceSlug: string }) {
         author_id: user.id,
         title: trimmedTitle || null,
         content: trimmedContent,
+        at_risk: detectAtRisk(trimmedTitle, trimmedContent),
       });
     setLoading(false);
     if (insErr) {

@@ -108,6 +108,11 @@ export async function enrichPendingReports(
     }
   }
 
+  const conversationIds = idsForType(reports, "conversation");
+  for (const id of conversationIds) {
+    urlByTarget.set(`conversation:${id}`, `/mentor/c/${id}`);
+  }
+
   return reports.map((r) => ({
     ...r,
     contentUrl: urlByTarget.get(`${r.target_type}:${r.target_id}`) ?? null,

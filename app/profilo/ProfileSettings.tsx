@@ -37,7 +37,7 @@ export default function ProfileSettings({
   }
 
   return (
-    <section className="card p-5 space-y-3">
+    <section id="impostazioni" className="card p-5 space-y-3 scroll-mt-20">
       <h2 className="text-sm font-medium text-petrolio/70">Impostazioni</h2>
 
       <div className="flex flex-col gap-2">

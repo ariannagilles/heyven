@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
+import AtRiskBanner from "@/components/AtRiskBanner";
 import { AvatarImage } from "@/components/AvatarImage";
 import ReportButton from "@/components/ReportButton";
 import StoryReactionButton from "@/components/StoryReactionButton";
@@ -14,6 +15,7 @@ import { timeAgo } from "@/lib/time";
 
 type SpaceStoriesListProps = {
   spaceSlug: string;
+  viewerId: string;
   initialItems: StoryRow[];
   initialNextCursor: FeedCursor | null;
   initialHasMore: boolean;
@@ -21,6 +23,7 @@ type SpaceStoriesListProps = {
 
 export default function SpaceStoriesList({
   spaceSlug,
+  viewerId,
   initialItems,
   initialNextCursor,
   initialHasMore,
@@ -50,6 +53,7 @@ export default function SpaceStoriesList({
       <ul className="space-y-4">
         {items.map((s) => (
           <li key={s.id} className="card p-5">
+            {s.at_risk && s.author_id === viewerId && <AtRiskBanner />}
             <header className="flex items-center gap-2 text-xs text-petrolio/60 mb-3">
               <AvatarImage src={s.avatarSrc} nickname={s.nickname} size={32} />
               <span className="font-medium text-petrolio">@{s.nickname}</span>

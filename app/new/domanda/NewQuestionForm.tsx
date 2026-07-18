@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { detectAtRisk } from "@/lib/at-risk";
 import { recordActiveEngagement } from "@/lib/active-engagement";
 import SpaceSelector from "@/components/SpaceSelector";
 
@@ -35,7 +36,7 @@ export default function NewQuestionForm({ initialSpace }: { initialSpace: string
 
     const { data, error: insErr } = await supabase
       .from("questions")
-      .insert({ author_id: user.id, space_slug: space, content: trimmed })
+      .insert({ author_id: user.id, space_slug: space, content: trimmed, at_risk: detectAtRisk(trimmed) })
       .select("id")
       .single();
 

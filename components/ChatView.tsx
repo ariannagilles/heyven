@@ -40,7 +40,12 @@ export default function ChatView({
   const [showConfirm, setShowConfirm] = useState(false);
   const [closing, setClosing] = useState(false);
   const [closeError, setCloseError] = useState<string | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [escalating, setEscalating] = useState(false);
+  const [escalationDone, setEscalationDone] = useState(false);
+  const [escalationError, setEscalationError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   async function markIncomingAsRead() {
     const { error } = await supabase
@@ -112,6 +117,32 @@ export default function ChatView({
       behavior: "smooth",
     });
   }, [messages.length]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    function onPointerDown(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", onPointerDown);
+    return () => document.removeEventListener("mousedown", onPointerDown);
+  }, [menuOpen]);
+
+  async function escalateToSupervision() {
+    setEscalating(true);
+    setEscalationError(null);
+    const { error } = await supabase.rpc("mentor_escalate_conversation", {
+      p_conversation_id: conversationId,
+    });
+    setEscalating(false);
+    if (error) {
+      setEscalationError(error.message);
+      return;
+    }
+    setMenuOpen(false);
+    setEscalationDone(true);
+  }
 
   async function send(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -190,7 +221,7 @@ export default function ChatView({
               <div className="text-xs text-petrolio/60 leading-tight">{otherRoleLabel}</div>
             </div>
           </div>
-          {!closed && (
+          {!closed && iAmUser && (
             <button
               type="button"
               onClick={() => setShowConfirm(true)}
@@ -199,6 +230,35 @@ export default function ChatView({
               Chiudi conversazione
             </button>
           )}
+          {!closed && !iAmUser && (
+            <div ref={menuRef} className="relative shrink-0">
+              <button
+                type="button"
+                onClick={() => setMenuOpen((open) => !open)}
+                aria-label="Altre azioni"
+                aria-expanded={menuOpen}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-petrolio/5 text-petrolio hover:bg-petrolio/10"
+              >
+                <span aria-hidden className="text-lg leading-none">
+                  ⋯
+                </span>
+              </button>
+              {menuOpen && (
+                <div className="absolute right-0 top-full z-10 mt-1 min-w-[220px] rounded-2xl border border-petrolio/10 bg-crema py-1 shadow-soft">
+                  <button
+                    type="button"
+                    onClick={() => void escalateToSupervision()}
+                    disabled={escalating || escalationDone}
+                    className="block w-full px-4 py-2.5 text-left text-sm text-petrolio hover:bg-petrolio/5 disabled:opacity-50"
+                  >
+                    {escalating
+                      ? "Invio segnalazione…"
+                      : "Segnala alla supervisione"}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
           {closed && (
             <span className="text-xs rounded-full px-3 py-1.5 bg-petrolio/5 text-petrolio/60 shrink-0">
               chiusa
@@ -206,6 +266,21 @@ export default function ChatView({
           )}
         </div>
       </header>
+
+      {(escalationDone || escalationError) && !iAmUser && (
+        <div className="border-b border-petrolio/10 bg-crema/90 px-4 py-2">
+          <div className="mx-auto max-w-2xl text-sm">
+            {escalationDone && (
+              <p className="text-petrolio/80">
+                Segnalazione inviata. La supervisione è stata avvisata.
+              </p>
+            )}
+            {escalationError && (
+              <p className="text-red-700">{escalationError}</p>
+            )}
+          </div>
+        </div>
+      )}
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto">
         <div className="mx-auto max-w-2xl px-4 py-4 space-y-2">

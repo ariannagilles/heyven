@@ -39,6 +39,12 @@ export default async function AdminReportsPage() {
     isReportTargetType(r.target_type),
   );
   const reports = await enrichPendingReports(supabase, raw);
+  reports.sort((a, b) => {
+    const aEscalation = a.target_type === "conversation" ? 1 : 0;
+    const bEscalation = b.target_type === "conversation" ? 1 : 0;
+    if (aEscalation !== bEscalation) return bEscalation - aEscalation;
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  });
 
   return (
     <>

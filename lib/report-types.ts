@@ -4,7 +4,8 @@ export type ReportTargetType =
   | "question"
   | "question_reply"
   | "story"
-  | "message";
+  | "message"
+  | "conversation";
 
 export const TARGET_TYPE_LABELS: Record<ReportTargetType, string> = {
   post: "Post (sfogo)",
@@ -13,4 +14,5 @@ export const TARGET_TYPE_LABELS: Record<ReportTargetType, string> = {
   question_reply: "Risposta a domanda",
   story: "Storia",
   message: "Messaggio chat",
+  conversation: "Conversazione mentore",
 };

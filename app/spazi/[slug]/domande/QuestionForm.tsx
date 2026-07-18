@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { detectAtRisk } from "@/lib/at-risk";
 import { recordActiveEngagement } from "@/lib/active-engagement";
 
 const MAX = 500;
@@ -32,7 +33,12 @@ export default function QuestionForm({ spaceSlug }: { spaceSlug: string }) {
     }
     const { error: insErr } = await supabase
       .from("questions")
-      .insert({ space_slug: spaceSlug, author_id: user.id, content: trimmed });
+      .insert({
+        space_slug: spaceSlug,
+        author_id: user.id,
+        content: trimmed,
+        at_risk: detectAtRisk(trimmed),
+      });
     setLoading(false);
     if (insErr) {
       setError(insErr.message);

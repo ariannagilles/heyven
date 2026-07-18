@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import AtRiskBanner from "@/components/AtRiskBanner";
 import Avatar from "@/components/Avatar";
 import ReportButton from "@/components/ReportButton";
 import ReplyForm from "./ReplyForm";
@@ -26,6 +27,8 @@ export default async function QuestionDetailPage({
   if (!question || question.space_slug !== params.slug) notFound();
 
   const replies = await getQuestionReplies(supabase, params.qid);
+  const showAtRiskBanner =
+    Boolean(user && question.at_risk && user.id === question.author_id);
 
   return (
     <div className="space-y-4">
@@ -37,6 +40,7 @@ export default async function QuestionDetailPage({
       </Link>
 
       <article className="card p-5">
+        {showAtRiskBanner && <AtRiskBanner />}
         <header className="flex items-center gap-2 text-xs text-petrolio/60 mb-3">
           <Avatar nickname={question.nickname} size={32} />
           <span className="font-medium text-petrolio">@{question.nickname}</span>

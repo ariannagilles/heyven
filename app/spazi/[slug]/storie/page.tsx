@@ -26,6 +26,7 @@ export default async function StorieTab({
       <StoryForm spaceSlug={params.slug} />
       <SpaceStoriesList
         spaceSlug={params.slug}
+        viewerId={user.id}
         initialItems={items}
         initialNextCursor={nextCursor}
         initialHasMore={hasMore}

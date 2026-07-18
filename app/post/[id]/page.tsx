@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import AtRiskBanner from "@/components/AtRiskBanner";
 import Navbar from "@/components/Navbar";
 import MeTooButton from "@/components/MeTooButton";
 import ReportButton from "@/components/ReportButton";
@@ -26,7 +27,7 @@ export default async function PostDetailPage({ params }: { params: { id: string 
   const { data: post, error: postError } = await supabase
     .from("posts")
     .select(
-      "id, content, created_at, space_slug, profiles!posts_author_id_fkey(nickname), me_too(count)",
+      "id, author_id, content, created_at, space_slug, at_risk, profiles!posts_author_id_fkey(nickname), me_too(count)",
     )
     .eq("id", params.id)
     .maybeSingle();
@@ -56,15 +57,18 @@ export default async function PostDetailPage({ params }: { params: { id: string 
 
   const p = post as unknown as {
     id: string;
+    author_id: string;
     content: string;
     created_at: string;
     space_slug: string;
+    at_risk: boolean;
     profiles: { nickname: string } | null;
     me_too: { count: number }[] | null;
   };
   const space = SPACE_BY_SLUG[p.space_slug];
   const meTooCount = p.me_too?.[0]?.count ?? 0;
   const nickname = p.profiles?.nickname ?? "anonimo";
+  const showAtRiskBanner = Boolean(user && p.at_risk && user.id === p.author_id);
 
   return (
     <>
@@ -73,6 +77,7 @@ export default async function PostDetailPage({ params }: { params: { id: string 
         <Link href="/" className="text-sm text-petrolio/60 hover:text-petrolio">← torna al feed</Link>
 
         <article className="card p-6">
+          {showAtRiskBanner && <AtRiskBanner />}
           <header className="flex items-center gap-2 text-xs text-petrolio/60 mb-3">
             <span className="font-medium text-petrolio">@{nickname}</span>
             <span aria-hidden>·</span>
