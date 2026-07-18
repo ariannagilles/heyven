@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import FeedbackWidget from "@/components/FeedbackWidget";
-import UrgentHelpBar from "@/components/UrgentHelpBar";
 
 export const metadata: Metadata = {
   title: "Heyven — comunità per la salute mentale",
@@ -21,7 +20,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="it">
       <body className="min-h-dvh bg-crema text-petrolio">
         {children}
-        <UrgentHelpBar />
         <FeedbackWidget />
       </body>
     </html>
