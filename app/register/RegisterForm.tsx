@@ -32,23 +32,16 @@ const DURATION_OPTIONS = [
 
 const INTRO_SLIDES = [
   {
-    badgeText: "Senza maschera",
-    badgeClass:
-      "bg-gradient-to-b from-[#fbd48a] to-[#e8a93d] text-[#04342C] shadow-inner",
-    description: "Uno spazio anonimo, tutto tuo, per le cose che non riesci a dire ad alta voce.",
+    description:
+      "Uno spazio anonimo, tutto tuo, per le cose che non riesci a dire ad alta voce.",
     Illustration: SlideOneIllustration,
   },
   {
-    badgeText: "Il tuo spazio ti aspetta",
-    badgeClass:
-      "bg-gradient-to-b from-[#fbd48a] to-[#e8a93d] text-[#04342C] shadow-inner",
-    description: "Otto spazi tematici. Ognuno è un posto dove non devi spiegarti da zero.",
+    description:
+      "Otto spazi tematici. Ognuno è un posto dove non devi spiegarti da zero.",
     Illustration: SlideTwoIllustration,
   },
   {
-    badgeText: "Una voce che conosce la strada",
-    badgeClass:
-      "bg-gradient-to-b from-[#fbd48a] to-[#e8a93d] text-[#04342C] shadow-inner",
     description: "Una community che capisce e un Mentore che accompagna.",
     Illustration: SlideThreeIllustration,
   },
@@ -112,7 +105,7 @@ function ProgressBar({ step }: { step: 1 | 2 | 3 }) {
         <div
           key={segment}
           className={`h-[3px] flex-1 rounded-full ${
-            segment <= step ? "bg-[#FAC775]" : "bg-white/15"
+            segment <= step ? "bg-[#04342C]" : "bg-[#04342C]/15"
           }`}
         />
       ))}
@@ -122,89 +115,90 @@ function ProgressBar({ step }: { step: 1 | 2 | 3 }) {
 
 function SlideOneIllustration() {
   return (
-    <svg viewBox="0 0 320 220" className="h-full w-full" aria-hidden>
-      <rect x="72" y="36" width="176" height="148" rx="10" fill="#FAEEDA" fillOpacity="0.35" stroke="#FFFFFF" strokeOpacity="0.25" strokeWidth="2" />
-      <rect x="88" y="52" width="144" height="96" rx="6" fill="#FFF8EC" />
+    <svg viewBox="0 0 320 240" className="h-full w-full" aria-hidden>
+      <ellipse cx="160" cy="52" rx="48" ry="28" fill="#FAC775" opacity="0.45" />
+      <ellipse cx="160" cy="48" rx="32" ry="18" fill="#FAC775" opacity="0.65" />
       <path
-        d="M88 148 L232 148 L232 220 L88 220 Z"
-        fill="#E8DFC8"
+        d="M72 188 C72 132, 108 96, 160 96 C212 96, 248 132, 248 188 Z"
+        fill="#0F6E56"
+        opacity="0.18"
       />
-      <line x1="96" y1="60" x2="96" y2="140" stroke="#D4EDE5" strokeWidth="3" />
-      <line x1="120" y1="60" x2="120" y2="140" stroke="#D4EDE5" strokeWidth="3" />
-      <line x1="144" y1="60" x2="144" y2="140" stroke="#D4EDE5" strokeWidth="3" />
-      <line x1="168" y1="60" x2="168" y2="140" stroke="#D4EDE5" strokeWidth="3" />
-      <line x1="192" y1="60" x2="192" y2="140" stroke="#D4EDE5" strokeWidth="3" />
-      <line x1="216" y1="60" x2="216" y2="140" stroke="#D4EDE5" strokeWidth="3" />
-      <circle cx="40" cy="48" r="2" fill="#9BB5AB" />
-      <circle cx="52" cy="72" r="2" fill="#9BB5AB" />
-      <circle cx="36" cy="96" r="2" fill="#9BB5AB" />
-      <circle cx="56" cy="120" r="2" fill="#9BB5AB" />
-      <circle cx="44" cy="144" r="2" fill="#9BB5AB" />
-      <circle cx="280" cy="56" r="2" fill="#9BB5AB" />
-      <circle cx="268" cy="88" r="2" fill="#9BB5AB" />
-      <circle cx="284" cy="116" r="2" fill="#9BB5AB" />
-      <ellipse cx="160" cy="118" rx="34" ry="20" fill="#FAC775" opacity="0.55" />
-      <rect x="148" y="152" width="24" height="18" rx="4" fill="#8FB5A4" />
-      <ellipse cx="160" cy="148" rx="18" ry="10" fill="#6FA08E" />
+      <path
+        d="M88 188 L88 118 Q88 88, 118 78 L202 78 Q232 88, 232 118 L232 188 Z"
+        fill="#04342C"
+        opacity="0.12"
+        stroke="#04342C"
+        strokeOpacity="0.25"
+        strokeWidth="2"
+      />
+      <path
+        d="M96 188 L96 124 Q96 98, 124 92 L196 92 Q224 98, 224 124 L224 188 Z"
+        fill="#FAEEDA"
+        stroke="#04342C"
+        strokeOpacity="0.2"
+        strokeWidth="1.5"
+      />
+      <ellipse cx="160" cy="158" rx="22" ry="14" fill="#0F6E56" opacity="0.55" />
+      <path
+        d="M148 172 Q160 182, 172 172 L168 188 L152 188 Z"
+        fill="#0F6E56"
+        opacity="0.55"
+      />
     </svg>
   );
 }
 
 function SlideTwoIllustration() {
+  const groups = [
+    { cx: 72, cy: 88, highlight: false },
+    { cx: 108, cy: 72, highlight: false },
+    { cx: 248, cy: 92, highlight: false },
+    { cx: 212, cy: 68, highlight: false },
+    { cx: 160, cy: 56, highlight: true },
+    { cx: 52, cy: 148, highlight: false },
+    { cx: 268, cy: 152, highlight: false },
+    { cx: 160, cy: 168, highlight: false },
+  ];
+
   return (
-    <svg viewBox="0 0 320 220" className="h-full w-full" aria-hidden>
-      <path
-        d="M40 170 C 80 120, 100 90, 160 110"
-        fill="none"
-        stroke="#FAEEDA"
-        strokeOpacity="0.9"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-      />
-      <path
-        d="M280 170 C 240 130, 210 80, 160 110"
-        fill="none"
-        stroke="#FAEEDA"
-        strokeOpacity="0.9"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-      />
-      <path
-        d="M160 40 C 150 80, 155 95, 160 110"
-        fill="none"
-        stroke="#FAEEDA"
-        strokeOpacity="0.9"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-      />
-      <circle cx="72" cy="132" r="4" fill="#FAEEDA" />
-      <circle cx="108" cy="98" r="4" fill="#FAEEDA" />
-      <circle cx="248" cy="126" r="4" fill="#FAEEDA" />
-      <circle cx="212" cy="88" r="4" fill="#FAEEDA" />
-      <circle cx="160" cy="58" r="4" fill="#FAEEDA" />
-      <circle cx="160" cy="110" r="22" fill="#FAC775" />
-      <circle cx="160" cy="110" r="14" fill="#F5D48A" opacity="0.8" />
+    <svg viewBox="0 0 320 240" className="h-full w-full" aria-hidden>
+      <circle cx="160" cy="120" r="88" fill="#04342C" opacity="0.04" />
+      {groups.map((g, i) => (
+        <g key={i}>
+          <circle
+            cx={g.cx}
+            cy={g.cy}
+            r={g.highlight ? 18 : 14}
+            fill={g.highlight ? "#FAC775" : "#0F6E56"}
+            opacity={g.highlight ? 0.85 : 0.35}
+          />
+          <ellipse
+            cx={g.cx}
+            cy={g.cy + (g.highlight ? 10 : 8)}
+            rx={g.highlight ? 10 : 8}
+            ry={g.highlight ? 6 : 5}
+            fill={g.highlight ? "#04342C" : "#04342C"}
+            opacity={g.highlight ? 0.5 : 0.25}
+          />
+        </g>
+      ))}
     </svg>
   );
 }
 
 function SlideThreeIllustration() {
   return (
-    <svg viewBox="0 0 320 220" className="h-full w-full" aria-hidden>
-      <rect x="36" y="56" width="168" height="72" rx="18" fill="white" fillOpacity="0.2" stroke="#FFFFFF" strokeOpacity="0.3" strokeWidth="2" />
-      <circle cx="64" cy="92" r="16" fill="#D4EDE5" />
-      <text x="64" y="97" textAnchor="middle" fontSize="14">
-        🙂
-      </text>
-      <rect x="92" y="78" width="92" height="10" rx="5" fill="#E8F5F0" />
-      <rect x="92" y="96" width="72" height="10" rx="5" fill="#E8F5F0" />
-      <rect x="116" y="148" width="168" height="72" rx="18" fill="#04342C" />
-      <circle cx="252" cy="184" r="16" fill="#0F6E56" />
-      <text x="252" y="189" textAnchor="middle" fill="#FAEEDA" fontSize="14" fontWeight="600">
-        M
-      </text>
-      <rect x="136" y="170" width="92" height="10" rx="5" fill="#0F6E56" />
-      <rect x="136" y="188" width="72" height="10" rx="5" fill="#0F6E56" />
+    <svg viewBox="0 0 320 240" className="h-full w-full" aria-hidden>
+      <ellipse cx="118" cy="148" rx="28" ry="18" fill="#0F6E56" opacity="0.45" />
+      <path d="M104 166 Q118 178, 132 166 L128 188 L108 188 Z" fill="#0F6E56" opacity="0.45" />
+      <ellipse cx="202" cy="148" rx="28" ry="18" fill="#04342C" opacity="0.55" />
+      <path d="M188 166 Q202 178, 216 166 L212 188 L192 188 Z" fill="#04342C" opacity="0.55" />
+      <rect x="72" y="88" width="56" height="28" rx="14" fill="#FAEEDA" stroke="#04342C" strokeOpacity="0.15" strokeWidth="1.5" />
+      <rect x="82" y="98" width="36" height="4" rx="2" fill="#0F6E56" opacity="0.35" />
+      <rect x="82" y="106" width="24" height="4" rx="2" fill="#0F6E56" opacity="0.25" />
+      <rect x="192" y="72" width="64" height="32" rx="16" fill="#04342C" opacity="0.12" stroke="#04342C" strokeOpacity="0.2" strokeWidth="1.5" />
+      <rect x="204" y="84" width="40" height="4" rx="2" fill="#04342C" opacity="0.35" />
+      <rect x="204" y="92" width="28" height="4" rx="2" fill="#04342C" opacity="0.25" />
     </svg>
   );
 }
@@ -222,6 +216,10 @@ function IntroPhase({
   onStart: () => void;
   onSkip: () => void;
 }) {
+  void nickname;
+  void onSkip;
+
+  const router = useRouter();
   const viewportRef = useRef<HTMLDivElement>(null);
   const dragStartX = useRef<number | null>(null);
   const dragging = useRef(false);
@@ -241,7 +239,7 @@ function IntroPhase({
     return () => observer.disconnect();
   }, []);
 
-  const slideWidth = Math.max(viewportWidth - 48, 0);
+  const slideWidth = Math.max(viewportWidth, 0);
   const slideStride = slideWidth + INTRO_SLIDE_GAP;
   const trackOffset = slideIndex * slideStride - dragOffset;
 
@@ -301,74 +299,86 @@ function IntroPhase({
     finishDrag(deltaX);
   }
 
-  return (
-    <main className="flex min-h-dvh flex-col bg-gradient-to-b from-[#0d2b24] via-[#04342C] to-[#021a16] pb-10">
-      <h1 className="px-8 pb-6 pt-14 text-2xl font-bold leading-tight text-white transition-all duration-300">
-        {introTitles[slideIndex]}
-      </h1>
+  const currentSlide = INTRO_SLIDES[slideIndex];
 
-      <div className="flex-1">
+  return (
+    <main className="flex min-h-dvh flex-col bg-[#FAEEDA]">
+      <img
+        src="/logo-green.png"
+        alt="heyven"
+        className="mx-auto w-28 pt-12"
+      />
+
+      <div className="flex flex-1 flex-col">
         <div
           ref={viewportRef}
-          className="overflow-visible px-4 touch-pan-y"
+          className="mt-6 h-64 w-full touch-pan-y overflow-hidden"
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
           onPointerCancel={onPointerCancel}
         >
           <div
-            className={`flex ${isDragging ? "" : "transition-transform duration-300 ease-out"}`}
+            className={`flex h-full ${isDragging ? "" : "transition-transform duration-300 ease-out"}`}
             style={{
               gap: INTRO_SLIDE_GAP,
               transform: `translateX(-${trackOffset}px)`,
             }}
           >
             {INTRO_SLIDES.map((slide, index) => (
-              <article
-                key={slide.badgeText}
-                className="shrink-0 rounded-3xl border border-white/20 bg-white/10 p-6 shadow-2xl backdrop-blur-2xl"
-                style={{ width: slideWidth > 0 ? slideWidth : "calc(100% - 48px)" }}
+              <div
+                key={introTitles[index]}
+                className="h-full shrink-0"
+                style={{ width: slideWidth > 0 ? slideWidth : "100%" }}
                 aria-hidden={index !== slideIndex}
               >
-                <div className="mb-5 h-48 w-full overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-                  <slide.Illustration />
-                </div>
-
-                <div
-                  className={`mb-3 w-full rounded-2xl px-5 py-2.5 text-center text-sm font-semibold ${slide.badgeClass}`}
-                  aria-hidden
-                >
-                  {slide.badgeText}
-                </div>
-
-                <p className="text-center text-sm leading-relaxed text-white/60">
-                  {slide.description}
-                </p>
-              </article>
+                <slide.Illustration />
+              </div>
             ))}
           </div>
         </div>
 
-        <p className="mt-4 text-center text-sm text-white/40">
-          Step {slideIndex + 1} di 3
+        <h1 className="mt-8 px-8 text-center text-2xl font-bold text-[#04342C] transition-all duration-300">
+          {introTitles[slideIndex]}
+        </h1>
+
+        <p className="mt-3 px-8 text-center text-base leading-relaxed text-[#4A6158]">
+          {currentSlide.description}
         </p>
+
+        <div className="mt-8 flex items-center justify-center gap-2">
+          {INTRO_SLIDES.map((_, index) => (
+            <div
+              key={introTitles[index]}
+              className={`h-2 rounded-full transition-all ${
+                index === slideIndex
+                  ? "w-6 bg-[#04342C]"
+                  : "w-2 bg-[#04342C]/20"
+              }`}
+              aria-hidden
+            />
+          ))}
+        </div>
       </div>
 
-      <div className="mt-6 px-4">
+      <div className="mt-auto px-6 pb-8">
         <button
           type="button"
           onClick={goNext}
-          className="w-full rounded-2xl border border-white/25 bg-white/15 py-4 font-semibold text-white backdrop-blur-xl transition active:scale-[0.99]"
+          className="w-full rounded-2xl bg-[#04342C] py-4 font-semibold text-[#FAEEDA] transition active:scale-[0.99]"
         >
-          {slideIndex < INTRO_SLIDES.length - 1 ? "Prossimo" : "Inizia"}
+          {slideIndex < INTRO_SLIDES.length - 1 ? "Continua" : "Inizia"}
         </button>
-        <button
-          type="button"
-          onClick={onSkip}
-          className="mt-3 w-full text-center text-sm text-white/30 underline-offset-2 hover:underline"
-        >
-          Salta l&apos;introduzione
-        </button>
+        <p className="mt-4 text-center text-sm text-[#4A6158]">
+          Hai già un account?{" "}
+          <button
+            type="button"
+            onClick={() => router.push("/login")}
+            className="font-semibold text-[#04342C] underline underline-offset-2"
+          >
+            Accedi
+          </button>
+        </p>
       </div>
     </main>
   );
@@ -382,9 +392,13 @@ function StepShell({
   children: React.ReactNode;
 }) {
   return (
-    <main className="flex min-h-dvh flex-col bg-gradient-to-b from-[#0a2e26] via-[#04342C] to-[#021a16] px-6 pb-10">
+    <main className="flex min-h-dvh flex-col bg-[#FAEEDA] px-6 pb-10">
       <div className="mx-auto w-full max-w-md">
-        <p className="pt-12 text-lg font-semibold text-[#FAC775]">heyven</p>
+        <img
+          src="/logo-green.png"
+          alt="heyven"
+          className="mx-auto w-24 pt-12"
+        />
         <ProgressBar step={progress} />
         {children}
       </div>
@@ -403,15 +417,15 @@ function GlassInput({
 }) {
   return (
     <label className="block">
-      <span className="text-sm font-medium text-white/60">{label}</span>
+      <span className="text-sm font-medium text-[#4A6158]">{label}</span>
       {children}
-      {hint && <p className="mt-1.5 text-xs text-white/40">{hint}</p>}
+      {hint && <p className="mt-1.5 text-xs text-[#7A9188]">{hint}</p>}
     </label>
   );
 }
 
 const inputClassName =
-  "mt-2 w-full rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-white outline-none placeholder:text-white/30 focus:border-white/50";
+  "mt-2 w-full rounded-2xl border border-[#04342C]/15 bg-white/60 px-4 py-3 text-[#04342C] outline-none placeholder:text-[#7A9188] focus:border-[#04342C]/40";
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -566,11 +580,11 @@ export default function RegisterForm() {
 
   if (phase === "splash") {
     return (
-      <div className="min-h-dvh bg-[#04342C] flex items-center justify-center">
+      <div className="flex min-h-dvh items-center justify-center bg-[#FAEEDA]">
         <img
-          src="/logo-white.png"
+          src="/logo-green.png"
           alt="Heyven"
-          className="w-[180px] h-auto"
+          className="h-auto w-[180px]"
           style={{ objectFit: "contain" }}
         />
       </div>
@@ -592,14 +606,14 @@ export default function RegisterForm() {
   if (phase === "step1") {
     return (
       <StepShell progress={1}>
-        <h1 className="mt-6 text-2xl font-semibold text-white">Crea il tuo rifugio</h1>
-        <p className="mt-2 text-sm leading-relaxed text-white/60">
+        <h1 className="mt-6 text-2xl font-semibold text-[#04342C]">Crea il tuo rifugio</h1>
+        <p className="mt-2 text-sm leading-relaxed text-[#4A6158]">
           Il nickname è l&apos;unico nome visibile. Nessuno saprà chi sei davvero.
         </p>
 
         <form
           onSubmit={onSubmit}
-          className="mt-6 rounded-3xl border border-white/15 bg-white/10 p-5 shadow-lg backdrop-blur-xl"
+          className="mt-6 rounded-3xl border border-white/60 bg-white/50 p-5 shadow-sm"
         >
           <div className="space-y-4">
             <GlassInput
@@ -624,7 +638,7 @@ export default function RegisterForm() {
                     setNickname(randomNickname());
                     setError(null);
                   }}
-                  className="text-xs font-medium text-white/60 underline underline-offset-2"
+                  className="text-xs font-medium text-[#4A6158] underline underline-offset-2"
                 >
                   ✦ Genera per me
                 </button>
@@ -638,12 +652,12 @@ export default function RegisterForm() {
                 required
               />
               {nicknameStatus === "taken" && (
-                <p className="mt-1.5 text-xs text-white/40">{NICKNAME_TAKEN_HINT}</p>
+                <p className="mt-1.5 text-xs text-[#7A9188]">{NICKNAME_TAKEN_HINT}</p>
               )}
               {nicknameStatus === "checking" &&
                 nickname.trim().length > 0 &&
                 isValidNickname(nickname.trim()) && (
-                  <p className="mt-1.5 text-xs text-white/40">Verifica disponibilità…</p>
+                  <p className="mt-1.5 text-xs text-[#7A9188]">Verifica disponibilità…</p>
                 )}
             </GlassInput>
 
@@ -661,12 +675,12 @@ export default function RegisterForm() {
           </div>
 
           {error && (
-            <p className="mt-4 rounded-2xl border border-white/20 bg-white/10 px-3 py-2 text-sm text-white/80">
+            <p className="mt-4 rounded-2xl border border-[#04342C]/10 bg-white/60 px-3 py-2 text-sm text-[#04342C]">
               {error}
             </p>
           )}
           {info && (
-            <p className="mt-4 rounded-2xl border border-white/20 bg-white/10 px-3 py-2 text-sm text-white/80">
+            <p className="mt-4 rounded-2xl border border-[#04342C]/10 bg-white/60 px-3 py-2 text-sm text-[#04342C]">
               {info}
             </p>
           )}
@@ -674,15 +688,18 @@ export default function RegisterForm() {
           <button
             type="submit"
             disabled={submitDisabled}
-            className="mt-4 w-full rounded-2xl bg-[#FAC775] py-4 font-semibold text-[#04342C] transition active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
+            className="mt-4 w-full rounded-2xl bg-[#04342C] py-4 font-semibold text-[#FAEEDA] transition active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? "Creazione…" : "Crea il mio spazio"}
           </button>
         </form>
 
-        <p className="mt-5 text-center text-sm text-white/60">
+        <p className="mt-5 text-center text-sm text-[#4A6158]">
           Hai già un account?{" "}
-          <Link href={`/login?next=${encodeURIComponent(next)}`} className="underline text-white/80">
+          <Link
+            href={`/login?next=${encodeURIComponent(next)}`}
+            className="font-semibold text-[#04342C] underline underline-offset-2"
+          >
             Accedi
           </Link>
         </p>
@@ -696,14 +713,14 @@ export default function RegisterForm() {
 
     return (
       <StepShell progress={2}>
-        <h1 className="mt-6 text-2xl font-semibold text-white">Trova il tuo spazio</h1>
-        <p className="mt-2 text-sm leading-relaxed text-white/60">
+        <h1 className="mt-6 text-2xl font-semibold text-[#04342C]">Trova il tuo spazio</h1>
+        <p className="mt-2 text-sm leading-relaxed text-[#4A6158]">
           Non serve avere le parole giuste. Scegli quello che ti sembra più vicino.
         </p>
 
         <div className="mt-6 space-y-6">
           <section>
-            <h2 className="text-sm font-medium text-white/60">
+            <h2 className="text-sm font-medium text-[#4A6158]">
               Cosa ti pesa di più in questo periodo?
             </h2>
             <div className="mt-3 flex flex-wrap gap-2">
@@ -716,8 +733,8 @@ export default function RegisterForm() {
                     onClick={() => setSelectedSpace(space.slug)}
                     className={
                       active
-                        ? "rounded-full bg-white px-4 py-2 text-sm font-medium text-[#04342C]"
-                        : "rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm text-white/60"
+                        ? "rounded-full bg-[#04342C] px-4 py-2 text-sm font-medium text-[#FAEEDA]"
+                        : "rounded-full border border-[#04342C]/20 bg-white/40 px-4 py-2 text-sm text-[#4A6158]"
                     }
                   >
                     {space.emoji} {space.name}
@@ -728,7 +745,7 @@ export default function RegisterForm() {
           </section>
 
           <section>
-            <h2 className="text-sm font-medium text-white/60">
+            <h2 className="text-sm font-medium text-[#4A6158]">
               Da quanto tempo ci convivi?
             </h2>
             <div className="mt-3 flex flex-wrap gap-2">
@@ -741,8 +758,8 @@ export default function RegisterForm() {
                     onClick={() => setSelectedDuration(option)}
                     className={
                       active
-                        ? "rounded-full bg-white px-4 py-2 text-sm font-medium text-[#04342C]"
-                        : "rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm text-white/60"
+                        ? "rounded-full bg-[#04342C] px-4 py-2 text-sm font-medium text-[#FAEEDA]"
+                        : "rounded-full border border-[#04342C]/20 bg-white/40 px-4 py-2 text-sm text-[#4A6158]"
                     }
                   >
                     {option}
@@ -754,7 +771,7 @@ export default function RegisterForm() {
         </div>
 
         {step2Error && (
-          <p className="mt-4 rounded-2xl border border-white/20 bg-white/10 px-3 py-2 text-sm text-white/80">
+          <p className="mt-4 rounded-2xl border border-[#04342C]/10 bg-white/60 px-3 py-2 text-sm text-[#04342C]">
             {step2Error}
           </p>
         )}
@@ -763,7 +780,7 @@ export default function RegisterForm() {
           type="button"
           onClick={onContinueStep2}
           disabled={!canContinue}
-          className="mt-6 w-full rounded-2xl bg-[#FAC775] py-4 font-semibold text-[#04342C] transition active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-6 w-full rounded-2xl bg-[#04342C] py-4 font-semibold text-[#FAEEDA] transition active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {step2Loading ? "Salvataggio…" : "Continua →"}
         </button>
@@ -773,8 +790,8 @@ export default function RegisterForm() {
 
   return (
     <StepShell progress={3}>
-      <h1 className="mt-6 text-2xl font-semibold text-white">Scopri chi c&apos;è</h1>
-      <p className="mt-2 text-sm leading-relaxed text-white/60">
+      <h1 className="mt-6 text-2xl font-semibold text-[#04342C]">Scopri chi c&apos;è</h1>
+      <p className="mt-2 text-sm leading-relaxed text-[#4A6158]">
         Qualcuno ha già scritto quello che forse stavi cercando le parole per dire.
       </p>
 
@@ -782,7 +799,7 @@ export default function RegisterForm() {
         {PREVIEW_POSTS.map((post) => (
           <article
             key={post.nickname}
-            className="rounded-3xl border border-white/15 bg-white/10 p-5 shadow-lg backdrop-blur-xl"
+            className="rounded-3xl border border-white/60 bg-white/50 p-5 shadow-sm"
           >
             <header className="flex items-center gap-3">
               <div
@@ -792,32 +809,32 @@ export default function RegisterForm() {
                 {post.nickname.slice(0, 1).toUpperCase()}
               </div>
               <div>
-                <p className="text-sm font-medium text-white">@{post.nickname}</p>
-                <p className="text-xs text-white/60">
+                <p className="text-sm font-medium text-[#04342C]">@{post.nickname}</p>
+                <p className="text-xs text-[#4A6158]">
                   {post.emoji} {post.space}
                 </p>
               </div>
             </header>
-            <p className="mt-3 text-sm leading-relaxed text-white/60">{post.content}</p>
-            <p className="mt-3 text-xs text-white/40">
+            <p className="mt-3 text-sm leading-relaxed text-[#4A6158]">{post.content}</p>
+            <p className="mt-3 text-xs text-[#7A9188]">
               💚 Anch&apos;io · {post.meToo} · 💬 {post.replies} risposte
             </p>
           </article>
         ))}
 
-        <article className="mt-2 rounded-3xl border border-white/15 bg-white/10 p-5 backdrop-blur-xl">
+        <article className="mt-2 rounded-3xl bg-[#04342C] p-5">
           <div className="flex items-start gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#FAC775]/30 text-sm font-semibold text-[#FAC775]">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#FAEEDA]/20 text-sm font-semibold text-[#FAEEDA]">
               S
             </div>
             <div>
-              <p className="font-medium text-white">Sara · Mentore</p>
-              <p className="text-xs text-white/60">
+              <p className="font-medium text-[#FAEEDA]">Sara · Mentore</p>
+              <p className="text-xs text-[#FAEEDA]/70">
                 Ha attraversato l&apos;ansia, qui da 8 mesi
               </p>
             </div>
           </div>
-          <p className="mt-4 text-sm italic leading-relaxed text-white/80">
+          <p className="mt-4 text-sm italic leading-relaxed text-[#FAEEDA]/90">
             &ldquo;Sono qui perché qualcuno c&apos;è stato per me quando ne avevo bisogno. Adesso
             voglio fare lo stesso.&rdquo;
           </p>
@@ -827,7 +844,7 @@ export default function RegisterForm() {
       <button
         type="button"
         onClick={onEnterHeyven}
-        className="mt-4 w-full rounded-2xl bg-[#FAC775] py-4 font-semibold text-[#04342C] transition active:scale-[0.99]"
+        className="mt-4 w-full rounded-2xl bg-[#04342C] py-4 font-semibold text-[#FAEEDA] transition active:scale-[0.99]"
       >
         Entra in Heyven ✦
       </button>
