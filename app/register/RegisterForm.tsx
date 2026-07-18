@@ -342,10 +342,10 @@ function IntroPhase({
         className="mx-auto w-20 shrink-0 pt-8"
       />
 
-      <div className="flex min-h-0 flex-1 flex-col justify-between">
+      <div className="flex min-h-0 flex-1 flex-col justify-evenly">
         <div
           ref={viewportRef}
-          className="mt-2 h-48 w-full shrink-0 touch-pan-y overflow-hidden"
+          className="h-40 w-full shrink-0 touch-pan-y overflow-hidden"
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
@@ -371,15 +371,17 @@ function IntroPhase({
           </div>
         </div>
 
-        <h1 className="mt-4 px-8 text-center text-2xl font-bold text-[#04342C] transition-all duration-300">
+        <h1 className="mt-2 px-8 text-center text-2xl font-bold text-[#04342C] transition-all duration-300">
           {introTitles[slideIndex]}
         </h1>
 
-        <p className="mt-2 px-8 text-center text-base leading-relaxed text-[#4A6158]">
+        <p className="mt-1 px-8 text-center text-base leading-relaxed text-[#4A6158]">
           {currentSlide.description}
         </p>
+      </div>
 
-        <div className="mt-4 flex shrink-0 items-center justify-center gap-2">
+      <div className="mt-auto flex shrink-0 flex-col gap-6 px-6 pb-6">
+        <div className="flex items-center justify-center gap-2">
           {INTRO_SLIDES.map((_, index) => (
             <div
               key={introTitles[index]}
@@ -392,9 +394,6 @@ function IntroPhase({
             />
           ))}
         </div>
-      </div>
-
-      <div className="mt-auto shrink-0 px-6 pb-6">
         <button
           type="button"
           onClick={goNext}
@@ -402,7 +401,7 @@ function IntroPhase({
         >
           {slideIndex < INTRO_SLIDES.length - 1 ? "Continua" : "Inizia"}
         </button>
-        <p className="mt-4 text-center text-sm text-[#4A6158]">
+        <p className="text-center text-sm text-[#4A6158]">
           Hai già un account?{" "}
           <button
             type="button"
