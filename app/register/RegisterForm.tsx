@@ -13,7 +13,7 @@ import { createClient } from "@/lib/supabase/client";
 import { randomNickname } from "@/lib/nickname";
 import { SPACES } from "@/lib/spaces";
 
-type Phase = "splash" | "intro" | "step1" | "step1b" | "step2" | "step3";
+type Phase = "intro" | "step1" | "step1b" | "step2" | "step3";
 type NicknameStatus = "idle" | "checking" | "available" | "taken" | "invalid";
 
 const NICKNAME_TAKEN_HINT = "Questo nickname è già in uso, provane un altro";
@@ -521,7 +521,7 @@ export default function RegisterForm() {
   const search = useSearchParams();
   const next = search.get("next") || "/";
 
-  const [phase, setPhase] = useState<Phase>("splash");
+  const [phase, setPhase] = useState<Phase>("intro");
   const [introSlide, setIntroSlide] = useState(0);
 
   const [email, setEmail] = useState("");
@@ -541,13 +541,6 @@ export default function RegisterForm() {
   const [step2Loading, setStep2Loading] = useState(false);
   const [step2Error, setStep2Error] = useState<string | null>(null);
   const hasPrefilledNickname = useRef(false);
-
-  useEffect(() => {
-    if (phase === "splash") {
-      const t = setTimeout(() => setPhase("intro"), 2000);
-      return () => clearTimeout(t);
-    }
-  }, [phase]);
 
   useEffect(() => {
     if (phase !== "step1" || hasPrefilledNickname.current) return;
@@ -725,21 +718,6 @@ export default function RegisterForm() {
     document.cookie = "heyven_registered=true; path=/; max-age=31536000; SameSite=Lax";
     router.replace(destination);
     router.refresh();
-  }
-
-  if (phase === "splash") {
-    return (
-      <div className="flex min-h-dvh items-center justify-center bg-[#04342C]">
-        <img
-          src="/logo-white.png"
-          alt="heyven"
-          width={180}
-          height={80}
-          style={{ objectFit: "contain" }}
-          className="animate-[fadeInScale_1.4s_ease-out_forwards]"
-        />
-      </div>
-    );
   }
 
   if (phase === "intro") {

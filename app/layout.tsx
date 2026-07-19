@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import FeedbackWidget from "@/components/FeedbackWidget";
+import SplashScreen from "@/components/SplashScreen";
 
 export const metadata: Metadata = {
   title: "Heyven — insieme a chi ti capisce",
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="it">
       <body className="min-h-dvh bg-crema text-petrolio">
+        <SplashScreen />
         {children}
         <FeedbackWidget />
       </body>
