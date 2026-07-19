@@ -30,7 +30,16 @@ export default function LoginForm() {
     setLoading(false);
 
     if (error) {
-      setError(error.message);
+      const msg = error.message.toLowerCase();
+      if (msg.includes("invalid login credentials")) {
+        setError("Email o password non corrispondono. Riprova con calma.");
+      } else if (msg.includes("email not confirmed")) {
+        setError("Devi ancora confermare la tua email. Controlla la posta, anche nello spam.");
+      } else if (msg.includes("too many requests") || msg.includes("rate limit")) {
+        setError("Troppi tentativi ravvicinati. Aspetta un momento e riprova.");
+      } else {
+        setError("Qualcosa non ha funzionato. Riprova tra poco.");
+      }
       return;
     }
     router.replace(next);
