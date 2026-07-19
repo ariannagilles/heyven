@@ -5,6 +5,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
+const inputClassName =
+  "mt-1 w-full rounded-2xl border border-[#04342C]/15 bg-white/60 px-4 py-3 text-[#04342C] outline-none focus:border-[#0F6E56]";
+
+const messageClassName =
+  "rounded-xl bg-[#D4EDE5] px-3 py-2 text-sm text-[#04342C]";
+
 export default function LoginForm() {
   const router = useRouter();
   const search = useSearchParams();
@@ -32,56 +38,83 @@ export default function LoginForm() {
   }
 
   return (
-    <main className="mx-auto max-w-md px-4 pt-10 pb-20">
-      <h1 className="text-2xl font-semibold mb-1">Bentornatə</h1>
-      <p className="text-petrolio/70 text-sm mb-6">Accedi a heyven con la tua email.</p>
+    <main className="flex min-h-dvh flex-col justify-center bg-[#FAEEDA] px-6">
+      <div className="mx-auto w-full max-w-md">
+        <img
+          src="/logo-green.png"
+          alt="heyven"
+          className="mx-auto mb-8 w-24"
+        />
 
-      {resetOk && (
-        <p className="text-sm text-petrolio bg-crema-200/60 rounded-xl px-3 py-2 mb-4">
-          Password aggiornata. Ora puoi accedere con la nuova password.
+        <h1 className="text-center text-2xl font-semibold text-[#04342C]">
+          Il tuo rifugio ti aspettava
+        </h1>
+        <p className="mt-2 mb-6 text-center text-sm text-[#4A6158]">
+          Accedi per riprendere da dove eri.
         </p>
-      )}
 
-      <form onSubmit={onSubmit} className="space-y-3 card p-5">
-        <label className="block">
-          <span className="text-xs font-medium text-petrolio/70">Email</span>
-          <input
-            type="email"
-            className="field mt-1"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            autoComplete="email"
-            required
-          />
-        </label>
-        <label className="block">
-          <span className="text-xs font-medium text-petrolio/70">Password</span>
-          <input
-            type="password"
-            className="field mt-1"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="current-password"
-            required
-          />
+        {resetOk && (
+          <p className={`${messageClassName} mb-4`}>
+            Password aggiornata. Ora puoi accedere con la nuova password.
+          </p>
+        )}
+
+        <form
+          onSubmit={onSubmit}
+          className="rounded-3xl border border-white/60 bg-white/50 p-5"
+        >
+          <div className="space-y-3">
+            <label className="block">
+              <span className="text-sm font-medium text-[#4A6158]">Email</span>
+              <input
+                type="email"
+                className={inputClassName}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+                required
+              />
+            </label>
+            <label className="block">
+              <span className="text-sm font-medium text-[#4A6158]">Password</span>
+              <input
+                type="password"
+                className={inputClassName}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
+                required
+              />
+              <Link
+                href="/reset-password/richiesta"
+                className="mt-1.5 inline-block text-xs text-[#4A6158] underline underline-offset-2 hover:text-[#04342C]"
+              >
+                Password dimenticata?
+              </Link>
+            </label>
+
+            {error && <p className={messageClassName}>{error}</p>}
+
+            <button
+              type="submit"
+              className="mt-2 w-full rounded-2xl bg-[#04342C] py-4 font-semibold text-[#FAEEDA] transition active:scale-[0.99] disabled:opacity-50"
+              disabled={loading}
+            >
+              {loading ? "Accesso…" : "Entra"}
+            </button>
+          </div>
+        </form>
+
+        <p className="mt-6 text-center text-sm text-[#4A6158]">
+          Non hai un account?{" "}
           <Link
-            href="/reset-password/richiesta"
-            className="inline-block mt-1.5 text-xs text-petrolio/60 hover:text-petrolio underline underline-offset-2"
+            href={`/register?next=${encodeURIComponent(next)}`}
+            className="font-semibold text-[#04342C] underline"
           >
-            Password dimenticata?
+            Registrati
           </Link>
-        </label>
-
-        {error && <p className="text-sm text-red-700 bg-red-50 rounded-xl px-3 py-2">{error}</p>}
-
-        <button type="submit" className="btn-primary w-full" disabled={loading}>
-          {loading ? "Accesso…" : "Entra"}
-        </button>
-      </form>
-
-      <p className="text-sm text-petrolio/70 mt-5 text-center">
-        Non hai un account? <Link href={`/register?next=${encodeURIComponent(next)}`} className="underline">Registrati</Link>
-      </p>
+        </p>
+      </div>
     </main>
   );
 }
