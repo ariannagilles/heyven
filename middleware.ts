@@ -35,8 +35,19 @@ export async function middleware(request: NextRequest) {
 
   if (!user && !isPublic) {
     const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    url.searchParams.set("next", path);
+    if (path === "/") {
+      const hasRegistered =
+        request.cookies.get("heyven_registered")?.value === "true";
+      url.pathname = hasRegistered ? "/login" : "/register";
+      if (hasRegistered) {
+        url.searchParams.set("next", path);
+      } else {
+        url.search = "";
+      }
+    } else {
+      url.pathname = "/login";
+      url.searchParams.set("next", path);
+    }
     return NextResponse.redirect(url);
   }
 

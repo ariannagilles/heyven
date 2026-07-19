@@ -722,6 +722,7 @@ export default function RegisterForm() {
     ) {
       destination = `/spazi/${selectedSpace}`;
     }
+    document.cookie = "heyven_registered=true; path=/; max-age=31536000; SameSite=Lax";
     router.replace(destination);
     router.refresh();
   }
