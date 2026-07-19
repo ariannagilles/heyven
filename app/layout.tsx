@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import FeedbackWidget from "@/components/FeedbackWidget";
+import BottomNav from "@/components/BottomNav";
 import SplashScreen from "@/components/SplashScreen";
 
 export const metadata: Metadata = {
@@ -25,7 +26,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="it">
       <body className="min-h-dvh bg-crema text-petrolio">
         <SplashScreen />
-        {children}
+        <div className="pb-24">{children}</div>
+        <BottomNav />
         <FeedbackWidget />
       </body>
     </html>
