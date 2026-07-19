@@ -3,9 +3,13 @@ import "./globals.css";
 import FeedbackWidget from "@/components/FeedbackWidget";
 
 export const metadata: Metadata = {
-  title: "Heyven — comunità per la salute mentale",
+  title: "Heyven — insieme a chi ti capisce",
   description:
-    "Heyven è una community italiana, anonima e sicura, per parlare di salute mentale.",
+    "Uno spazio anonimo dove trovare persone che vivono quello che vivi tu, e un Mentore pronto ad ascoltarti. Prima della terapia, quando serve solo non sentirsi soli.",
+  icons: {
+    icon: "/icon-green.png",
+    apple: "/icon-green.png",
+  },
 };
 
 export const viewport: Viewport = {
