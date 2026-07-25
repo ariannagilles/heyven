@@ -106,6 +106,7 @@ export type AssignedMentorProfile = {
   nickname: string;
   intro_text: string;
   experience_areas: string[];
+  match_type: "experience" | "fallback";
   completed_conversations: number;
   avg_rating: number;
   ratings_count: number;
