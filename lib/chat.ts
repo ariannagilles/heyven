@@ -105,6 +105,7 @@ export type AssignedMentorProfile = {
   mentor_id: string;
   nickname: string;
   intro_text: string;
+  experience_areas: string[];
   completed_conversations: number;
   avg_rating: number;
   ratings_count: number;
