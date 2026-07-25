@@ -1,53 +1,79 @@
 import Link from "next/link";
 import Avatar from "./Avatar";
-import Stars from "./Stars";
 import type { AssignedMentorProfile } from "@/lib/chat";
+import { SPACES } from "@/lib/spaces";
 
 export default function MentorProfileCard({
   profile,
 }: {
   profile: AssignedMentorProfile;
 }) {
-  return (
-    <article className="card p-6">
-      <div className="flex items-start gap-4">
-        <Avatar nickname={profile.nickname} size={64} />
-        <div className="flex-1 min-w-0">
-          <div className="flex items-baseline justify-between gap-2 flex-wrap">
-            <h2 className="text-lg font-semibold">@{profile.nickname}</h2>
-            <span className="text-xs text-petrolio/50 shrink-0">
-              il tuo mentore
-            </span>
-          </div>
+  const areas = (profile.experience_areas ?? [])
+    .map((slug) => SPACES.find((s) => s.slug === slug))
+    .filter(Boolean) as { slug: string; name: string; emoji: string }[];
 
-          <div className="flex items-center gap-2 mt-1.5 text-sm text-petrolio/70 flex-wrap">
-            <Stars value={profile.avg_rating} size="sm" />
-            {profile.ratings_count > 0 ? (
-              <span className="tabular-nums">
-                {profile.avg_rating.toFixed(2)}{" "}
-                <span className="text-petrolio/50">
-                  ({profile.ratings_count})
-                </span>
-              </span>
-            ) : (
-              <span className="text-petrolio/50">nessuna valutazione</span>
-            )}
-            <span aria-hidden>·</span>
-            <span>
-              {profile.completed_conversations} conversazion
-              {profile.completed_conversations === 1 ? "e" : "i"} completate
-            </span>
+  return (
+    <div className="space-y-3">
+      <article className="card p-5">
+        <div className="flex items-center gap-4">
+          <Avatar nickname={profile.nickname} size={56} />
+          <div className="flex-1 min-w-0">
+            <h2 className="text-base font-semibold text-petrolio">@{profile.nickname}</h2>
+            <p className="text-xs text-petrolio/50">il tuo mentore</p>
           </div>
         </div>
-      </div>
+        <p className="text-[15px] text-petrolio/80 mt-4 whitespace-pre-wrap italic leading-relaxed">
+          &ldquo;{profile.intro_text}&rdquo;
+        </p>
+      </article>
 
-      <p className="text-[15px] text-petrolio/80 mt-4 whitespace-pre-wrap italic leading-relaxed">
-        “{profile.intro_text}”
-      </p>
+      {areas.length > 0 && (
+        <article className="card p-5">
+          <div className="text-xs font-semibold text-petrolio/50 uppercase tracking-wide mb-3">
+            Di cosa si occupa
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {areas.map((a) => (
+              <span
+                key={a.slug}
+                className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm bg-petrolio/5 text-petrolio"
+              >
+                <span aria-hidden>{a.emoji}</span>
+                {a.name}
+              </span>
+            ))}
+          </div>
+        </article>
+      )}
 
-      <Link href="/chat/c" className="btn-primary w-full mt-5 sm:w-auto sm:inline-flex">
-        Inizia la chat
+      <article className="card p-5 space-y-3">
+        <div className="flex items-center gap-3 text-sm text-petrolio/80">
+          <span aria-hidden>🤝</span>
+          <span>
+            Ha accompagnato{" "}
+            <b className="text-petrolio font-semibold">
+              {profile.completed_conversations}{" "}
+              {profile.completed_conversations === 1 ? "persona" : "persone"}
+            </b>
+          </span>
+        </div>
+        {profile.ratings_count > 0 && (
+          <div className="flex items-center gap-3 text-sm text-petrolio/80">
+            <span aria-hidden>💚</span>
+            <span>
+              Valutazione media{" "}
+              <b className="text-petrolio font-semibold tabular-nums">
+                {profile.avg_rating.toFixed(1)}
+              </b>{" "}
+              <span className="text-petrolio/50">su {profile.ratings_count}</span>
+            </span>
+          </div>
+        )}
+      </article>
+
+      <Link href="/chat/c" className="btn-primary w-full text-center">
+        Scrivi al tuo Mentore
       </Link>
-    </article>
+    </div>
   );
 }
