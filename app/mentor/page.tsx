@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Avatar from "@/components/Avatar";
 import Stars from "@/components/Stars";
 import IntroEditor from "./IntroEditor";
+import ExperienceAreasEditor from "./ExperienceAreasEditor";
 import { createClient } from "@/lib/supabase/server";
 import { getProfile, getMentorChats, getMentorRatingsSummary } from "@/lib/chat";
 import { timeAgo } from "@/lib/time";
@@ -21,7 +22,7 @@ export default async function MentorDashboard() {
   const [{ data: mentorRow }, chats, ratings] = await Promise.all([
     supabase
       .from("mentors")
-      .select("is_available, active_users_count, intro_text")
+      .select("is_available, active_users_count, intro_text, experience_areas")
       .eq("user_id", user.id)
       .maybeSingle(),
     getMentorChats(supabase),
@@ -70,6 +71,15 @@ export default async function MentorDashboard() {
             mentorId={user.id}
             initial={mentorRow?.intro_text ?? ""}
           />
+        </section>
+
+        <section className="card p-5 space-y-3">
+          <h2 className="text-sm font-medium text-petrolio/70">Di cosa ti occupi</h2>
+          <p className="text-sm text-petrolio/70">
+            Scegli fino a 4 aree che hai attraversato in prima persona. Ci aiutano a farti
+            incontrare le persone che vivono qualcosa di simile.
+          </p>
+          <ExperienceAreasEditor initial={mentorRow?.experience_areas ?? []} />
         </section>
 
         <RatingsSection summary={ratings} />
