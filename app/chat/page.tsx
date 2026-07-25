@@ -1,9 +1,14 @@
 import { redirect } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Avatar from "@/components/Avatar";
+import MentorProfileCard from "@/components/MentorProfileCard";
 import StartChatButton from "./StartChatButton";
 import { createClient } from "@/lib/supabase/server";
-import { getProfile, getUserConversation } from "@/lib/chat";
+import {
+  getAssignedMentorProfile,
+  getProfile,
+  getUserConversation,
+} from "@/lib/chat";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +22,46 @@ export default async function ChatPage() {
   if (profile?.role === "admin") redirect("/admin");
 
   const conversation = await getUserConversation(supabase, user.id);
-  if (conversation) redirect("/chat/c");
+
+  if (conversation) {
+    const mentorProfile = await getAssignedMentorProfile(supabase);
+    if (!mentorProfile) redirect("/chat/c");
+
+    return (
+      <>
+        <Navbar />
+        <main className="mx-auto max-w-2xl px-4 py-8 space-y-5">
+          {mentorProfile.match_type === "experience" ? (
+            <>
+              <h1 className="text-xl font-semibold">
+                Abbiamo pensato a @{mentorProfile.nickname} per te
+              </h1>
+              <p className="text-sm text-petrolio/70 leading-relaxed">
+                Ha attraversato qualcosa di simile a quello che stai vivendo. Non
+                sei solo a conoscerlo.
+              </p>
+            </>
+          ) : (
+            <>
+              <h1 className="text-xl font-semibold">
+                Ti presentiamo @{mentorProfile.nickname}
+              </h1>
+              <p className="text-sm text-petrolio/70 leading-relaxed">
+                Una persona reale, pronta ad ascoltarti quando vuoi.
+              </p>
+            </>
+          )}
+
+          <div className="inline-flex items-center gap-2 rounded-full bg-petrolio text-crema px-4 py-2 text-sm font-medium">
+            <span aria-hidden>✦</span>
+            Il tuo Mentore è una persona reale, non un&apos;AI
+          </div>
+
+          <MentorProfileCard profile={mentorProfile} />
+        </main>
+      </>
+    );
+  }
 
   return (
     <>
@@ -27,7 +71,7 @@ export default async function ChatPage() {
 
         <div className="inline-flex items-center gap-2 rounded-full bg-petrolio text-crema px-4 py-2 text-sm font-medium">
           <span aria-hidden>✦</span>
-          Il tuo Mentore è una persona reale, non un'AI
+          Il tuo Mentore è una persona reale, non un&apos;AI
         </div>
 
         <p className="text-sm text-petrolio/70 leading-relaxed">
