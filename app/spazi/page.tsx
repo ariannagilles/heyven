@@ -17,40 +17,36 @@ export default async function SpacesListPage() {
   return (
     <>
       <Navbar />
-      <main className="mx-auto max-w-2xl px-4 py-6">
-        <div className="mb-4">
-          <h1 className="text-xl font-semibold">Spazi</h1>
-          <p className="text-sm text-cream/70">
-            Scegli uno spazio per leggere, chiedere o raccontare.
+      <main className="mx-auto max-w-2xl px-4 pb-24 pt-6">
+        <header className="mb-5">
+          <h1 className="font-display text-2xl leading-tight text-cream">Gli spazi</h1>
+          <p className="mt-1 text-[13.5px] text-cream/70">
+            Entra dove ti senti a casa oggi.
           </p>
-        </div>
+        </header>
 
-        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {SPACES.map((s) => (
-            <li key={s.slug}>
-              <Link
-                href={`/spazi/${s.slug}`}
-                className="card block p-5 hover:bg-cream/5 transition"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="text-3xl shrink-0 leading-none" aria-hidden>
+        <ul className="grid grid-cols-2 gap-[11px]">
+          {SPACES.map((s) => {
+            const count = counts.get(s.slug) ?? 0;
+            return (
+              <li key={s.slug}>
+                <Link
+                  href={`/spazi/${s.slug}`}
+                  className="glass-card flex min-h-[104px] flex-col p-[15px] transition-transform active:scale-[0.98]"
+                >
+                  <span className="text-[26px] leading-none" aria-hidden>
                     {s.emoji}
-                  </div>
-                  <div className="min-w-0">
-                    <div className="flex items-baseline justify-between gap-2">
-                      <h2 className="font-semibold text-cream">{s.name}</h2>
-                      <span className="text-xs text-cream/50 tabular-nums">
-                        {counts.get(s.slug) ?? 0} post
-                      </span>
-                    </div>
-                    <p className="text-sm text-cream/70 mt-1">
-                      {s.description}
-                    </p>
-                  </div>
-                </div>
-              </Link>
-            </li>
-          ))}
+                  </span>
+                  <h2 className="mt-2 text-[14px] font-medium leading-tight text-cream">
+                    {s.name}
+                  </h2>
+                  <p className="mt-1 text-[11.5px] text-cream/60 tabular-nums">
+                    {count} oggi
+                  </p>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </main>
     </>
