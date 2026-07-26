@@ -9,6 +9,12 @@ import { AvatarImage } from "./AvatarImage";
 
 const MAX = 2000;
 
+const ICEBREAKER_PROMPTS = [
+  "In questi giorni mi sento…",
+  "Vorrei parlare di…",
+  "Ultimamente faccio fatica a…",
+] as const;
+
 type Props = {
   conversationId: string;
   meId: string;
@@ -51,6 +57,15 @@ export default function ChatView({
   const scrollRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const showIcebreakers =
+    !closed && iAmUser && messages.length === 0 && content.trim() === "";
+
+  function applyIcebreakerPrompt(text: string) {
+    setContent(text);
+    textareaRef.current?.focus();
+  }
 
   async function markIncomingAsRead() {
     const { error } = await supabase
@@ -348,9 +363,11 @@ export default function ChatView({
       <div ref={scrollRef} className="flex-1 overflow-y-auto">
         <div className="mx-auto max-w-2xl px-4 py-4 space-y-2">
           {messages.length === 0 ? (
-            <div className="card p-5 text-center text-sm text-petrolio/70">
-              Nessun messaggio, ancora.
-            </div>
+            !iAmUser ? (
+              <div className="card p-5 text-center text-sm text-petrolio/70">
+                Nessun messaggio, ancora.
+              </div>
+            ) : null
           ) : (
             messages.map((m) => {
               const mine = m.sender_id === meId;
@@ -393,8 +410,26 @@ export default function ChatView({
           onSubmit={send}
           className="border-t border-petrolio/10 bg-crema/90 backdrop-blur px-4 py-3"
         >
+          {showIcebreakers && (
+            <div className="mx-auto mb-3 max-w-2xl">
+              <p className="mb-2 text-xs text-petrolio/50">Se non sai da dove iniziare:</p>
+              <div className="flex flex-col gap-2">
+                {ICEBREAKER_PROMPTS.map((prompt) => (
+                  <button
+                    key={prompt}
+                    type="button"
+                    onClick={() => applyIcebreakerPrompt(prompt)}
+                    className="rounded-2xl bg-petrolio/5 px-4 py-2.5 text-left text-sm text-petrolio/80 transition-colors hover:bg-petrolio/10"
+                  >
+                    {prompt}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="mx-auto max-w-2xl flex items-end gap-2">
             <textarea
+              ref={textareaRef}
               value={content}
               onChange={(e) => setContent(e.target.value)}
               onKeyDown={(e) => {
