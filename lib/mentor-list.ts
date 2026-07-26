@@ -17,6 +17,7 @@ type ConversationRow = {
   mentor_id: string;
   status: "active" | "closed";
   created_at: string;
+  closed_at?: string | null;
 };
 
 async function enrichConversations(
@@ -80,7 +81,7 @@ async function enrichConversations(
       mentor_nickname: mentorNickname,
       mentor_avatar_src: avatarDataUri(mentorNickname),
       status: row.status,
-      closed_at: null,
+      closed_at: row.closed_at ?? null,
       last_message: last?.content ?? null,
       last_message_sender_nickname: last
         ? (senderNicknames.get(last.sender_id) ?? null)
@@ -114,15 +115,15 @@ export async function getUserClosedConversations(
 ): Promise<ConversationListItem[]> {
   const { data } = await supabase
     .from("conversations")
-    .select("id, mentor_id, status, created_at")
+    .select("id, mentor_id, status, created_at, closed_at")
     .eq("user_id", userId)
     .eq("status", "closed")
     .order("created_at", { ascending: false });
 
   const rows = (data as ConversationRow[] | null) ?? [];
   rows.sort((a, b) => {
-    const aTs = new Date(a.created_at).getTime();
-    const bTs = new Date(b.created_at).getTime();
+    const aTs = new Date(a.closed_at ?? a.created_at).getTime();
+    const bTs = new Date(b.closed_at ?? b.created_at).getTime();
     return bTs - aTs;
   });
 
