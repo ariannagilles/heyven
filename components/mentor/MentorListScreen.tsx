@@ -66,17 +66,21 @@ function ActiveConversationCard({
     <>
       <article className="glass-card relative p-4">
         <div className="flex items-start gap-3">
-          <MentorAvatar
-            src={item.mentor_avatar_src}
-            nickname={item.mentor_nickname}
-            size={48}
-          />
+          <Link href="/chat/incontro" className="shrink-0">
+            <MentorAvatar
+              src={item.mentor_avatar_src}
+              nickname={item.mentor_nickname}
+              size={48}
+            />
+          </Link>
           <div className="min-w-0 flex-1">
-            <p className="text-[15px] font-semibold leading-tight text-cream">
-              @{item.mentor_nickname}
-            </p>
-            <p className="mt-0.5 text-[12px] text-mint">● attivo</p>
-            <p className="mt-1 text-[12px] text-cream/55">{presence}</p>
+            <Link href="/chat/incontro" className="block">
+              <p className="text-[15px] font-semibold leading-tight text-cream">
+                @{item.mentor_nickname}
+              </p>
+              <p className="mt-0.5 text-[12px] text-mint">● attivo</p>
+              <p className="mt-1 text-[12px] text-cream/55">{presence}</p>
+            </Link>
           </div>
           <div className="relative shrink-0">
             <button
@@ -132,6 +136,12 @@ function ActiveConversationCard({
           className="mt-4 block rounded-full bg-cream py-2.5 text-center text-sm font-semibold text-petrolio transition-transform active:scale-[0.98]"
         >
           Apri la conversazione ›
+        </Link>
+        <Link
+          href="/chat/incontro"
+          className="mt-2 block text-center text-[12px] text-cream/50 underline underline-offset-2 hover:text-cream/70"
+        >
+          Profilo del Mentore
         </Link>
       </article>
 
