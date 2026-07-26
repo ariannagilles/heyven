@@ -37,8 +37,10 @@ export default function ProfileSettings({
   }
 
   return (
-    <section id="impostazioni" className="card p-5 space-y-3 scroll-mt-20">
-      <h2 className="text-sm font-medium text-cream/70">Impostazioni</h2>
+    <section className="glass-card space-y-3 p-5">
+      <h2 className="text-xs font-semibold uppercase tracking-[0.9px] text-cream/[0.72]">
+        Account
+      </h2>
 
       <div className="flex flex-col gap-2">
         <button

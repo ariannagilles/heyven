@@ -105,7 +105,7 @@ export default function NavbarProfileMenu({
             Il mio profilo
           </Link>
           <Link
-            href="/profilo#impostazioni"
+            href="/profilo/impostazioni"
             role="menuitem"
             onClick={closeMenu}
             className={itemClassName}
@@ -123,7 +123,7 @@ export default function NavbarProfileMenu({
             href="/aiuto"
             role="menuitem"
             onClick={closeMenu}
-            className={`${itemClassName} text-amber-900/80 hover:bg-amber-50/80 focus-visible:bg-amber-50/80`}
+            className={`${itemClassName} text-mint hover:bg-mint/5 focus-visible:bg-mint/5`}
           >
             Serve aiuto urgente?
           </Link>
