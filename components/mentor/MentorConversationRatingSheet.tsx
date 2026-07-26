@@ -7,6 +7,7 @@ import {
   submitConversationRating,
   submitConversationRatingFeedback,
 } from "@/lib/mentor-rating-rpc";
+import { mentorRatingUserMessage } from "@/lib/mentor-rating-errors";
 
 type Props = {
   open: boolean;
@@ -80,7 +81,7 @@ export default function MentorConversationRatingSheet({
     );
     setLoading(false);
     if (submitError) {
-      setError(submitError.message);
+      setError(mentorRatingUserMessage(submitError.message));
       return;
     }
     setSavedStars(stars);
@@ -104,7 +105,7 @@ export default function MentorConversationRatingSheet({
     );
     setLoading(false);
     if (submitError) {
-      setError(submitError.message);
+      setError(mentorRatingUserMessage(submitError.message));
       return;
     }
     finish();

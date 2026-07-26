@@ -1,14 +1,18 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-/** Salva il voto 1–5 via RPC submit_rating. */
+function normalizeStars(stars: number): number {
+  return Math.min(5, Math.max(1, Math.round(stars)));
+}
+
+/** Salva il voto 1–5 via RPC submit_rating (solo titolare conversazione). */
 export async function submitConversationRating(
   supabase: SupabaseClient,
   conversationId: string,
-  rating: number,
+  stars: number,
 ) {
   return supabase.rpc("submit_rating", {
     p_conversation_id: conversationId,
-    p_rating: rating,
+    p_rating: normalizeStars(stars),
   });
 }
 
@@ -20,7 +24,7 @@ export async function submitConversationRatingFeedback(
 ) {
   return supabase.rpc("submit_rating_feedback", {
     p_conversation_id: conversationId,
-    p_feedback: feedback,
+    p_feedback: feedback.trim(),
   });
 }
 
