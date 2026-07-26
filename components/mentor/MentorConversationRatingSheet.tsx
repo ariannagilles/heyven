@@ -9,13 +9,18 @@ type Props = {
   open: boolean;
   conversationId: string;
   mentorNickname: string;
-  onDone: () => void;
+  onSubmitted?: () => void;
+  onSkipped?: () => void;
+  /** @deprecated use onSubmitted */
+  onDone?: () => void;
 };
 
 export default function MentorConversationRatingSheet({
   open,
   conversationId,
   mentorNickname,
+  onSubmitted,
+  onSkipped,
   onDone,
 }: Props) {
   const router = useRouter();
@@ -26,8 +31,9 @@ export default function MentorConversationRatingSheet({
 
   if (!open) return null;
 
-  function finish() {
-    onDone();
+  function skip() {
+    onSkipped?.();
+    onDone?.();
     router.refresh();
   }
 
@@ -46,7 +52,9 @@ export default function MentorConversationRatingSheet({
       setError(submitError.message);
       return;
     }
-    finish();
+    onSubmitted?.();
+    onDone?.();
+    router.refresh();
   }
 
   const active = hover || stars;
@@ -54,12 +62,14 @@ export default function MentorConversationRatingSheet({
   return (
     <div
       className="fixed inset-0 z-50 flex items-end justify-center bg-petrolio/40 p-4 backdrop-blur-sm"
+      onClick={() => !loading && skip()}
       role="presentation"
     >
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="rate-conversation-title"
+        onClick={(e) => e.stopPropagation()}
         className="glass-card w-full max-w-md rounded-t-[28px] rounded-b-[24px] p-6 pb-[calc(1.25rem+env(safe-area-inset-bottom))]"
       >
         <h2
@@ -105,12 +115,12 @@ export default function MentorConversationRatingSheet({
               disabled={loading}
               className="w-full rounded-full bg-cream py-3.5 text-[15px] font-semibold text-petrolio transition-transform active:scale-[0.98] disabled:opacity-50"
             >
-              {loading ? "Invio…" : "Invia valutazione"}
+              {loading ? "Invio…" : "Invia"}
             </button>
           )}
           <button
             type="button"
-            onClick={finish}
+            onClick={skip}
             disabled={loading}
             className="w-full py-2 text-[15px] text-cream/55 transition-colors hover:text-cream/75 disabled:opacity-50"
           >

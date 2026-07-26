@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { avatarDataUri } from "@/lib/avatar";
 import { getConversationById, getMessages, getProfile } from "@/lib/chat";
 import { detectAtRisk } from "@/lib/at-risk";
+import { hasRatedConversation } from "@/lib/mentor-rating-rpc";
 
 export const dynamic = "force-dynamic";
 
@@ -39,6 +40,7 @@ export default async function UserConversationPage({
   ]);
 
   const skipRatingOnClose = messages.some((m) => detectAtRisk(m.content));
+  const initialHasRated = await hasRatedConversation(supabase, conversation.id);
 
   return (
     <div className="-mb-28 h-dvh">
@@ -52,6 +54,7 @@ export default async function UserConversationPage({
         initialClosed={conversation.status === "closed"}
         mentorLastActivityAt={lastMentorMessage.data?.created_at ?? null}
         skipRatingOnClose={skipRatingOnClose}
+        initialHasRated={initialHasRated}
         iAmUser
         fullScreen
       />

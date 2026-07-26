@@ -75,7 +75,6 @@ declare
   uid uuid := auth.uid();
   conv_user uuid;
   conv_mentor uuid;
-  conv_status text;
 begin
   if uid is null then
     raise exception 'not authenticated';
@@ -84,19 +83,16 @@ begin
     raise exception 'invalid rating';
   end if;
 
-  select user_id, mentor_id, status
-    into conv_user, conv_mentor, conv_status
+  select user_id, mentor_id
+    into conv_user, conv_mentor
   from public.conversations
   where id = p_conversation_id;
 
   if conv_user is null then
     raise exception 'conversation not found';
   end if;
-  if conv_user <> uid then
+  if (conv_user <> uid then
     raise exception 'only the user can rate';
-  end if;
-  if conv_status is distinct from 'closed' then
-    raise exception 'conversation must be closed before rating';
   end if;
 
   insert into public.mentor_ratings (

@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import MentorConversationRatingSheet from "@/components/mentor/MentorConversationRatingSheet";
+import { markAutoRatingPromptDismissed } from "@/lib/mentor-rating-prompt";
 
 type Props = {
   conversationId: string;
@@ -14,14 +15,20 @@ export default function RateConversationClient({
 }: Props) {
   const router = useRouter();
 
+  function leaveChat() {
+    router.replace("/chat");
+    router.refresh();
+  }
+
   return (
     <MentorConversationRatingSheet
       open
       conversationId={conversationId}
       mentorNickname={mentorNickname}
-      onDone={() => {
-        router.replace("/chat");
-        router.refresh();
+      onSubmitted={leaveChat}
+      onSkipped={() => {
+        markAutoRatingPromptDismissed(conversationId);
+        leaveChat();
       }}
     />
   );

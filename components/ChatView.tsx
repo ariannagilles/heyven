@@ -9,6 +9,14 @@ import { mentorPresenceLabel } from "@/lib/mentor-list-types";
 import { formatMessageTime } from "@/lib/time";
 import { AvatarImage } from "./AvatarImage";
 import CloseConversationSheet from "./mentor/CloseConversationSheet";
+import MentorConversationRatingSheet from "./mentor/MentorConversationRatingSheet";
+import { hasRatedConversation } from "@/lib/mentor-rating-rpc";
+import {
+  AUTO_RATING_MIN_MENTOR_MESSAGES,
+  AUTO_RATING_MIN_TOTAL_MESSAGES,
+  markAutoRatingPromptDismissed,
+  wasAutoRatingPromptDismissed,
+} from "@/lib/mentor-rating-prompt";
 
 const MAX = 2000;
 
@@ -30,6 +38,7 @@ type Props = {
   fullScreen?: boolean;
   mentorLastActivityAt?: string | null;
   skipRatingOnClose?: boolean;
+  initialHasRated?: boolean;
 };
 
 export default function ChatView({
@@ -44,6 +53,7 @@ export default function ChatView({
   fullScreen = false,
   mentorLastActivityAt = null,
   skipRatingOnClose = false,
+  initialHasRated = false,
 }: Props) {
   const router = useRouter();
   const [supabase] = useState(() => createClient());
@@ -53,6 +63,9 @@ export default function ChatView({
   const [error, setError] = useState<string | null>(null);
   const [closed, setClosed] = useState(initialClosed);
   const [showCloseSheet, setShowCloseSheet] = useState(false);
+  const [showRatingSheet, setShowRatingSheet] = useState(false);
+  const [hasRated, setHasRated] = useState(initialHasRated);
+  const autoPromptShownRef = useRef(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [escalating, setEscalating] = useState(false);
@@ -70,6 +83,62 @@ export default function ChatView({
   const userHasSent = messages.some((m) => m.sender_id === meId);
   const showIcebreakers =
     !closed && iAmUser && !userHasSent && content.trim() === "";
+
+  const mentorMessageCount = messages.filter((m) => m.sender_id !== meId).length;
+  const canShowRatingUi = iAmUser && !hasRated;
+
+  useEffect(() => {
+    if (!iAmUser) return;
+    void hasRatedConversation(supabase, conversationId).then(setHasRated);
+  }, [supabase, conversationId, iAmUser]);
+
+  useEffect(() => {
+    if (!iAmUser || closed || hasRated || skipRatingOnClose) return;
+    if (wasAutoRatingPromptDismissed(conversationId)) return;
+    if (autoPromptShownRef.current) return;
+
+    const total = messages.length;
+    if (total < AUTO_RATING_MIN_TOTAL_MESSAGES) return;
+    if (mentorMessageCount < AUTO_RATING_MIN_MENTOR_MESSAGES) return;
+
+    autoPromptShownRef.current = true;
+
+    void hasRatedConversation(supabase, conversationId).then((alreadyRated) => {
+      if (
+        alreadyRated ||
+        wasAutoRatingPromptDismissed(conversationId) ||
+        skipRatingOnClose
+      ) {
+        return;
+      }
+      setShowRatingSheet(true);
+    });
+  }, [
+    messages.length,
+    mentorMessageCount,
+    iAmUser,
+    closed,
+    hasRated,
+    skipRatingOnClose,
+    conversationId,
+    supabase,
+  ]);
+
+  function openRatingSheet() {
+    setUserMenuOpen(false);
+    setShowRatingSheet(true);
+  }
+
+  function handleRatingSubmitted() {
+    markAutoRatingPromptDismissed(conversationId);
+    setShowRatingSheet(false);
+    setHasRated(true);
+  }
+
+  function handleRatingSkipped() {
+    markAutoRatingPromptDismissed(conversationId);
+    setShowRatingSheet(false);
+  }
 
   function applyIcebreakerPrompt(text: string) {
     setContent(text);
@@ -361,6 +430,15 @@ export default function ChatView({
                     >
                       Vedi profilo
                     </Link>
+                    {canShowRatingUi && (
+                      <button
+                        type="button"
+                        onClick={openRatingSheet}
+                        className="block w-full px-4 py-2.5 text-left text-sm text-cream hover:bg-cream/5"
+                      >
+                        Valuta il Mentore
+                      </button>
+                    )}
                     {!closed && (
                       <button
                         type="button"
@@ -568,6 +646,16 @@ export default function ChatView({
             <p className="mx-auto mt-2 max-w-2xl msg-error">{error}</p>
           )}
         </form>
+      )}
+
+      {showRatingSheet && (
+        <MentorConversationRatingSheet
+          open
+          conversationId={conversationId}
+          mentorNickname={otherNickname}
+          onSubmitted={handleRatingSubmitted}
+          onSkipped={handleRatingSkipped}
+        />
       )}
 
       {showCloseSheet && (

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { hasRatedConversation } from "@/lib/mentor-rating-rpc";
 import MentorConversationRatingSheet from "./MentorConversationRatingSheet";
+import { markAutoRatingPromptDismissed } from "@/lib/mentor-rating-prompt";
 
 type Props = {
   open: boolean;
@@ -79,7 +80,14 @@ export default function CloseConversationSheet({
         open
         conversationId={conversationId}
         mentorNickname={mentorNickname}
-        onDone={onRatingDone}
+        onSubmitted={() => {
+          markAutoRatingPromptDismissed(conversationId);
+          onRatingDone();
+        }}
+        onSkipped={() => {
+          markAutoRatingPromptDismissed(conversationId);
+          onRatingDone();
+        }}
       />
     );
   }
