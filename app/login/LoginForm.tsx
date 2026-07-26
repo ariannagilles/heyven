@@ -4,9 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-
-const inputClassName =
-  "mt-1 w-full rounded-2xl border border-[#04342C]/15 bg-cream/5 px-4 py-3 text-[#04342C] outline-none focus:border-[#0F6E56]";
+import PasswordInput from "@/components/PasswordInput";
 
 const messageClassName =
   "rounded-xl bg-[#D4EDE5] px-3 py-2 text-sm text-[#04342C]";
@@ -47,18 +45,14 @@ export default function LoginForm() {
   }
 
   return (
-    <main className="flex min-h-dvh flex-col justify-center bg-[#FAEEDA] px-6">
+    <main className="flex min-h-dvh flex-col justify-center px-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-[calc(1.5rem+env(safe-area-inset-top))]">
       <div className="mx-auto w-full max-w-md">
-        <img
-          src="/logo-green.png"
-          alt="heyven"
-          className="mx-auto mb-8 w-24"
-        />
+        <img src="/logo-white.png" alt="heyven" className="mx-auto mb-8 w-24" />
 
-        <h1 className="text-center text-2xl font-semibold text-[#04342C]">
+        <h1 className="font-display text-center text-[25px] leading-tight text-cream">
           Il tuo rifugio ti aspettava
         </h1>
-        <p className="mt-2 mb-6 text-center text-sm text-[#4A6158]">
+        <p className="mt-2 mb-6 text-center text-sm text-cream/70">
           Accedi per riprendere da dove eri.
         </p>
 
@@ -68,57 +62,54 @@ export default function LoginForm() {
           </p>
         )}
 
-        <form
-          onSubmit={onSubmit}
-          className="rounded-3xl border border-white/60 bg-cream/10 p-5"
-        >
-          <div className="space-y-3">
-            <label className="block">
-              <span className="text-sm font-medium text-[#4A6158]">Email</span>
-              <input
-                type="email"
-                className={inputClassName}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                autoComplete="email"
-                required
-              />
-            </label>
-            <label className="block">
-              <span className="text-sm font-medium text-[#4A6158]">Password</span>
-              <input
-                type="password"
-                className={inputClassName}
+        <form onSubmit={onSubmit} className="space-y-4">
+          <div>
+            <span className="field-label">Email</span>
+            <input
+              type="email"
+              className="field-input mt-2"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="nome@esempio.it"
+              autoComplete="email"
+              required
+            />
+          </div>
+          <div>
+            <span className="field-label">Password</span>
+            <div className="mt-2">
+              <PasswordInput
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                placeholder="Almeno 8 caratteri"
                 autoComplete="current-password"
                 required
               />
-              <Link
-                href="/reset-password/richiesta"
-                className="mt-1.5 inline-block text-xs text-[#4A6158] underline underline-offset-2 hover:text-[#04342C]"
-              >
-                Password dimenticata?
-              </Link>
-            </label>
-
-            {error && <p className={messageClassName}>{error}</p>}
-
-            <button
-              type="submit"
-              className="mt-2 w-full rounded-2xl bg-[#04342C] py-4 font-semibold text-[#FAEEDA] transition active:scale-[0.99] disabled:opacity-50"
-              disabled={loading}
+            </div>
+            <Link
+              href="/reset-password/richiesta"
+              className="field-hint inline-block underline underline-offset-2 hover:text-cream/70"
             >
-              {loading ? "Accesso…" : "Entra"}
-            </button>
+              Password dimenticata?
+            </Link>
           </div>
+
+          {error && <p className={messageClassName}>{error}</p>}
+
+          <button
+            type="submit"
+            className="w-full rounded-full bg-cream py-4 text-[15px] font-semibold text-petrolio transition active:scale-[0.99] disabled:opacity-50"
+            disabled={loading}
+          >
+            {loading ? "Accesso…" : "Entra"}
+          </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-[#4A6158]">
+        <p className="mt-6 text-center text-sm text-cream/55">
           Non hai un account?{" "}
           <Link
             href={`/register?next=${encodeURIComponent(next)}`}
-            className="font-semibold text-[#04342C] underline"
+            className="font-semibold text-cream/70 underline underline-offset-2"
           >
             Registrati
           </Link>

@@ -137,20 +137,18 @@ function ChangeNicknameModal({
         ma appariranno con il nuovo nickname.
       </p>
       <form onSubmit={save} className="space-y-3 mt-4">
-        <label className="block">
-          <span className="text-xs font-medium text-cream/70">
-            Nuovo nickname
-          </span>
+        <div>
+          <span className="field-label">Nuovo nickname</span>
           <input
-            className="field mt-1"
+            className="field-input mt-2"
             value={value}
             onChange={(e) => setValue(e.target.value)}
             autoFocus
             required
           />
-        </label>
+        </div>
         {error && (
-          <p className="msg-error">
+          <p className="rounded-xl bg-[#D4EDE5] px-3 py-2 text-sm text-[#04342C]">
             {error}
           </p>
         )}

@@ -84,7 +84,7 @@ export default function RatingForm({ conversationId }: { conversationId: string 
           Vuoi raccontarci com'è andata? (opzionale)
         </span>
         <textarea
-          className="field mt-1 min-h-[120px]"
+          className="field-input mt-2 min-h-[120px]"
           value={feedback}
           onChange={(e) => setFeedback(e.target.value)}
           placeholder="La tua esperienza, in libertà."

@@ -44,9 +44,9 @@ export default function ContentEditForm({
     <form onSubmit={handleSubmit} className="space-y-4">
       {showTitle && onTitleChange && (
         <label className="block">
-          <span className="text-xs font-medium text-cream/70">Titolo</span>
+          <span className="field-label">Titolo</span>
           <input
-            className="field mt-1"
+            className="field-input mt-2"
             value={title}
             onChange={(e) => onTitleChange(e.target.value)}
             placeholder="Dai un titolo alla tua storia (opzionale)"
@@ -64,9 +64,9 @@ export default function ContentEditForm({
       )}
 
       <label className="block">
-        <span className="text-xs font-medium text-cream/70">{contentLabel}</span>
+        <span className="field-label">{contentLabel}</span>
         <textarea
-          className={`field mt-1 ${textareaClassName}`}
+          className={`field-input mt-2 ${textareaClassName}`}
           value={content}
           onChange={(e) => onContentChange(e.target.value)}
           maxLength={contentMaxLength}

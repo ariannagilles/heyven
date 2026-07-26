@@ -186,7 +186,7 @@ export default function ReportButton({ targetType, targetId, className = "" }: P
                       Dettagli (opzionale)
                     </span>
                     <textarea
-                      className="field min-h-[88px]"
+                      className="field-input min-h-[88px]"
                       value={otherText}
                       onChange={(e) => setOtherText(e.target.value)}
                       placeholder="Descrivi brevemente il problema…"

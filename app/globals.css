@@ -87,8 +87,51 @@ textarea {
   .btn-outline {
     @apply btn border border-cream/20 text-cream hover:bg-cream/5;
   }
+  .field-label {
+    @apply text-xs font-semibold uppercase tracking-[0.9px] text-cream/[0.72];
+  }
+  .field-hint {
+    @apply mt-2 text-xs leading-relaxed text-cream/[0.55];
+  }
+  .field-input {
+    display: block;
+    width: 100%;
+    min-height: 52px;
+    padding: 14px 16px;
+    background: rgba(245, 239, 227, 0.06);
+    border: 1px solid rgba(245, 239, 227, 0.28);
+    border-radius: 14px;
+    color: var(--color-cream);
+    font-size: 16px;
+    line-height: 1.4;
+    outline: none;
+    caret-color: var(--color-mint);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .field-input::placeholder {
+    color: rgba(245, 239, 227, 0.4);
+  }
+  .field-input:focus {
+    border-color: #5dcaa5;
+    box-shadow:
+      0 0 0 1px #5dcaa5,
+      0 0 0 4px rgba(93, 202, 165, 0.12);
+  }
+  textarea.field-input {
+    min-height: 52px;
+    resize: vertical;
+  }
+  .field-input-wrap {
+    @apply relative;
+  }
+  .field-input-wrap .field-input {
+    padding-right: 3rem;
+  }
+  .field-input-toggle {
+    @apply absolute right-3 top-1/2 -translate-y-1/2 inline-flex h-9 w-9 items-center justify-center rounded-lg text-cream/45 transition-colors hover:text-cream/70 focus:outline-none focus-visible:text-cream/80;
+  }
   .field {
-    @apply w-full rounded-2xl border border-cream/20 bg-cream/5 px-4 py-3 text-cream placeholder:text-cream/40 focus:outline-none focus:border-mint/40 focus:bg-cream/10;
+    @apply field-input;
   }
   .card {
     @apply glass-card;

@@ -57,7 +57,7 @@ export default function NewPostForm({ initialSpace }: { initialSpace: string }) 
       <label className="block">
         <span className="text-xs font-medium text-cream/70">Il tuo sfogo</span>
         <textarea
-          className="field mt-1 min-h-[160px]"
+          className="field-input mt-2 min-h-[160px]"
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="Scrivi quello che senti..."

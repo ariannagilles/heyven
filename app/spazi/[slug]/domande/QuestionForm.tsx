@@ -61,7 +61,7 @@ export default function QuestionForm({ spaceSlug }: { spaceSlug: string }) {
           maxLength={MAX}
           rows={2}
           placeholder="Chiedi alla community."
-          className="field mt-1 min-h-[64px]"
+          className="field-input mt-2 min-h-[64px]"
         />
         <div className="mt-1 text-right text-xs text-cream/50 tabular-nums">
           {content.length} / {MAX}

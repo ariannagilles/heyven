@@ -64,7 +64,7 @@ export default function NewStoryForm({ initialSpace }: { initialSpace: string })
       <label className="block">
         <span className="text-xs font-medium text-cream/70">Titolo</span>
         <input
-          className="field mt-1"
+          className="field-input mt-2"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Dai un titolo alla tua storia (opzionale)"
@@ -75,7 +75,7 @@ export default function NewStoryForm({ initialSpace }: { initialSpace: string })
       <label className="block">
         <span className="text-xs font-medium text-cream/70">La tua storia</span>
         <textarea
-          className="field mt-1 min-h-[260px]"
+          className="field-input mt-2 min-h-[260px]"
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="Scrivi quello che vuoi raccontare..."

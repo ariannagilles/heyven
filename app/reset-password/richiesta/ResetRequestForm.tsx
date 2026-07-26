@@ -56,21 +56,22 @@ export default function ResetRequestForm() {
           </Link>
         </div>
       ) : (
-        <form onSubmit={onSubmit} className="space-y-3 card p-5">
-          <label className="block">
-            <span className="text-xs font-medium text-cream/70">Email</span>
+        <form onSubmit={onSubmit} className="space-y-4 card p-5">
+          <div>
+            <span className="field-label">Email</span>
             <input
               type="email"
-              className="field mt-1"
+              className="field-input mt-2"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              placeholder="nome@esempio.it"
               autoComplete="email"
               required
             />
-          </label>
+          </div>
 
           {error && (
-            <p className="msg-error">
+            <p className="rounded-xl bg-[#D4EDE5] px-3 py-2 text-sm text-[#04342C]">
               {error}
             </p>
           )}

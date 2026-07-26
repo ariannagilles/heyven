@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import PasswordInput from "@/components/PasswordInput";
 
 export default function ResetConfirmForm() {
   const router = useRouter();
@@ -112,38 +113,36 @@ export default function ResetConfirmForm() {
           Verifica del link in corso…
         </div>
       ) : (
-        <form onSubmit={onSubmit} className="space-y-3 card p-5">
-          <label className="block">
-            <span className="text-xs font-medium text-cream/70">
-              Nuova password
-            </span>
-            <input
-              type="password"
-              className="field mt-1"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete="new-password"
-              minLength={8}
-              required
-            />
-          </label>
-          <label className="block">
-            <span className="text-xs font-medium text-cream/70">
-              Conferma nuova password
-            </span>
-            <input
-              type="password"
-              className="field mt-1"
-              value={confirm}
-              onChange={(e) => setConfirm(e.target.value)}
-              autoComplete="new-password"
-              minLength={8}
-              required
-            />
-          </label>
+        <form onSubmit={onSubmit} className="space-y-4 card p-5">
+          <div>
+            <span className="field-label">Nuova password</span>
+            <div className="mt-2">
+              <PasswordInput
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Almeno 8 caratteri"
+                autoComplete="new-password"
+                minLength={8}
+                required
+              />
+            </div>
+          </div>
+          <div>
+            <span className="field-label">Conferma nuova password</span>
+            <div className="mt-2">
+              <PasswordInput
+                value={confirm}
+                onChange={(e) => setConfirm(e.target.value)}
+                placeholder="Almeno 8 caratteri"
+                autoComplete="new-password"
+                minLength={8}
+                required
+              />
+            </div>
+          </div>
 
           {error && (
-            <p className="msg-error">
+            <p className="rounded-xl bg-[#D4EDE5] px-3 py-2 text-sm text-[#04342C]">
               {error}
             </p>
           )}

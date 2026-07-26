@@ -53,7 +53,7 @@ export default function IntroEditor({
         maxLength={MAX}
         rows={3}
         placeholder="Scrivi una frase di presentazione per i tuoi utenti."
-        className="field min-h-[88px]"
+        className="field-input min-h-[88px]"
       />
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <span className="text-xs text-cream/50 tabular-nums">

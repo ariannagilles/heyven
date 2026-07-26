@@ -168,7 +168,7 @@ export default function FeedbackWidget() {
                 <label className="block">
                   <span className="sr-only">Il tuo messaggio</span>
                   <textarea
-                    className="field min-h-[120px]"
+                    className="field-input min-h-[120px]"
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     placeholder="Scrivi quello che pensi, tutto è utile."

@@ -67,7 +67,7 @@ export default function StoryForm({ spaceSlug }: { spaceSlug: string }) {
             onChange={(e) => setTitle(e.target.value)}
             maxLength={TITLE_MAX}
             placeholder="Un titolo, se vuoi."
-            className="field mt-1"
+            className="field-input mt-2"
           />
         </label>
       )}
@@ -81,7 +81,7 @@ export default function StoryForm({ spaceSlug }: { spaceSlug: string }) {
           onFocus={() => setExpanded(true)}
           rows={expanded ? 8 : 2}
           placeholder="Scrivi quello che vuoi raccontare…"
-          className="field mt-1 min-h-[64px]"
+          className="field-input mt-2 min-h-[64px]"
         />
       </label>
       {error && (

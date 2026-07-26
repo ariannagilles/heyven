@@ -27,7 +27,7 @@ export default function CityMap() {
           value={city}
           onChange={(e) => setCity(e.target.value)}
           placeholder="Inserisci la tua città..."
-          className="field flex-1"
+          className="field-input flex-1"
           aria-label="Città"
         />
         <button

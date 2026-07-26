@@ -12,6 +12,7 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import { randomNickname } from "@/lib/nickname";
 import { SPACES } from "@/lib/spaces";
+import PasswordInput from "@/components/PasswordInput";
 
 type Phase = "intro" | "step1" | "step1b" | "step2" | "step3";
 type NicknameStatus = "idle" | "checking" | "available" | "taken" | "invalid";
@@ -81,10 +82,6 @@ const ONBOARDING_ERROR =
   "rounded-xl bg-[#D4EDE5] px-3 py-2 text-sm text-[#04342C]";
 const ONBOARDING_INFO =
   "rounded-2xl border border-cream/10 bg-cream/5 px-3 py-2 text-sm text-cream/80";
-const ONBOARDING_INPUT =
-  "mt-2 w-full border-0 bg-transparent px-0 py-1.5 text-[15px] text-cream outline-none placeholder:text-cream/30 focus:outline-none";
-const ONBOARDING_LABEL =
-  "text-xs font-semibold uppercase tracking-[0.9px] text-cream/[0.72]";
 
 const introTitles = [
   "Heyven è rifugio",
@@ -501,7 +498,7 @@ function StepShell({
   );
 }
 
-function GlassInput({
+function FormField({
   label,
   hint,
   children,
@@ -511,10 +508,25 @@ function GlassInput({
   children: React.ReactNode;
 }) {
   return (
+    <div>
+      <span className="field-label">{label}</span>
+      <div className="mt-2">{children}</div>
+      {hint ? <p className="field-hint">{hint}</p> : null}
+    </div>
+  );
+}
+
+function NicknameField({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
     <div className="glass-card p-4">
-      <span className={ONBOARDING_LABEL}>{label}</span>
-      {children}
-      {hint && <p className="mt-2 text-xs text-cream/45">{hint}</p>}
+      <span className="field-label">{label}</span>
+      <div className="mt-2">{children}</div>
     </div>
   );
 }
@@ -744,7 +756,7 @@ export default function RegisterForm() {
         </p>
 
         <form onSubmit={onSubmit} className="mt-6 space-y-4">
-          <GlassInput label="Nickname anonimo">
+          <NicknameField label="Nickname anonimo">
             <div className="mb-1 flex justify-end">
               <button
                 type="button"
@@ -758,14 +770,14 @@ export default function RegisterForm() {
               </button>
             </div>
             <input
-              className={ONBOARDING_INPUT}
+              className="field-input"
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
               placeholder="es. luna_silente"
               autoComplete="off"
               required
             />
-            <p className="mt-2 text-xs text-cream/45">
+            <p className="field-hint">
               Il nickname è l&apos;unico nome visibile. Nessuno saprà chi sei davvero.
             </p>
             {nicknameStatus === "taken" && (
@@ -774,35 +786,35 @@ export default function RegisterForm() {
             {nicknameStatus === "checking" &&
               nickname.trim().length > 0 &&
               isValidNickname(nickname.trim()) && (
-                <p className="mt-2 text-xs text-cream/45">Verifica disponibilità…</p>
+                <p className="field-hint">Verifica disponibilità…</p>
               )}
-          </GlassInput>
+          </NicknameField>
 
-          <GlassInput
+          <FormField
             label="Indirizzo email"
             hint="Usata solo per recuperare l'accesso. Non sarà mai visibile ad altri."
           >
             <input
               type="email"
-              className={ONBOARDING_INPUT}
+              className="field-input"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              placeholder="nome@esempio.it"
               autoComplete="email"
               required
             />
-          </GlassInput>
+          </FormField>
 
-          <GlassInput label="Password">
-            <input
-              type="password"
-              className={ONBOARDING_INPUT}
+          <FormField label="Password">
+            <PasswordInput
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="Almeno 8 caratteri"
               autoComplete="new-password"
               minLength={6}
               required
             />
-          </GlassInput>
+          </FormField>
 
           {error && <p className={ONBOARDING_ERROR}>{error}</p>}
           {info && <p className={ONBOARDING_INFO}>{info}</p>}
@@ -834,29 +846,29 @@ export default function RegisterForm() {
         </p>
 
         <div className="mt-6 space-y-4">
-          <GlassInput label="Data di nascita">
+          <FormField label="Data di nascita">
             <input
               type="date"
-              className={`${ONBOARDING_INPUT} [color-scheme:dark]`}
+              className="field-input [color-scheme:dark]"
               value={birthDate}
               onChange={(e) => setBirthDate(e.target.value)}
               autoComplete="bday"
               required
             />
-          </GlassInput>
+          </FormField>
 
-          <GlassInput
+          <FormField
             label="In che città vivi?"
             hint="Facoltativo — ci aiuta a mostrarti risorse vicino a te."
           >
             <input
               type="text"
-              className={ONBOARDING_INPUT}
+              className="field-input"
               value={city}
               onChange={(e) => setCity(e.target.value)}
               autoComplete="address-level2"
             />
-          </GlassInput>
+          </FormField>
 
           {step1bError && <p className={ONBOARDING_ERROR}>{step1bError}</p>}
 
@@ -895,7 +907,7 @@ export default function RegisterForm() {
 
         <div className="mt-6 space-y-6">
           <section>
-            <h2 className={ONBOARDING_LABEL}>
+            <h2 className="field-label">
               Cosa ti pesa di più in questo periodo?
             </h2>
             <div className="mt-3 grid grid-cols-2 gap-2">
@@ -921,7 +933,7 @@ export default function RegisterForm() {
           </section>
 
           <section>
-            <h2 className={ONBOARDING_LABEL}>
+            <h2 className="field-label">
               Da quanto tempo ci convivi?
             </h2>
             <div className="mt-3 flex flex-wrap gap-2">
