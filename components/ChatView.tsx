@@ -8,6 +8,7 @@ import type { Message } from "@/lib/chat";
 import { mentorPresenceLabel } from "@/lib/mentor-list-types";
 import { formatMessageTime } from "@/lib/time";
 import { AvatarImage } from "./AvatarImage";
+import CloseConversationSheet from "./mentor/CloseConversationSheet";
 
 const MAX = 2000;
 
@@ -28,6 +29,7 @@ type Props = {
   iAmUser: boolean;
   fullScreen?: boolean;
   mentorLastActivityAt?: string | null;
+  skipRatingOnClose?: boolean;
 };
 
 export default function ChatView({
@@ -41,6 +43,7 @@ export default function ChatView({
   iAmUser,
   fullScreen = false,
   mentorLastActivityAt = null,
+  skipRatingOnClose = false,
 }: Props) {
   const router = useRouter();
   const [supabase] = useState(() => createClient());
@@ -49,17 +52,12 @@ export default function ChatView({
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [closed, setClosed] = useState(initialClosed);
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [closing, setClosing] = useState(false);
-  const [closeError, setCloseError] = useState<string | null>(null);
+  const [showCloseSheet, setShowCloseSheet] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [escalating, setEscalating] = useState(false);
   const [escalationDone, setEscalationDone] = useState(false);
   const [escalationError, setEscalationError] = useState<string | null>(null);
-  const [changingMentor, setChangingMentor] = useState(false);
-  const [showChangeConfirm, setShowChangeConfirm] = useState(false);
-  const [changeError, setChangeError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -69,8 +67,9 @@ export default function ChatView({
   const wasDisconnectedRef = useRef(false);
   const [realtimeConnected, setRealtimeConnected] = useState(true);
 
+  const userHasSent = messages.some((m) => m.sender_id === meId);
   const showIcebreakers =
-    !closed && iAmUser && messages.length === 0 && content.trim() === "";
+    !closed && iAmUser && !userHasSent && content.trim() === "";
 
   function applyIcebreakerPrompt(text: string) {
     setContent(text);
@@ -206,23 +205,6 @@ export default function ChatView({
     return () => document.removeEventListener("mousedown", onPointerDown);
   }, [userMenuOpen]);
 
-  async function handleChangeMentor() {
-    setChangingMentor(true);
-    setChangeError(null);
-    const { error } = await supabase.rpc("change_mentor");
-    if (error) {
-      setChangingMentor(false);
-      setChangeError(
-        error.message.includes("no mentors")
-          ? "Non ci sono altri Mentori disponibili in questo momento. Riprova più tardi."
-          : "Non è stato possibile cambiare Mentore. Riprova.",
-      );
-      return;
-    }
-    router.push("/chat");
-    router.refresh();
-  }
-
   async function escalateToSupervision() {
     setEscalating(true);
     setEscalationError(null);
@@ -281,27 +263,6 @@ export default function ChatView({
       prev.map((m) => (m.id === optimisticId ? (data as Message) : m)),
     );
     router.refresh();
-  }
-
-  async function confirmClose() {
-    setCloseError(null);
-    setClosing(true);
-    await markIncomingAsRead();
-    const { error } = await supabase.rpc("close_conversation", {
-      p_conversation_id: conversationId,
-    });
-    setClosing(false);
-    if (error) {
-      setCloseError(error.message);
-      return;
-    }
-    setShowConfirm(false);
-    setClosed(true);
-    if (iAmUser) {
-      router.push(`/chat/rate?c=${conversationId}`);
-    } else {
-      router.refresh();
-    }
   }
 
   const useMentorChrome = fullScreen && iAmUser;
@@ -378,7 +339,7 @@ export default function ChatView({
                 </>
               )}
             </div>
-            {!closed && iAmUser && (
+            {iAmUser && (
               <div ref={userMenuRef} className="relative shrink-0">
                 <button
                   type="button"
@@ -400,16 +361,18 @@ export default function ChatView({
                     >
                       Vedi profilo
                     </Link>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setUserMenuOpen(false);
-                        setShowChangeConfirm(true);
-                      }}
-                      className="block w-full px-4 py-2.5 text-left text-sm text-cream hover:bg-cream/5"
-                    >
-                      Preferisco un altro Mentore
-                    </button>
+                    {!closed && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setUserMenuOpen(false);
+                          setShowCloseSheet(true);
+                        }}
+                        className="block w-full px-4 py-2.5 text-left text-sm text-cream hover:bg-cream/5"
+                      >
+                        Preferisco un altro Mentore
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
@@ -443,18 +406,15 @@ export default function ChatView({
                 )}
               </div>
             )}
-            {closed && (
-              <span className="shrink-0 rounded-full bg-cream/5 px-3 py-1.5 text-xs text-cream/60">
-                chiusa
-              </span>
-            )}
           </div>
         </header>
 
         {closed && fullScreen && iAmUser && (
-          <p className="mx-auto max-w-2xl px-4 pb-3 text-center text-[11.5px] text-cream/50">
-            Conversazione chiusa · sola lettura
-          </p>
+          <div className="px-4 pb-3">
+            <p className="glass-card mx-auto max-w-2xl px-3 py-2 text-center text-[11.5px] text-cream/55">
+              Conversazione chiusa · sola lettura
+            </p>
+          </div>
         )}
 
         {!realtimeConnected && (
@@ -534,11 +494,6 @@ export default function ChatView({
               );
             })
           )}
-          {closed && (
-            <div className="glass-card mt-2 p-4 text-center text-sm text-cream/70">
-              Conversazione chiusa. I messaggi restano qui, ma non puoi più scrivere.
-            </div>
-          )}
         </div>
       </div>
 
@@ -615,102 +570,19 @@ export default function ChatView({
         </form>
       )}
 
-      {showChangeConfirm && (
-        <div
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-cream/40 backdrop-blur-sm"
-          onClick={() => !changingMentor && setShowChangeConfirm(false)}
-          role="presentation"
-        >
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="change-mentor-title"
-            onClick={(e) => e.stopPropagation()}
-            className="glass-card rounded-3xl p-6 max-w-md w-full shadow-soft border border-cream/10"
-          >
-            <h3 id="change-mentor-title" className="text-lg font-semibold">
-              Vuoi cambiare Mentore?
-            </h3>
-            <p className="text-sm text-cream/70 mt-2">
-              Cambiare va bene, e puoi farlo quando vuoi. A volte però una
-              relazione ha bisogno di un po&apos; di tempo per funzionare. Se te
-              la senti, va benissimo così.
-            </p>
-            {changeError && (
-              <p className="text-sm bg-[#D4EDE5] text-[#04342C] rounded-xl px-3 py-2 mt-3">
-                {changeError}
-              </p>
-            )}
-            <div className="flex justify-end gap-2 mt-5">
-              <button
-                type="button"
-                onClick={() => {
-                  setShowChangeConfirm(false);
-                  setChangeError(null);
-                }}
-                disabled={changingMentor}
-                className="btn-outline"
-              >
-                Resto con @{otherNickname}
-              </button>
-              <button
-                type="button"
-                onClick={() => void handleChangeMentor()}
-                disabled={changingMentor}
-                className="btn-primary"
-              >
-                {changingMentor ? "Un momento…" : "Cambia Mentore"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showConfirm && (
-        <div
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-cream/40 backdrop-blur-sm"
-          onClick={() => !closing && setShowConfirm(false)}
-          role="presentation"
-        >
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="close-conv-title"
-            onClick={(e) => e.stopPropagation()}
-            className="glass-card rounded-3xl p-6 max-w-md w-full shadow-soft border border-cream/10"
-          >
-            <h3 id="close-conv-title" className="text-lg font-semibold">
-              Chiudi conversazione
-            </h3>
-            <p className="text-sm text-cream/70 mt-2">
-              Sei sicuro di voler chiudere questa conversazione? Non potrai più
-              inviare messaggi.
-            </p>
-            {closeError && (
-              <p className="msg-error mt-3">
-                {closeError}
-              </p>
-            )}
-            <div className="flex justify-end gap-2 mt-5">
-              <button
-                type="button"
-                onClick={() => setShowConfirm(false)}
-                disabled={closing}
-                className="btn-outline"
-              >
-                Annulla
-              </button>
-              <button
-                type="button"
-                onClick={confirmClose}
-                disabled={closing}
-                className="btn-primary"
-              >
-                {closing ? "Chiusura…" : "Chiudi"}
-              </button>
-            </div>
-          </div>
-        </div>
+      {showCloseSheet && (
+        <CloseConversationSheet
+          open={showCloseSheet}
+          onClose={() => setShowCloseSheet(false)}
+          conversationId={conversationId}
+          mentorNickname={otherNickname}
+          skipRating={skipRatingOnClose}
+          onClosed={() => setClosed(true)}
+          onComplete={() => {
+            setShowCloseSheet(false);
+            router.push("/chat");
+          }}
+        />
       )}
     </div>
   );

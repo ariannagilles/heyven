@@ -11,6 +11,10 @@ type Props = {
   conversationId: string;
   mentorNickname: string;
   skipRating: boolean;
+  /** Called immediately after the conversation is closed successfully. */
+  onClosed?: () => void;
+  /** Called after close succeeds (and rating is skipped or finished). */
+  onComplete?: () => void;
 };
 
 export default function CloseConversationSheet({
@@ -19,6 +23,8 @@ export default function CloseConversationSheet({
   conversationId,
   mentorNickname,
   skipRating,
+  onClosed,
+  onComplete,
 }: Props) {
   const router = useRouter();
   const [closing, setClosing] = useState(false);
@@ -42,9 +48,11 @@ export default function CloseConversationSheet({
     }
 
     onClose();
+    onClosed?.();
 
     if (skipRating) {
-      router.refresh();
+      if (onComplete) onComplete();
+      else router.refresh();
       return;
     }
 
@@ -53,6 +61,8 @@ export default function CloseConversationSheet({
 
   function onRatingDone() {
     setShowRating(false);
+    if (onComplete) onComplete();
+    else router.refresh();
   }
 
   if (showRating) {

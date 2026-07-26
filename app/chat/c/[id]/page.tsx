@@ -3,6 +3,7 @@ import ChatView from "@/components/ChatView";
 import { createClient } from "@/lib/supabase/server";
 import { avatarDataUri } from "@/lib/avatar";
 import { getConversationById, getMessages, getProfile } from "@/lib/chat";
+import { detectAtRisk } from "@/lib/at-risk";
 
 export const dynamic = "force-dynamic";
 
@@ -37,6 +38,8 @@ export default async function UserConversationPage({
       .maybeSingle(),
   ]);
 
+  const skipRatingOnClose = messages.some((m) => detectAtRisk(m.content));
+
   return (
     <div className="-mb-28 h-dvh">
       <ChatView
@@ -48,6 +51,7 @@ export default async function UserConversationPage({
         initialMessages={messages}
         initialClosed={conversation.status === "closed"}
         mentorLastActivityAt={lastMentorMessage.data?.created_at ?? null}
+        skipRatingOnClose={skipRatingOnClose}
         iAmUser
         fullScreen
       />
