@@ -1,11 +1,14 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import Navbar from "@/components/Navbar";
-import PostDetailArticle from "@/components/PostDetailArticle";
-import ReportButton from "@/components/ReportButton";
+import ContentDetailBody from "@/components/content/ContentDetailBody";
+import ContentDetailChrome from "@/components/content/ContentDetailChrome";
+import ContentDetailHeader, {
+  contentDetailTitle,
+} from "@/components/content/ContentDetailHeader";
+import ContentReplyList from "@/components/content/ContentReplyList";
+import ReactionBar from "@/components/content/ReactionBar";
 import ReplyForm from "./ReplyForm";
 import { createClient } from "@/lib/supabase/server";
-import { timeAgo } from "@/lib/time";
 
 export const dynamic = "force-dynamic";
 
@@ -67,58 +70,50 @@ export default async function PostDetailPage({ params }: { params: { id: string 
   };
   const meTooCount = p.me_too?.[0]?.count ?? 0;
   const replyCount = p.replies?.[0]?.count ?? replies?.length ?? 0;
-  const nickname = p.profiles?.nickname ?? "anonimo";
+  const isAuthor = user?.id === p.author_id;
+  const backHref = `/spazi/${p.space_slug}?tipo=sfogo`;
 
   return (
     <>
       <Navbar />
-      <main className="mx-auto max-w-2xl px-4 py-6 space-y-6">
-        <Link href="/" className="text-sm text-cream/60 hover:text-cream">← torna al feed</Link>
-
-        <PostDetailArticle
-          post={{
-            id: p.id,
-            author_id: p.author_id,
-            content: p.content,
-            created_at: p.created_at,
-            edited_at: p.edited_at ?? null,
-            space_slug: p.space_slug,
-            at_risk: p.at_risk,
-            nickname,
-          }}
-          viewerId={user?.id ?? null}
-          meTooCount={meTooCount}
-          userMeToo={userMeToo}
-          replyCount={replyCount}
-        />
-
-        <section className="space-y-3">
-          <h2 className="text-sm font-medium text-cream/70 px-1">
-            Risposte {replies?.length ? `(${replies.length})` : ""}
-          </h2>
-
-          {(replies?.length ?? 0) === 0 ? (
-            <div className="card p-5 text-sm text-cream/70">
-              Ancora nessuna risposta. Scrivere per primə richiede coraggio.
-            </div>
-          ) : (
-            <ul className="space-y-3">
-              {(replies as unknown as Reply[]).map((r) => (
-                <li key={r.id} className="card p-4">
-                  <header className="flex items-center gap-2 text-xs text-cream/60 mb-1.5">
-                    <span className="font-medium text-cream">@{r.profiles?.nickname ?? "anonimo"}</span>
-                    <span aria-hidden>·</span>
-                    <time dateTime={r.created_at}>{timeAgo(r.created_at)}</time>
-                    <ReportButton targetType="reply" targetId={r.id} className="ml-auto shrink-0" />
-                  </header>
-                  <p className="whitespace-pre-wrap text-cream leading-relaxed">{r.content}</p>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-
-        <ReplyForm postId={post.id} />
+      <main className="mx-auto max-w-2xl px-4 pt-6">
+        <ContentDetailChrome
+          replyForm={<ReplyForm postId={post.id} />}
+          reactionBar={
+            <ReactionBar
+              kind="sfogo"
+              postId={p.id}
+              initialCount={meTooCount}
+              initialActive={userMeToo}
+            />
+          }
+        >
+          <ContentDetailHeader
+            backHref={backHref}
+            title={contentDetailTitle("sfogo", isAuthor)}
+          />
+          <ContentDetailBody
+            kind="sfogo"
+            id={p.id}
+            authorId={p.author_id}
+            viewerId={user?.id ?? null}
+            content={p.content}
+            createdAt={p.created_at}
+            editedAt={p.edited_at ?? null}
+            atRisk={p.at_risk}
+            replyCount={replyCount}
+            reactionCount={meTooCount}
+          />
+          <ContentReplyList
+            replies={((replies as unknown as Reply[]) ?? []).map((r) => ({
+              id: r.id,
+              content: r.content,
+              nickname: r.profiles?.nickname ?? "anonimo",
+              reportTargetType: "reply" as const,
+            }))}
+            emptyMessage="Ancora nessuna risposta. Scrivere per primə richiede coraggio."
+          />
+        </ContentDetailChrome>
       </main>
     </>
   );

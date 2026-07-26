@@ -2,6 +2,7 @@
 
 import { FormEvent, useState, useTransition } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import ReplyComposer from "@/components/content/ReplyComposer";
 import { createClient } from "@/lib/supabase/client";
 import { revalidatePathAction } from "@/lib/revalidate-path";
 import { recordActiveEngagement } from "@/lib/active-engagement";
@@ -26,7 +27,9 @@ export default function ReplyForm({ postId }: { postId: string }) {
 
     setLoading(true);
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) {
       setLoading(false);
       router.replace("/login");
@@ -50,29 +53,16 @@ export default function ReplyForm({ postId }: { postId: string }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="card p-5 space-y-3">
-      <label className="block">
-        <span className="text-xs font-medium text-cream/70">Rispondi in anonimo</span>
-        <textarea
-          className="field mt-1 min-h-[120px]"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="Anche solo un 'ti capisco' può fare la differenza."
-          maxLength={MAX}
-          required
-        />
-        <div className="mt-1 text-right text-xs text-cream/50 tabular-nums">
-          {content.length} / {MAX}
-        </div>
-      </label>
-
-      {error && <p className="msg-error">{error}</p>}
-
-      <div className="flex justify-end">
-        <button type="submit" className="btn-primary" disabled={loading}>
-          {loading ? "Invio…" : "Pubblica risposta"}
-        </button>
-      </div>
-    </form>
+    <div className="space-y-2">
+      <ReplyComposer
+        value={content}
+        onChange={setContent}
+        onSubmit={onSubmit}
+        loading={loading}
+        error={error}
+        maxLength={MAX}
+      />
+      {error && <p className="msg-error px-1">{error}</p>}
+    </div>
   );
 }

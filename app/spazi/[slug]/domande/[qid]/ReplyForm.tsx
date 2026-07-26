@@ -2,6 +2,7 @@
 
 import { FormEvent, useState, useTransition } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import ReplyComposer from "@/components/content/ReplyComposer";
 import { createClient } from "@/lib/supabase/client";
 import { revalidatePathAction } from "@/lib/revalidate-path";
 import { recordActiveEngagement } from "@/lib/active-engagement";
@@ -27,7 +28,9 @@ export default function ReplyForm({ questionId }: { questionId: string }) {
     }
     setLoading(true);
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) {
       setLoading(false);
       router.replace("/login");
@@ -48,37 +51,16 @@ export default function ReplyForm({ questionId }: { questionId: string }) {
   }
 
   return (
-    <form onSubmit={submit} className="card p-4 space-y-3">
-      <label className="block">
-        <span className="text-xs font-medium text-cream/70">
-          La tua risposta
-        </span>
-        <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          maxLength={MAX}
-          rows={3}
-          placeholder="Scrivi in modo gentile."
-          className="field mt-1 min-h-[88px]"
-        />
-        <div className="mt-1 text-right text-xs text-cream/50 tabular-nums">
-          {content.length} / {MAX}
-        </div>
-      </label>
-      {error && (
-        <p className="msg-error">
-          {error}
-        </p>
-      )}
-      <div className="flex justify-end">
-        <button
-          type="submit"
-          disabled={loading || content.trim().length === 0}
-          className="btn-primary"
-        >
-          {loading ? "Invio…" : "Rispondi"}
-        </button>
-      </div>
-    </form>
+    <div className="space-y-2">
+      <ReplyComposer
+        value={content}
+        onChange={setContent}
+        onSubmit={submit}
+        loading={loading}
+        error={error}
+        maxLength={MAX}
+      />
+      {error && <p className="msg-error px-1">{error}</p>}
+    </div>
   );
 }

@@ -117,7 +117,7 @@ export default function MixedFeedItemClient({ item, viewerId }: Props) {
               </p>
             </Link>
           ) : (
-            <Link href={`/spazi/${item.space_slug}/storie`} className="block">
+            <Link href={`/spazi/${item.space_slug}/storie/${item.id}`} className="block">
               <p className="whitespace-pre-wrap text-cream leading-relaxed line-clamp-6">
                 {editable.content}
               </p>

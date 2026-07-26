@@ -15,7 +15,7 @@ type Props = {
 function itemHref(item: MixedFeedItem): string {
   if (item.kind === "sfogo") return `/post/${item.id}`;
   if (item.kind === "domanda") return `/spazi/${item.space_slug}/domande/${item.id}`;
-  return `/spazi/${item.space_slug}/storie`;
+  return `/spazi/${item.space_slug}/storie/${item.id}`;
 }
 
 function reactionCount(item: MixedFeedItem): number {

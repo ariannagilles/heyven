@@ -18,7 +18,7 @@ function itemHref(item: MixedFeedItem): string {
   if (item.kind === "domanda") {
     return `/spazi/${item.space_slug}/domande/${item.id}`;
   }
-  return `/spazi/${item.space_slug}/storie`;
+  return `/spazi/${item.space_slug}/storie/${item.id}`;
 }
 
 function meTooCount(item: MixedFeedItem): number {

@@ -225,3 +225,74 @@ export async function getStories(
 
   return pageFromRows(mapped, limit);
 }
+
+export type StoryDetail = {
+  id: string;
+  space_slug: string;
+  author_id: string;
+  title: string | null;
+  content: string;
+  created_at: string;
+  edited_at: string | null;
+  nickname: string;
+  at_risk: boolean;
+  reaction_count: number;
+  has_reacted: boolean;
+};
+
+type RawStoryDetail = {
+  id: string;
+  space_slug: string;
+  author_id: string;
+  title: string | null;
+  content: string;
+  created_at: string;
+  edited_at: string | null;
+  at_risk: boolean;
+  profiles: { nickname: string } | null;
+  story_reactions: { count: number }[] | null;
+};
+
+export async function getStory(
+  supabase: SupabaseClient,
+  storyId: string,
+  userId: string | null,
+): Promise<StoryDetail | null> {
+  const { data } = await supabase
+    .from("stories")
+    .select(
+      "id, space_slug, author_id, title, content, created_at, edited_at, at_risk, profiles!stories_author_id_fkey(nickname), story_reactions(count)",
+    )
+    .eq("id", storyId)
+    .maybeSingle();
+
+  if (!data) return null;
+
+  const s = data as unknown as RawStoryDetail;
+  const nickname = s.profiles?.nickname ?? "anonimo";
+
+  let hasReacted = false;
+  if (userId) {
+    const { data: mine } = await supabase
+      .from("story_reactions")
+      .select("story_id")
+      .eq("story_id", storyId)
+      .eq("user_id", userId)
+      .maybeSingle();
+    hasReacted = !!mine;
+  }
+
+  return {
+    id: s.id,
+    space_slug: s.space_slug,
+    author_id: s.author_id,
+    title: s.title,
+    content: s.content,
+    created_at: s.created_at,
+    edited_at: s.edited_at ?? null,
+    nickname,
+    at_risk: s.at_risk ?? false,
+    reaction_count: s.story_reactions?.[0]?.count ?? 0,
+    has_reacted: hasReacted,
+  };
+}

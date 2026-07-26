@@ -1,14 +1,15 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import QuestionDetailArticle from "@/components/QuestionDetailArticle";
-import Avatar from "@/components/Avatar";
-import ReportButton from "@/components/ReportButton";
+import ContentDetailBody from "@/components/content/ContentDetailBody";
+import ContentDetailChrome from "@/components/content/ContentDetailChrome";
+import ContentDetailHeader, {
+  contentDetailTitle,
+} from "@/components/content/ContentDetailHeader";
+import ContentReplyList from "@/components/content/ContentReplyList";
+import ReactionBar from "@/components/content/ReactionBar";
 import ReplyForm from "./ReplyForm";
 import { createClient } from "@/lib/supabase/server";
-import { avatarDataUri } from "@/lib/avatar";
 import { SPACE_BY_SLUG } from "@/lib/spaces";
 import { getQuestion, getQuestionReplies } from "@/lib/space-content";
-import { timeAgo } from "@/lib/time";
 
 export const dynamic = "force-dynamic";
 
@@ -21,72 +22,46 @@ export default async function QuestionDetailPage({
   if (!space) notFound();
 
   const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) redirect(`/login?next=/spazi/${params.slug}/domande/${params.qid}`);
 
   const question = await getQuestion(supabase, params.qid);
   if (!question || question.space_slug !== params.slug) notFound();
 
   const replies = await getQuestionReplies(supabase, params.qid);
+  const isAuthor = user.id === question.author_id;
 
   return (
-    <div className="space-y-4">
-      <Link
-        href={`/spazi/${params.slug}?tipo=domanda`}
-        className="text-sm text-cream/60 hover:text-cream"
-      >
-        ← tutte le domande
-      </Link>
-
-      <QuestionDetailArticle
-        question={{
-          id: question.id,
-          author_id: question.author_id,
-          content: question.content,
-          created_at: question.created_at,
-          edited_at: question.edited_at,
-          at_risk: question.at_risk,
-          nickname: question.nickname,
-          avatarSrc: avatarDataUri(question.nickname),
-        }}
+    <ContentDetailChrome
+      replyForm={<ReplyForm questionId={params.qid} />}
+      reactionBar={<ReactionBar kind="domanda" />}
+    >
+      <ContentDetailHeader
+        backHref={`/spazi/${params.slug}?tipo=domanda`}
+        title={contentDetailTitle("domanda", isAuthor)}
+      />
+      <ContentDetailBody
+        kind="domanda"
+        id={question.id}
+        authorId={question.author_id}
         viewerId={user.id}
+        content={question.content}
+        createdAt={question.created_at}
+        editedAt={question.edited_at}
+        atRisk={question.at_risk}
         replyCount={replies.length}
       />
-
-      <section className="space-y-3">
-        <h2 className="text-sm font-medium text-cream/70 px-1">
-          {replies.length} rispost{replies.length === 1 ? "a" : "e"}
-        </h2>
-
-        {replies.length === 0 ? (
-          <div className="card p-5 text-sm text-cream/70">
-            Nessuna risposta ancora. Scrivere per primə richiede coraggio.
-          </div>
-        ) : (
-          <ul className="space-y-2">
-            {replies.map((r) => (
-              <li key={r.id} className="card p-4">
-                <header className="flex items-center gap-2 text-xs text-cream/60 mb-1.5">
-                  <Avatar nickname={r.nickname} size={28} />
-                  <span className="font-medium text-cream">@{r.nickname}</span>
-                  <span aria-hidden>·</span>
-                  <time dateTime={r.created_at}>{timeAgo(r.created_at)}</time>
-                  <ReportButton
-                    targetType="question_reply"
-                    targetId={r.id}
-                    className="ml-auto shrink-0"
-                  />
-                </header>
-                <p className="text-cream leading-relaxed whitespace-pre-wrap">
-                  {r.content}
-                </p>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <ReplyForm questionId={params.qid} />
-    </div>
+      <ContentReplyList
+        replies={replies.map((r) => ({
+          id: r.id,
+          content: r.content,
+          nickname: r.nickname,
+          reportTargetType: "question_reply" as const,
+        }))}
+        emptyMessage="Nessuna risposta ancora. Scrivere per primə richiede coraggio."
+      />
+    </ContentDetailChrome>
   );
 }
