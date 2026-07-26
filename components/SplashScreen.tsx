@@ -18,15 +18,17 @@ export default function SplashScreen() {
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-[#04342C] flex items-center justify-center animate-[splashFade_2s_ease-out_forwards]">
-      <img
-        src="/logo-white.png"
-        alt="heyven"
-        width={180}
-        height={80}
-        style={{ objectFit: "contain" }}
-        className="animate-[fadeInScale_1.4s_ease-out_forwards]"
-      />
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center px-8 animate-[splashFade_2s_ease-out_forwards]">
+      <div className="flex flex-col items-center gap-6">
+        <img
+          src="/logo-white.png"
+          alt="heyven"
+          width={180}
+          height={80}
+          style={{ objectFit: "contain" }}
+          className="animate-[fadeInScale_1.4s_ease-out_forwards]"
+        />
+      </div>
     </div>
   );
 }

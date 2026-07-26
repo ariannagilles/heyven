@@ -70,6 +70,22 @@ const INTRO_SLIDES = [
 
 const INTRO_SLIDE_GAP = 12;
 
+const ONBOARDING_TITLE = "font-display text-[25px] leading-tight text-cream";
+const ONBOARDING_SUBTITLE = "text-sm leading-relaxed text-cream/70";
+const ONBOARDING_PRIMARY_BTN =
+  "w-full rounded-full bg-cream py-4 text-[15px] font-semibold text-petrolio transition active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50";
+const ONBOARDING_SECONDARY_TEXT = "text-center text-sm text-cream/55";
+const ONBOARDING_SECONDARY_LINK =
+  "font-semibold text-cream/70 underline underline-offset-2 hover:text-cream/85";
+const ONBOARDING_ERROR =
+  "rounded-xl bg-[#D4EDE5] px-3 py-2 text-sm text-[#04342C]";
+const ONBOARDING_INFO =
+  "rounded-2xl border border-cream/10 bg-cream/5 px-3 py-2 text-sm text-cream/80";
+const ONBOARDING_INPUT =
+  "mt-2 w-full border-0 bg-transparent px-0 py-1.5 text-[15px] text-cream outline-none placeholder:text-cream/30 focus:outline-none";
+const ONBOARDING_LABEL =
+  "text-xs font-semibold uppercase tracking-[0.9px] text-cream/[0.72]";
+
 const introTitles = [
   "Heyven è rifugio",
   "Qualcuno qui sa di cosa parli",
@@ -137,7 +153,7 @@ function ProgressBar({ step }: { step: 1 | 2 | 3 | 4 }) {
         <div
           key={segment}
           className={`h-[3px] flex-1 rounded-full ${
-            segment <= step ? "bg-[#04342C]" : "bg-[#04342C]/15"
+            segment <= step ? "bg-mint" : "bg-cream/[0.16]"
           }`}
         />
       ))}
@@ -390,24 +406,22 @@ function IntroPhase({
     }
   }, [onSlideChange, onStart, slideIndex]);
 
-  const currentSlide = INTRO_SLIDES[slideIndex];
-
   return (
-    <main className="flex h-dvh flex-col overflow-hidden bg-[#FAEEDA]">
+    <main className="flex h-dvh flex-col overflow-hidden px-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-[calc(1.5rem+env(safe-area-inset-top))]">
       <img
-        src="/logo-green.png"
+        src="/logo-white.png"
         alt="heyven"
-        className="mx-auto w-20 shrink-0 pt-8"
+        className="mx-auto w-20 shrink-0"
       />
 
-      <div className="flex min-h-0 flex-1 flex-col justify-evenly">
+      <div className="flex min-h-0 flex-1 flex-col justify-center py-4">
         <div
           ref={viewportRef}
-          className="relative z-10 h-40 w-full shrink-0 touch-pan-y overflow-hidden select-none"
+          className="relative z-10 w-full shrink-0 touch-pan-y overflow-hidden select-none"
           style={{ touchAction: "pan-y" }}
         >
           <div
-            className={`pointer-events-none flex h-full ${isDragging ? "" : "transition-transform duration-300 ease-out"}`}
+            className={`pointer-events-none flex ${isDragging ? "" : "transition-transform duration-300 ease-out"}`}
             style={{
               gap: INTRO_SLIDE_GAP,
               transform: `translateX(-${trackOffset}px)`,
@@ -416,52 +430,48 @@ function IntroPhase({
             {INTRO_SLIDES.map((slide, index) => (
               <div
                 key={introTitles[index]}
-                className="pointer-events-none h-full shrink-0"
+                className="glass-card pointer-events-none shrink-0 overflow-hidden p-5"
                 style={{ width: slideWidth > 0 ? slideWidth : "100%" }}
                 aria-hidden={index !== slideIndex}
               >
-                <slide.Illustration />
+                <div className="h-36 w-full">
+                  <slide.Illustration />
+                </div>
+                <h1 className={`pointer-events-none mt-4 ${ONBOARDING_TITLE}`}>
+                  {introTitles[index]}
+                </h1>
+                <p className="pointer-events-none mt-2 text-base leading-relaxed text-cream/70">
+                  {slide.description}
+                </p>
               </div>
             ))}
           </div>
         </div>
-
-        <h1 className="pointer-events-none mt-2 px-8 text-center text-2xl font-bold text-[#04342C] transition-all duration-300">
-          {introTitles[slideIndex]}
-        </h1>
-
-        <p className="pointer-events-none mt-1 px-8 text-center text-base leading-relaxed text-[#4A6158]">
-          {currentSlide.description}
-        </p>
       </div>
 
-      <div className="mt-auto flex shrink-0 flex-col gap-6 px-6 pb-6">
+      <div className="mt-auto flex shrink-0 flex-col gap-6">
         <div className="flex items-center justify-center gap-2">
           {INTRO_SLIDES.map((_, index) => (
             <div
               key={introTitles[index]}
-              className={`h-2 rounded-full transition-all ${
+              className={`rounded-full transition-all ${
                 index === slideIndex
-                  ? "w-6 bg-[#04342C]"
-                  : "w-2 bg-[#04342C]/20"
+                  ? "h-1.5 w-6 bg-mint"
+                  : "h-1.5 w-1.5 bg-cream/[0.28]"
               }`}
               aria-hidden
             />
           ))}
         </div>
-        <button
-          type="button"
-          onClick={goNext}
-          className="w-full rounded-2xl bg-[#04342C] py-4 font-semibold text-[#FAEEDA] transition active:scale-[0.99]"
-        >
+        <button type="button" onClick={goNext} className={ONBOARDING_PRIMARY_BTN}>
           {slideIndex < INTRO_SLIDES.length - 1 ? "Continua" : "Inizia"}
         </button>
-        <p className="text-center text-sm text-[#4A6158]">
+        <p className={ONBOARDING_SECONDARY_TEXT}>
           Hai già un account?{" "}
           <button
             type="button"
             onClick={() => router.push("/login")}
-            className="font-semibold text-[#04342C] underline underline-offset-2"
+            className={ONBOARDING_SECONDARY_LINK}
           >
             Accedi
           </button>
@@ -479,14 +489,10 @@ function StepShell({
   children: React.ReactNode;
 }) {
   return (
-    <main className="flex h-dvh flex-col overflow-hidden bg-[#FAEEDA] px-6">
+    <main className="flex h-dvh flex-col overflow-hidden px-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-[calc(1.5rem+env(safe-area-inset-top))]">
       <div className="mx-auto flex h-full w-full max-w-md min-h-0 flex-col">
-        <div className="shrink-0 pt-8">
-          <img
-            src="/logo-green.png"
-            alt="heyven"
-            className="mx-auto w-20"
-          />
+        <div className="shrink-0">
+          <img src="/logo-white.png" alt="heyven" className="mx-auto w-20" />
           <ProgressBar step={progress} />
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto pb-6">{children}</div>
@@ -505,16 +511,13 @@ function GlassInput({
   children: React.ReactNode;
 }) {
   return (
-    <label className="block">
-      <span className="text-sm font-medium text-[#4A6158]">{label}</span>
+    <div className="glass-card p-4">
+      <span className={ONBOARDING_LABEL}>{label}</span>
       {children}
-      {hint && <p className="mt-1.5 text-xs text-[#7A9188]">{hint}</p>}
-    </label>
+      {hint && <p className="mt-2 text-xs text-cream/45">{hint}</p>}
+    </div>
   );
 }
-
-const inputClassName =
-  "mt-2 w-full rounded-2xl border border-[#04342C]/15 bg-cream/5 px-4 py-3 text-[#04342C] outline-none placeholder:text-[#7A9188] focus:border-[#04342C]/40";
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -735,102 +738,85 @@ export default function RegisterForm() {
   if (phase === "step1") {
     return (
       <StepShell progress={1}>
-        <h1 className="mt-6 text-2xl font-semibold text-[#04342C]">Crea il tuo rifugio</h1>
-        <p className="mt-2 text-sm leading-relaxed text-[#4A6158]">
+        <h1 className={`mt-6 ${ONBOARDING_TITLE}`}>Crea il tuo rifugio</h1>
+        <p className={`mt-2 ${ONBOARDING_SUBTITLE}`}>
           Il primo passo è anonimo.
         </p>
 
-        <form
-          onSubmit={onSubmit}
-          className="mt-6 rounded-3xl border border-white/60 bg-cream/10 p-5 shadow-sm"
-        >
-          <div className="space-y-4">
-            <GlassInput label="Nickname anonimo">
-              <div className="mb-2 flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setNickname(randomNickname());
-                    setError(null);
-                  }}
-                  className="text-xs font-medium text-[#4A6158] underline underline-offset-2"
-                >
-                  ✦ Genera per me
-                </button>
-              </div>
-              <input
-                className={inputClassName}
-                value={nickname}
-                onChange={(e) => setNickname(e.target.value)}
-                placeholder="es. luna_silente"
-                autoComplete="off"
-                required
-              />
-              <p className="mt-1.5 text-xs text-[#7A9188]">
-                Il nickname è l&apos;unico nome visibile. Nessuno saprà chi sei davvero.
-              </p>
-              {nicknameStatus === "taken" && (
-                <p className="mt-1.5 text-xs text-[#7A9188]">{NICKNAME_TAKEN_HINT}</p>
+        <form onSubmit={onSubmit} className="mt-6 space-y-4">
+          <GlassInput label="Nickname anonimo">
+            <div className="mb-1 flex justify-end">
+              <button
+                type="button"
+                onClick={() => {
+                  setNickname(randomNickname());
+                  setError(null);
+                }}
+                className="text-xs font-medium text-cream/55 underline underline-offset-2 hover:text-cream/75"
+              >
+                ✦ Genera per me
+              </button>
+            </div>
+            <input
+              className={ONBOARDING_INPUT}
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
+              placeholder="es. luna_silente"
+              autoComplete="off"
+              required
+            />
+            <p className="mt-2 text-xs text-cream/45">
+              Il nickname è l&apos;unico nome visibile. Nessuno saprà chi sei davvero.
+            </p>
+            {nicknameStatus === "taken" && (
+              <p className={`mt-2 ${ONBOARDING_ERROR}`}>{NICKNAME_TAKEN_HINT}</p>
+            )}
+            {nicknameStatus === "checking" &&
+              nickname.trim().length > 0 &&
+              isValidNickname(nickname.trim()) && (
+                <p className="mt-2 text-xs text-cream/45">Verifica disponibilità…</p>
               )}
-              {nicknameStatus === "checking" &&
-                nickname.trim().length > 0 &&
-                isValidNickname(nickname.trim()) && (
-                  <p className="mt-1.5 text-xs text-[#7A9188]">Verifica disponibilità…</p>
-                )}
-            </GlassInput>
+          </GlassInput>
 
-            <GlassInput
-              label="Indirizzo email"
-              hint="Usata solo per recuperare l'accesso. Non sarà mai visibile ad altri."
-            >
-              <input
-                type="email"
-                className={inputClassName}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                autoComplete="email"
-                required
-              />
-            </GlassInput>
-
-            <GlassInput label="Password">
-              <input
-                type="password"
-                className={inputClassName}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete="new-password"
-                minLength={6}
-                required
-              />
-            </GlassInput>
-          </div>
-
-          {error && (
-            <p className="mt-4 rounded-xl bg-[#D4EDE5] px-3 py-2 text-sm text-[#04342C]">
-              {error}
-            </p>
-          )}
-          {info && (
-            <p className="mt-4 rounded-2xl border border-[#04342C]/10 bg-cream/5 px-3 py-2 text-sm text-[#04342C]">
-              {info}
-            </p>
-          )}
-
-          <button
-            type="submit"
-            disabled={submitDisabled}
-            className="mt-4 w-full rounded-2xl bg-[#04342C] py-4 font-semibold text-[#FAEEDA] transition active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
+          <GlassInput
+            label="Indirizzo email"
+            hint="Usata solo per recuperare l'accesso. Non sarà mai visibile ad altri."
           >
+            <input
+              type="email"
+              className={ONBOARDING_INPUT}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
+              required
+            />
+          </GlassInput>
+
+          <GlassInput label="Password">
+            <input
+              type="password"
+              className={ONBOARDING_INPUT}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="new-password"
+              minLength={6}
+              required
+            />
+          </GlassInput>
+
+          {error && <p className={ONBOARDING_ERROR}>{error}</p>}
+          {info && <p className={ONBOARDING_INFO}>{info}</p>}
+
+          <button type="submit" disabled={submitDisabled} className={ONBOARDING_PRIMARY_BTN}>
             {loading ? "Creazione…" : "Crea il mio spazio"}
           </button>
         </form>
 
-        <p className="mt-5 text-center text-sm text-[#4A6158]">
+        <p className={`mt-5 ${ONBOARDING_SECONDARY_TEXT}`}>
           Hai già un account?{" "}
           <Link
             href={`/login?next=${encodeURIComponent(next)}`}
-            className="font-semibold text-[#04342C] underline underline-offset-2"
+            className={ONBOARDING_SECONDARY_LINK}
           >
             Accedi
           </Link>
@@ -842,16 +828,16 @@ export default function RegisterForm() {
   if (phase === "step1b") {
     return (
       <StepShell progress={2}>
-        <h1 className="mt-6 text-2xl font-semibold text-[#04342C]">Quasi fatto</h1>
-        <p className="mt-2 text-sm leading-relaxed text-[#4A6158]">
+        <h1 className={`mt-6 ${ONBOARDING_TITLE}`}>Quasi fatto</h1>
+        <p className={`mt-2 ${ONBOARDING_SUBTITLE}`}>
           Due dettagli in più, poi si va avanti.
         </p>
 
-        <div className="mt-6 space-y-4 rounded-3xl border border-white/60 bg-cream/10 p-5 shadow-sm">
+        <div className="mt-6 space-y-4">
           <GlassInput label="Data di nascita">
             <input
               type="date"
-              className={inputClassName}
+              className={`${ONBOARDING_INPUT} [color-scheme:dark]`}
               value={birthDate}
               onChange={(e) => setBirthDate(e.target.value)}
               autoComplete="bday"
@@ -865,24 +851,20 @@ export default function RegisterForm() {
           >
             <input
               type="text"
-              className={inputClassName}
+              className={ONBOARDING_INPUT}
               value={city}
               onChange={(e) => setCity(e.target.value)}
               autoComplete="address-level2"
             />
           </GlassInput>
 
-          {step1bError && (
-            <p className="rounded-xl bg-[#D4EDE5] px-3 py-2 text-sm text-[#04342C]">
-              {step1bError}
-            </p>
-          )}
+          {step1bError && <p className={ONBOARDING_ERROR}>{step1bError}</p>}
 
           <button
             type="button"
             onClick={onContinueStep1b}
             disabled={step1bLoading}
-            className="w-full rounded-2xl bg-[#04342C] py-4 font-semibold text-[#FAEEDA] transition active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
+            className={ONBOARDING_PRIMARY_BTN}
           >
             {step1bLoading ? "Salvataggio…" : "Continua →"}
           </button>
@@ -904,19 +886,19 @@ export default function RegisterForm() {
 
     return (
       <StepShell progress={3}>
-        <h1 className="mt-6 text-2xl font-semibold text-[#04342C]">
+        <h1 className={`mt-6 ${ONBOARDING_TITLE}`}>
           Trova il tuo spazio
         </h1>
-        <p className="mt-2 text-sm leading-relaxed text-[#4A6158]">
+        <p className={`mt-2 ${ONBOARDING_SUBTITLE}`}>
           Non serve avere le parole giuste. Scegli quello che ti sembra più vicino.
         </p>
 
         <div className="mt-6 space-y-6">
           <section>
-            <h2 className="text-sm font-medium text-[#4A6158]">
+            <h2 className={ONBOARDING_LABEL}>
               Cosa ti pesa di più in questo periodo?
             </h2>
-            <div className="mt-3 flex flex-wrap gap-2">
+            <div className="mt-3 grid grid-cols-2 gap-2">
               {spaceOptions.map((space) => {
                 const active = selectedSpace === space.slug;
                 return (
@@ -925,9 +907,10 @@ export default function RegisterForm() {
                     type="button"
                     onClick={() => setSelectedSpace(space.slug)}
                     className={
-                      active
-                        ? "rounded-full bg-[#04342C] px-4 py-2 text-sm font-medium text-[#FAEEDA]"
-                        : "rounded-full border border-[#04342C]/20 bg-cream/10 px-4 py-2 text-sm text-[#4A6158]"
+                      "glass-card p-3 text-left text-sm leading-snug transition-all active:scale-[0.98] " +
+                      (active
+                        ? "border-mint shadow-[0_0_0_1px_rgba(93,202,165,0.35),0_0_20px_-4px_rgba(93,202,165,0.25)] text-cream"
+                        : "text-cream/75 hover:bg-cream/[0.04]")
                     }
                   >
                     {space.emoji} {space.label}
@@ -938,7 +921,7 @@ export default function RegisterForm() {
           </section>
 
           <section>
-            <h2 className="text-sm font-medium text-[#4A6158]">
+            <h2 className={ONBOARDING_LABEL}>
               Da quanto tempo ci convivi?
             </h2>
             <div className="mt-3 flex flex-wrap gap-2">
@@ -950,9 +933,10 @@ export default function RegisterForm() {
                     type="button"
                     onClick={() => setSelectedDuration(option)}
                     className={
-                      active
-                        ? "rounded-full bg-[#04342C] px-4 py-2 text-sm font-medium text-[#FAEEDA]"
-                        : "rounded-full border border-[#04342C]/20 bg-cream/10 px-4 py-2 text-sm text-[#4A6158]"
+                      "rounded-full px-4 py-2 text-sm transition-all active:scale-[0.98] " +
+                      (active
+                        ? "border border-mint bg-mint/10 font-medium text-cream shadow-[0_0_16px_-4px_rgba(93,202,165,0.3)]"
+                        : "glass-card text-cream/75 hover:bg-cream/[0.04]")
                     }
                   >
                     {option}
@@ -963,17 +947,13 @@ export default function RegisterForm() {
           </section>
         </div>
 
-        {step2Error && (
-          <p className="mt-4 rounded-2xl border border-[#04342C]/10 bg-cream/5 px-3 py-2 text-sm text-[#04342C]">
-            {step2Error}
-          </p>
-        )}
+        {step2Error && <p className={`mt-4 ${ONBOARDING_INFO}`}>{step2Error}</p>}
 
         <button
           type="button"
           onClick={onContinueStep2}
           disabled={!canContinue}
-          className="mt-6 w-full rounded-2xl bg-[#04342C] py-4 font-semibold text-[#FAEEDA] transition active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
+          className={`mt-6 ${ONBOARDING_PRIMARY_BTN}`}
         >
           {step2Loading ? "Salvataggio…" : "Continua →"}
         </button>
@@ -983,60 +963,63 @@ export default function RegisterForm() {
 
   return (
     <StepShell progress={4}>
-      <h1 className="mt-6 text-2xl font-semibold text-[#04342C]">Scopri chi c&apos;è</h1>
-      <p className="mt-2 text-sm leading-relaxed text-[#4A6158]">
+      <h1 className={`mt-6 ${ONBOARDING_TITLE}`}>Scopri chi c&apos;è</h1>
+      <p className={`mt-2 ${ONBOARDING_SUBTITLE}`}>
         Qualcuno ha già scritto quello che forse stavi cercando le parole per dire.
       </p>
 
       <div className="mt-6 space-y-3">
         {PREVIEW_POSTS.map((post) => (
-          <article
-            key={post.nickname}
-            className="rounded-3xl border border-white/60 bg-cream/10 p-5 shadow-sm"
-          >
+          <article key={post.nickname} className="glass-card p-5">
             <header className="flex items-center gap-3">
               <div
-                className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-medium text-[#04342C]"
+                className="flex h-10 w-10 items-center justify-center rounded-[14px] text-sm font-medium text-petrolio"
                 style={{ backgroundColor: post.avatarBg }}
               >
                 {post.nickname.slice(0, 1).toUpperCase()}
               </div>
               <div>
-                <p className="text-sm font-medium text-[#04342C]">@{post.nickname}</p>
-                <p className="text-xs text-[#4A6158]">
+                <p className="text-sm font-medium text-cream">@{post.nickname}</p>
+                <p className="text-xs text-cream/55">
                   {post.emoji} {post.space}
                 </p>
               </div>
             </header>
-            <p className="mt-3 text-sm leading-relaxed text-[#4A6158]">{post.content}</p>
-            <p className="mt-3 text-xs text-[#7A9188]">
+            <p className="mt-3 text-sm leading-relaxed text-cream/75">{post.content}</p>
+            <p className="mt-3 text-xs text-cream/45">
               💚 Anch&apos;io · {post.meToo} · 💬 {post.replies} risposte
             </p>
           </article>
         ))}
 
-        <article className="mt-2 rounded-3xl bg-[#04342C] p-5">
+        <article
+          className="glass-card p-5"
+          style={{
+            background:
+              "linear-gradient(145deg, rgba(15, 110, 86, 0.35) 0%, rgba(4, 52, 44, 0.55) 100%)",
+          }}
+        >
           <div className="flex items-start gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#FAEEDA]/20 text-sm font-semibold text-[#FAEEDA]">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] bg-cream/10 text-sm font-semibold text-cream">
               S
             </div>
             <div>
-              <p className="font-medium text-[#FAEEDA]">Sara · Mentore</p>
-              <p className="text-xs text-[#FAEEDA]/70">
+              <p className="font-medium text-cream">Sara · Mentore</p>
+              <p className="text-xs text-cream/55">
                 Ha attraversato l&apos;ansia, qui da 8 mesi
               </p>
             </div>
           </div>
-          <p className="mt-4 text-sm italic leading-relaxed text-[#FAEEDA]/90">
+          <p className="mt-4 text-sm italic leading-relaxed text-cream/80">
             &ldquo;Sono qui perché qualcuno c&apos;è stato per me quando ne avevo bisogno. Adesso
             voglio fare lo stesso.&rdquo;
           </p>
         </article>
 
         {selectedSpace === "vuole-aiutare" && (
-          <div className="mt-3 rounded-2xl border border-[#04342C]/15 bg-cream/10 p-4">
-            <p className="text-sm font-medium text-[#04342C]">Grazie di cuore 💚</p>
-            <p className="mt-1 text-sm leading-relaxed text-[#4A6158]">
+          <div className="glass-card p-4">
+            <p className="text-sm font-medium text-cream">Grazie di cuore 💚</p>
+            <p className="mt-1 text-sm leading-relaxed text-cream/70">
               Quando sarai più presente nella community, potrai candidarti come Mentore. Te lo
               faremo sapere.
             </p>
@@ -1044,11 +1027,7 @@ export default function RegisterForm() {
         )}
       </div>
 
-      <button
-        type="button"
-        onClick={onEnterHeyven}
-        className="mt-4 w-full rounded-2xl bg-[#04342C] py-4 font-semibold text-[#FAEEDA] transition active:scale-[0.99]"
-      >
+      <button type="button" onClick={onEnterHeyven} className={`mt-4 ${ONBOARDING_PRIMARY_BTN}`}>
         Entra in Heyven ✦
       </button>
     </StepShell>
