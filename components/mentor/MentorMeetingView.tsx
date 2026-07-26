@@ -83,17 +83,6 @@ export default function MentorMeetingView({
           </p>
         </section>
 
-        <section className="glass-card p-4">
-          <div className="grid grid-cols-3 gap-3">
-            <Signal value={mentor.months_here} label="mesi qui" />
-            <Signal
-              value={mentor.people_accompanied}
-              label="persone accompagnate"
-            />
-            <Signal value="☾" label="supervisionato" />
-          </div>
-        </section>
-
         {areas.length > 0 && (
           <section className="glass-card p-4">
             <BlockLabel>Aree di esperienza</BlockLabel>
@@ -109,6 +98,17 @@ export default function MentorMeetingView({
             </div>
           </section>
         )}
+
+        <section className="glass-card p-4">
+          <div className="grid grid-cols-3 gap-3">
+            <Signal value={mentor.months_here} label="mesi qui" />
+            <Signal
+              value={mentor.people_accompanied}
+              label="persone accompagnate"
+            />
+            <Signal value="☾" label="supervisionato" />
+          </div>
+        </section>
 
         {mode === "profile" && ratingSummary && (
           <MentorRatingBlock summary={ratingSummary} />
