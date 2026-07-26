@@ -12,8 +12,10 @@ export type MentorMeetingData = {
 };
 
 type Props = {
-  mode: "preview" | "active";
+  mode: "preview" | "profile";
   mentor: MentorMeetingData;
+  presenceLabel: string;
+  conversationId?: string;
 };
 
 function BlockLabel({ children }: { children: React.ReactNode }) {
@@ -39,25 +41,40 @@ function Signal({
   );
 }
 
-export default function MentorMeetingView({ mode, mentor }: Props) {
+export default function MentorMeetingView({
+  mode,
+  mentor,
+  presenceLabel,
+  conversationId,
+}: Props) {
   const areas = experienceAreaLabels(mentor.experience_areas);
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-2xl flex-col px-4 pb-24 pt-[calc(1.25rem+env(safe-area-inset-top))]">
       <div className="flex flex-1 flex-col space-y-4 pb-36">
-        <header className="flex flex-col items-center text-center">
-          <MentorMeetingAvatar nickname={mentor.nickname} />
-          <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.1em] text-mint">
-            Il tuo Mentore
-          </p>
-          <h1 className="font-display mt-1.5 text-[20px] leading-tight text-cream">
-            @{mentor.nickname}
-          </h1>
+        <header className="relative pt-1">
+          <Link
+            href="/chat"
+            aria-label="Torna alla lista"
+            className="glass-card absolute left-0 top-0 flex h-[34px] w-[34px] items-center justify-center text-lg leading-none text-cream/80 transition-transform active:scale-[0.98]"
+          >
+            ‹
+          </Link>
+          <div className="flex flex-col items-center px-12 text-center">
+            <MentorMeetingAvatar nickname={mentor.nickname} />
+            <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.1em] text-mint">
+              Il tuo Mentore
+            </p>
+            <h1 className="font-display mt-1.5 text-[20px] leading-tight text-cream">
+              @{mentor.nickname}
+            </h1>
+            <p className="mt-2 text-[12px] text-cream/55">{presenceLabel}</p>
+          </div>
         </header>
 
         <section className="glass-card p-4">
           <BlockLabel>Chi sono</BlockLabel>
-          <p className="mt-2 text-[13.5px] leading-[1.55] text-cream/85 whitespace-pre-wrap">
+          <p className="mt-2 whitespace-pre-wrap text-[13.5px] leading-[1.55] text-cream/85">
             {mentor.intro_text}
           </p>
         </section>
@@ -93,13 +110,18 @@ export default function MentorMeetingView({ mode, mentor }: Props) {
       <div className="fixed bottom-[calc(5.75rem+env(safe-area-inset-bottom))] left-0 right-0 z-40 px-4">
         <div className="mx-auto max-w-2xl">
           {mode === "preview" ? (
-            <ActivateMentorButton />
+            <>
+              <ActivateMentorButton />
+              <p className="mt-2 text-center text-[11.5px] text-cream/50">
+                Puoi iniziare quando te la senti. Nessuna fretta.
+              </p>
+            </>
           ) : (
             <Link
-              href="/chat/c"
+              href={`/chat/c/${conversationId}`}
               className="block w-full rounded-full bg-cream py-3.5 text-center text-[15px] font-semibold text-petrolio transition-transform active:scale-[0.98]"
             >
-              Inizia la conversazione
+              Apri la conversazione
             </Link>
           )}
         </div>

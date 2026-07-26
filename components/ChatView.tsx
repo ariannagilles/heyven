@@ -358,7 +358,7 @@ export default function ChatView({
                 </div>
                 {useMentorChrome ? (
                   <p className="text-[11.5px] leading-snug text-mint">
-                    ● Il tuo Mentore · supervisionato
+                    ● Il tuo Mentore
                   </p>
                 ) : (
                   <div className="text-xs leading-tight text-cream/60">

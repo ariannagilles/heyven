@@ -16,7 +16,10 @@ export default function ActivateMentorButton() {
 
     const minWait = new Promise((res) => setTimeout(res, 2500));
     const assign = supabase.rpc("assign_mentor");
-    const [, { error: assignError }] = await Promise.all([minWait, assign]);
+    const [, { data: convId, error: assignError }] = await Promise.all([
+      minWait,
+      assign,
+    ]);
 
     if (assignError) {
       setLoading(false);
@@ -28,7 +31,7 @@ export default function ActivateMentorButton() {
       return;
     }
 
-    router.push("/chat");
+    router.push(typeof convId === "string" ? `/chat/c/${convId}` : "/chat/c");
   }
 
   return (
