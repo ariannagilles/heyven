@@ -92,12 +92,7 @@ export default async function ChatPage() {
           </div>
         </article>
 
-        <div className="space-y-2">
-          <StartChatButton />
-          <p className="text-xs text-petrolio/60">
-            Troveremo il Mentore più adatto a te.
-          </p>
-        </div>
+        <StartChatButton />
       </main>
     </>
   );
