@@ -129,10 +129,13 @@ export default function ChatView({
     setShowRatingSheet(true);
   }
 
-  function handleRatingSubmitted() {
+  function handleRatingStarsSubmitted() {
     markAutoRatingPromptDismissed(conversationId);
-    setShowRatingSheet(false);
     setHasRated(true);
+  }
+
+  function handleRatingFinished() {
+    setShowRatingSheet(false);
   }
 
   function handleRatingSkipped() {
@@ -653,7 +656,8 @@ export default function ChatView({
           open
           conversationId={conversationId}
           mentorNickname={otherNickname}
-          onSubmitted={handleRatingSubmitted}
+          onStarsSubmitted={handleRatingStarsSubmitted}
+          onFinished={handleRatingFinished}
           onSkipped={handleRatingSkipped}
         />
       )}

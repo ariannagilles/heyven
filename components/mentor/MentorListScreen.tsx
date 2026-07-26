@@ -178,15 +178,15 @@ function ActiveConversationCard({
           open
           conversationId={item.id}
           mentorNickname={item.mentor_nickname}
-          onSubmitted={() => {
+          onStarsSubmitted={() => {
             markAutoRatingPromptDismissed(item.id);
-            setRatingSheetOpen(false);
             setHasRated(true);
+          }}
+          onFinished={() => {
+            setRatingSheetOpen(false);
             router.refresh();
           }}
-          onSkipped={() => {
-            setRatingSheetOpen(false);
-          }}
+          onSkipped={() => setRatingSheetOpen(false)}
         />
       )}
     </>

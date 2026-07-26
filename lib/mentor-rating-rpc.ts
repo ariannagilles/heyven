@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-/** Salva il voto 1–5 via RPC submit_rating (solo titolare conversazione chiusa). */
+/** Salva il voto 1–5 via RPC submit_rating. */
 export async function submitConversationRating(
   supabase: SupabaseClient,
   conversationId: string,
@@ -9,6 +9,18 @@ export async function submitConversationRating(
   return supabase.rpc("submit_rating", {
     p_conversation_id: conversationId,
     p_rating: rating,
+  });
+}
+
+/** Feedback privato per la supervisione (dopo le stelle). */
+export async function submitConversationRatingFeedback(
+  supabase: SupabaseClient,
+  conversationId: string,
+  feedback: string,
+) {
+  return supabase.rpc("submit_rating_feedback", {
+    p_conversation_id: conversationId,
+    p_feedback: feedback,
   });
 }
 

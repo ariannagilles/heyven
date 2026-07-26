@@ -8,6 +8,7 @@ create table if not exists public.mentor_ratings (
   conversation_id uuid not null references public.conversations(id) on delete cascade,
   rater_user_id uuid not null references public.profiles(id) on delete cascade,
   stars int not null check (stars between 1 and 5),
+  feedback text check (feedback is null or char_length(feedback) <= 1000),
   created_at timestamptz not null default now()
 );
 
@@ -43,6 +44,10 @@ begin
   end if;
 end $$;
 
+alter table public.mentor_ratings
+  add column if not exists feedback text
+  check (feedback is null or char_length(feedback) <= 1000);
+
 alter table public.mentor_ratings drop constraint if exists mentor_ratings_unique_user_conv;
 alter table public.mentor_ratings drop constraint if exists mentor_ratings_unique_rater_conv;
 alter table public.mentor_ratings
@@ -63,8 +68,7 @@ revoke all on table public.mentor_ratings from anon, authenticated;
 -- Inserimento solo via RPC; l'RPC verifica che l'utente sia il titolare della conversazione.
 create or replace function public.submit_rating(
   p_conversation_id uuid,
-  p_rating int,
-  p_feedback text default null
+  p_rating int
 )
 returns void
 language plpgsql
@@ -91,7 +95,7 @@ begin
   if conv_user is null then
     raise exception 'conversation not found';
   end if;
-  if (conv_user <> uid then
+  if conv_user <> uid then
     raise exception 'only the user can rate';
   end if;
 
@@ -103,6 +107,52 @@ begin
   )
   values (p_conversation_id, uid, conv_mentor, p_rating)
   on conflict (conversation_id, rater_user_id) do nothing;
+end;
+$$;
+
+create or replace function public.submit_rating_feedback(
+  p_conversation_id uuid,
+  p_feedback text
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  uid uuid := auth.uid();
+  conv_user uuid;
+  trimmed text := nullif(trim(p_feedback), '');
+begin
+  if uid is null then
+    raise exception 'not authenticated';
+  end if;
+  if trimmed is null then
+    raise exception 'feedback is empty';
+  end if;
+  if char_length(trimmed) > 1000 then
+    raise exception 'feedback too long';
+  end if;
+
+  select user_id into conv_user
+  from public.conversations
+  where id = p_conversation_id;
+
+  if conv_user is null then
+    raise exception 'conversation not found';
+  end if;
+  if conv_user <> uid then
+    raise exception 'only the user can submit feedback';
+  end if;
+
+  update public.mentor_ratings
+  set feedback = trimmed
+  where conversation_id = p_conversation_id
+    and rater_user_id = uid;
+
+  if not found then
+    raise exception 'rating not found';
+  end if;
 end;
 $$;
 
@@ -135,8 +185,11 @@ as $$
   where mentor_id = p_mentor_id;
 $$;
 
-revoke all on function public.submit_rating(uuid, int, text) from public;
-grant execute on function public.submit_rating(uuid, int, text) to authenticated;
+revoke all on function public.submit_rating(uuid, int) from public;
+grant execute on function public.submit_rating(uuid, int) to authenticated;
+
+revoke all on function public.submit_rating_feedback(uuid, text) from public;
+grant execute on function public.submit_rating_feedback(uuid, text) to authenticated;
 
 revoke all on function public.has_rated_conversation(uuid) from public;
 grant execute on function public.has_rated_conversation(uuid) to authenticated;

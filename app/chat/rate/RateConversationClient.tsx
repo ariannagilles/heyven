@@ -25,7 +25,8 @@ export default function RateConversationClient({
       open
       conversationId={conversationId}
       mentorNickname={mentorNickname}
-      onSubmitted={leaveChat}
+      onStarsSubmitted={() => markAutoRatingPromptDismissed(conversationId)}
+      onFinished={leaveChat}
       onSkipped={() => {
         markAutoRatingPromptDismissed(conversationId);
         leaveChat();

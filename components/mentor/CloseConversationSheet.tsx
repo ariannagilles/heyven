@@ -80,10 +80,8 @@ export default function CloseConversationSheet({
         open
         conversationId={conversationId}
         mentorNickname={mentorNickname}
-        onSubmitted={() => {
-          markAutoRatingPromptDismissed(conversationId);
-          onRatingDone();
-        }}
+        onStarsSubmitted={() => markAutoRatingPromptDismissed(conversationId)}
+        onFinished={onRatingDone}
         onSkipped={() => {
           markAutoRatingPromptDismissed(conversationId);
           onRatingDone();
