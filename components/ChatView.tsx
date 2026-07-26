@@ -41,11 +41,16 @@ export default function ChatView({
   const [closing, setClosing] = useState(false);
   const [closeError, setCloseError] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [escalating, setEscalating] = useState(false);
   const [escalationDone, setEscalationDone] = useState(false);
   const [escalationError, setEscalationError] = useState<string | null>(null);
+  const [changingMentor, setChangingMentor] = useState(false);
+  const [showChangeConfirm, setShowChangeConfirm] = useState(false);
+  const [changeError, setChangeError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   async function markIncomingAsRead() {
     const { error } = await supabase
@@ -128,6 +133,34 @@ export default function ChatView({
     document.addEventListener("mousedown", onPointerDown);
     return () => document.removeEventListener("mousedown", onPointerDown);
   }, [menuOpen]);
+
+  useEffect(() => {
+    if (!userMenuOpen) return;
+    function onPointerDown(e: MouseEvent) {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", onPointerDown);
+    return () => document.removeEventListener("mousedown", onPointerDown);
+  }, [userMenuOpen]);
+
+  async function handleChangeMentor() {
+    setChangingMentor(true);
+    setChangeError(null);
+    const { error } = await supabase.rpc("change_mentor");
+    if (error) {
+      setChangingMentor(false);
+      setChangeError(
+        error.message.includes("no mentors")
+          ? "Non ci sono altri Mentori disponibili in questo momento. Riprova più tardi."
+          : "Non è stato possibile cambiare Mentore. Riprova.",
+      );
+      return;
+    }
+    router.push("/chat");
+    router.refresh();
+  }
 
   async function escalateToSupervision() {
     setEscalating(true);
@@ -222,13 +255,43 @@ export default function ChatView({
             </div>
           </div>
           {!closed && iAmUser && (
-            <button
-              type="button"
-              onClick={() => setShowConfirm(true)}
-              className="text-xs rounded-full px-3 py-1.5 bg-petrolio/5 text-petrolio hover:bg-petrolio/10 shrink-0"
-            >
-              Chiudi conversazione
-            </button>
+            <div ref={userMenuRef} className="relative shrink-0">
+              <button
+                type="button"
+                onClick={() => setUserMenuOpen((open) => !open)}
+                aria-label="Altre azioni"
+                aria-expanded={userMenuOpen}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-petrolio/5 text-petrolio hover:bg-petrolio/10"
+              >
+                <span aria-hidden className="text-lg leading-none">
+                  ⋯
+                </span>
+              </button>
+              {userMenuOpen && (
+                <div className="absolute right-0 top-full z-10 mt-1 min-w-[220px] rounded-2xl border border-petrolio/10 bg-crema py-1 shadow-soft">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUserMenuOpen(false);
+                      setShowChangeConfirm(true);
+                    }}
+                    className="block w-full px-4 py-2.5 text-left text-sm text-petrolio hover:bg-petrolio/5"
+                  >
+                    Preferisco un altro Mentore
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUserMenuOpen(false);
+                      setShowConfirm(true);
+                    }}
+                    className="block w-full px-4 py-2.5 text-left text-sm text-petrolio hover:bg-petrolio/5"
+                  >
+                    Chiudi conversazione
+                  </button>
+                </div>
+              )}
+            </div>
           )}
           {!closed && !iAmUser && (
             <div ref={menuRef} className="relative shrink-0">
@@ -359,6 +422,57 @@ export default function ChatView({
             </p>
           )}
         </form>
+      )}
+
+      {showChangeConfirm && (
+        <div
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-petrolio/40 backdrop-blur-sm"
+          onClick={() => !changingMentor && setShowChangeConfirm(false)}
+          role="presentation"
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="change-mentor-title"
+            onClick={(e) => e.stopPropagation()}
+            className="bg-crema rounded-3xl p-6 max-w-md w-full shadow-soft border border-petrolio/10"
+          >
+            <h3 id="change-mentor-title" className="text-lg font-semibold">
+              Vuoi cambiare Mentore?
+            </h3>
+            <p className="text-sm text-petrolio/70 mt-2">
+              Cambiare va bene, e puoi farlo quando vuoi. A volte però una
+              relazione ha bisogno di un po&apos; di tempo per funzionare. Se te
+              la senti, va benissimo così.
+            </p>
+            {changeError && (
+              <p className="text-sm bg-[#D4EDE5] text-[#04342C] rounded-xl px-3 py-2 mt-3">
+                {changeError}
+              </p>
+            )}
+            <div className="flex justify-end gap-2 mt-5">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowChangeConfirm(false);
+                  setChangeError(null);
+                }}
+                disabled={changingMentor}
+                className="btn-outline"
+              >
+                Resto con @{otherNickname}
+              </button>
+              <button
+                type="button"
+                onClick={() => void handleChangeMentor()}
+                disabled={changingMentor}
+                className="btn-primary"
+              >
+                {changingMentor ? "Un momento…" : "Cambia Mentore"}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {showConfirm && (
