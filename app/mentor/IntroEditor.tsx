@@ -56,12 +56,12 @@ export default function IntroEditor({
         className="field min-h-[88px]"
       />
       <div className="flex items-center justify-between gap-2 flex-wrap">
-        <span className="text-xs text-petrolio/50 tabular-nums">
+        <span className="text-xs text-cream/50 tabular-nums">
           {value.length} / {MAX}
         </span>
         <div className="flex items-center gap-3">
           {savedAt && !error && (
-            <span className="text-xs text-petrolio/60">salvato</span>
+            <span className="text-xs text-cream/60">salvato</span>
           )}
           <button
             type="submit"
@@ -73,7 +73,7 @@ export default function IntroEditor({
         </div>
       </div>
       {error && (
-        <p className="text-sm text-red-700 bg-red-50 rounded-xl px-3 py-2">
+        <p className="msg-error">
           {error}
         </p>
       )}

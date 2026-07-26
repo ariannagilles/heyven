@@ -41,15 +41,15 @@ export default function NewPickerPage({
             <li key={c.href}>
               <Link
                 href={`${c.href}${suffix}`}
-                className="card block p-5 hover:bg-white transition"
+                className="card block p-5 hover:bg-cream/5 transition"
               >
                 <div className="flex items-start gap-4">
                   <div className="text-3xl shrink-0 leading-none" aria-hidden>
                     {c.emoji}
                   </div>
                   <div className="min-w-0">
-                    <h2 className="font-semibold text-petrolio">{c.title}</h2>
-                    <p className="text-sm text-petrolio/70 mt-1 leading-relaxed">
+                    <h2 className="font-semibold text-cream">{c.title}</h2>
+                    <p className="text-sm text-cream/70 mt-1 leading-relaxed">
                       {c.text}
                     </p>
                   </div>

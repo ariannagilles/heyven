@@ -35,7 +35,7 @@ export default function MarkReportReviewedButton({ reportId }: { reportId: strin
         {loading ? "…" : "Segna come revisionato"}
       </button>
       {error && (
-        <p className="text-xs text-red-700 max-w-[200px] text-right">{error}</p>
+        <p className="msg-error max-w-[200px] text-right">{error}</p>
       )}
     </div>
   );

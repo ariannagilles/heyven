@@ -20,7 +20,7 @@ export default async function SpacesListPage() {
       <main className="mx-auto max-w-2xl px-4 py-6">
         <div className="mb-4">
           <h1 className="text-xl font-semibold">Spazi</h1>
-          <p className="text-sm text-petrolio/70">
+          <p className="text-sm text-cream/70">
             Scegli uno spazio per leggere, chiedere o raccontare.
           </p>
         </div>
@@ -30,7 +30,7 @@ export default async function SpacesListPage() {
             <li key={s.slug}>
               <Link
                 href={`/spazi/${s.slug}`}
-                className="card block p-5 hover:bg-white transition"
+                className="card block p-5 hover:bg-cream/5 transition"
               >
                 <div className="flex items-start gap-3">
                   <div className="text-3xl shrink-0 leading-none" aria-hidden>
@@ -38,12 +38,12 @@ export default async function SpacesListPage() {
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-baseline justify-between gap-2">
-                      <h2 className="font-semibold text-petrolio">{s.name}</h2>
-                      <span className="text-xs text-petrolio/50 tabular-nums">
+                      <h2 className="font-semibold text-cream">{s.name}</h2>
+                      <span className="text-xs text-cream/50 tabular-nums">
                         {counts.get(s.slug) ?? 0} post
                       </span>
                     </div>
-                    <p className="text-sm text-petrolio/70 mt-1">
+                    <p className="text-sm text-cream/70 mt-1">
                       {s.description}
                     </p>
                   </div>

@@ -13,7 +13,7 @@ export default function SpaceSelector({
 }) {
   return (
     <div>
-      <span className="text-xs font-medium text-petrolio/70 block mb-2">
+      <span className="text-xs font-medium text-cream/70 block mb-2">
         {label}
       </span>
       <div className="flex flex-wrap gap-2">
@@ -29,7 +29,7 @@ export default function SpaceSelector({
                 "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm transition " +
                 (active
                   ? "bg-petrolio text-crema"
-                  : "bg-petrolio/5 text-petrolio hover:bg-petrolio/10")
+                  : "bg-cream/5 text-cream hover:bg-cream/10")
               }
             >
               <span aria-hidden>{s.emoji}</span>

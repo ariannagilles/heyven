@@ -52,7 +52,7 @@ export default function ReplyForm({ postId }: { postId: string }) {
   return (
     <form onSubmit={onSubmit} className="card p-5 space-y-3">
       <label className="block">
-        <span className="text-xs font-medium text-petrolio/70">Rispondi in anonimo</span>
+        <span className="text-xs font-medium text-cream/70">Rispondi in anonimo</span>
         <textarea
           className="field mt-1 min-h-[120px]"
           value={content}
@@ -61,12 +61,12 @@ export default function ReplyForm({ postId }: { postId: string }) {
           maxLength={MAX}
           required
         />
-        <div className="mt-1 text-right text-xs text-petrolio/50 tabular-nums">
+        <div className="mt-1 text-right text-xs text-cream/50 tabular-nums">
           {content.length} / {MAX}
         </div>
       </label>
 
-      {error && <p className="text-sm text-red-700 bg-red-50 rounded-xl px-3 py-2">{error}</p>}
+      {error && <p className="msg-error">{error}</p>}
 
       <div className="flex justify-end">
         <button type="submit" className="btn-primary" disabled={loading}>

@@ -36,7 +36,7 @@ export default async function ChatPage() {
               <h1 className="text-xl font-semibold">
                 Abbiamo pensato a @{mentorProfile.nickname} per te
               </h1>
-              <p className="text-sm text-petrolio/70 leading-relaxed">
+              <p className="text-sm text-cream/70 leading-relaxed">
                 Ha attraversato qualcosa di simile a quello che stai vivendo. Non
                 sei solo a conoscerlo.
               </p>
@@ -46,7 +46,7 @@ export default async function ChatPage() {
               <h1 className="text-xl font-semibold">
                 Ti presentiamo @{mentorProfile.nickname}
               </h1>
-              <p className="text-sm text-petrolio/70 leading-relaxed">
+              <p className="text-sm text-cream/70 leading-relaxed">
                 Una persona reale, pronta ad ascoltarti quando vuoi.
               </p>
             </>
@@ -87,16 +87,16 @@ export default async function ChatPage() {
           />
         </svg>
 
-        <h1 className="text-2xl font-semibold text-petrolio">Il tuo Mentore ti aspetta</h1>
-        <p className="mt-3 max-w-sm text-[15px] leading-relaxed text-petrolio/70">
+        <h1 className="text-2xl font-semibold text-cream">Il tuo Mentore ti aspetta</h1>
+        <p className="mt-3 max-w-sm text-[15px] leading-relaxed text-cream/70">
           Cercheremo tra i nostri Mentori la persona più adatta a quello che stai vivendo.
         </p>
 
         <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-petrolio/5 px-3 py-1.5 text-xs text-petrolio/70">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-cream/5 px-3 py-1.5 text-xs text-cream/70">
             <span aria-hidden>✦</span> Una persona reale, non un&apos;AI
           </span>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-petrolio/5 px-3 py-1.5 text-xs text-petrolio/70">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-cream/5 px-3 py-1.5 text-xs text-cream/70">
             <span aria-hidden>⏱</span> Risponde entro 24 ore
           </span>
         </div>

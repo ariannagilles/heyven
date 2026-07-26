@@ -88,7 +88,7 @@ export default function FeedbackWidget() {
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Invia feedback"
-        className="fixed bottom-4 right-4 z-30 inline-flex items-center gap-2 rounded-full bg-petrolio text-crema px-4 py-2.5 text-sm font-medium shadow-soft hover:bg-petrolio-600 active:scale-[0.97] transition"
+        className="fixed bottom-28 right-4 z-30 inline-flex items-center gap-2 rounded-full bg-teal text-cream px-4 py-2.5 text-sm font-medium shadow-soft hover:bg-teal-mid active:scale-[0.97] transition"
       >
         <ChatIcon />
         <span>Feedback</span>
@@ -96,7 +96,7 @@ export default function FeedbackWidget() {
 
       {open && (
         <div
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-petrolio/40 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-cream/40 backdrop-blur-sm"
           onClick={() => !loading && close()}
           role="presentation"
         >
@@ -105,14 +105,14 @@ export default function FeedbackWidget() {
             aria-modal="true"
             aria-labelledby="feedback-title"
             onClick={(e) => e.stopPropagation()}
-            className="bg-crema rounded-3xl p-6 max-w-md w-full shadow-soft border border-petrolio/10 relative"
+            className="glass-card rounded-3xl p-6 max-w-md w-full shadow-soft border border-cream/10 relative"
           >
             <button
               type="button"
               onClick={close}
               disabled={loading}
               aria-label="Chiudi"
-              className="absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center text-petrolio/60 hover:bg-petrolio/5"
+              className="absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center text-cream/60 hover:bg-cream/5"
             >
               ✕
             </button>
@@ -120,7 +120,7 @@ export default function FeedbackWidget() {
             {done ? (
               <div className="text-center py-4">
                 <p className="text-lg font-semibold">Grazie 💛</p>
-                <p className="text-sm text-petrolio/70 mt-1">
+                <p className="text-sm text-cream/70 mt-1">
                   Il tuo feedback è arrivato.
                 </p>
               </div>
@@ -130,7 +130,7 @@ export default function FeedbackWidget() {
                   <h2 id="feedback-title" className="text-lg font-semibold">
                     Cosa pensi di Heyven?
                   </h2>
-                  <p className="text-sm text-petrolio/70 mt-1">
+                  <p className="text-sm text-cream/70 mt-1">
                     Ogni feedback ci aiuta a migliorare.
                   </p>
                 </header>
@@ -153,7 +153,7 @@ export default function FeedbackWidget() {
                           "w-full flex items-center gap-3 rounded-2xl px-4 py-2.5 text-sm text-left transition " +
                           (active
                             ? "bg-petrolio text-crema"
-                            : "bg-petrolio/5 text-petrolio hover:bg-petrolio/10")
+                            : "bg-cream/5 text-cream hover:bg-cream/10")
                         }
                       >
                         <span className="text-lg" aria-hidden>
@@ -178,7 +178,7 @@ export default function FeedbackWidget() {
                 </label>
 
                 {error && (
-                  <p className="text-sm text-red-700 bg-red-50 rounded-xl px-3 py-2">
+                  <p className="msg-error">
                     {error}
                   </p>
                 )}

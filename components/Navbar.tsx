@@ -19,11 +19,11 @@ export default async function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-20 bg-crema/85 backdrop-blur border-b border-petrolio/10">
+    <header className="sticky top-0 z-20 border-b border-cream/10 bg-cream/5 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
       <div className="mx-auto max-w-2xl px-4 h-14 flex items-center justify-between gap-2">
         <Link
           href="/"
-          className="font-semibold tracking-tight text-petrolio text-lg shrink-0"
+          className="font-semibold tracking-tight text-cream text-lg shrink-0"
         >
           heyven
         </Link>
@@ -34,7 +34,7 @@ export default async function Navbar() {
               href="/notifiche"
               aria-label="Notifiche"
               title="Notifiche"
-              className="relative inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm bg-petrolio/5 text-petrolio hover:bg-petrolio/10"
+              className="relative inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm bg-cream/5 text-cream hover:bg-cream/10"
             >
               <BellIcon />
               <span className="hidden sm:inline">notifiche</span>
@@ -45,7 +45,7 @@ export default async function Navbar() {
               href="/vai-oltre"
               aria-label="Vai oltre"
               title="Vai oltre"
-              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm bg-petrolio/5 text-petrolio hover:bg-petrolio/10"
+              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm bg-cream/5 text-cream hover:bg-cream/10"
             >
               <StepIcon />
               <span className="hidden sm:inline">vai oltre</span>
@@ -74,7 +74,7 @@ function CountBadge({ count, label }: { count: number; label: string }) {
   return (
     <span
       aria-label={`${count} ${label}`}
-      className="absolute -top-1 -right-1 min-w-[1.125rem] h-[1.125rem] px-1 flex items-center justify-center rounded-full bg-[#FAC775] text-[10px] font-semibold text-[#04342C] leading-none ring-2 ring-crema tabular-nums"
+      className="absolute -top-1 -right-1 min-w-[1.125rem] h-[1.125rem] px-1 flex items-center justify-center rounded-full bg-[#FAC775] text-[10px] font-semibold text-[#04342C] leading-none ring-2 ring-cream tabular-nums"
     >
       {text}
     </span>

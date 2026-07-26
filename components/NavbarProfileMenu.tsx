@@ -71,7 +71,7 @@ export default function NavbarProfileMenu({
   }
 
   const itemClassName =
-    "block w-full px-4 py-2.5 text-left text-sm text-petrolio hover:bg-petrolio/5 focus:outline-none focus-visible:bg-petrolio/5 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-petrolio/30";
+    "block w-full px-4 py-2.5 text-left text-sm text-cream hover:bg-cream/5 focus:outline-none focus-visible:bg-cream/5 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-petrolio/30";
 
   return (
     <div ref={containerRef} className="relative ml-1 shrink-0">
@@ -93,7 +93,7 @@ export default function NavbarProfileMenu({
           id={menuId}
           role="menu"
           aria-label="Menu profilo"
-          className="absolute right-0 top-full z-30 mt-2 min-w-[220px] overflow-hidden rounded-2xl border border-petrolio/10 bg-crema py-1 shadow-soft"
+          className="absolute right-0 top-full z-30 mt-2 min-w-[220px] overflow-hidden rounded-2xl border border-cream/10 bg-petrolio-2/95 backdrop-blur-xl py-1 shadow-soft"
         >
           <Link
             ref={firstItemRef}
@@ -116,7 +116,7 @@ export default function NavbarProfileMenu({
           <div
             role="separator"
             aria-hidden
-            className="my-1 border-t border-petrolio/10"
+            className="my-1 border-t border-cream/10"
           />
 
           <Link

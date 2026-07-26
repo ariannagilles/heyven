@@ -50,7 +50,7 @@ export default function ReplyForm({ questionId }: { questionId: string }) {
   return (
     <form onSubmit={submit} className="card p-4 space-y-3">
       <label className="block">
-        <span className="text-xs font-medium text-petrolio/70">
+        <span className="text-xs font-medium text-cream/70">
           La tua risposta
         </span>
         <textarea
@@ -61,12 +61,12 @@ export default function ReplyForm({ questionId }: { questionId: string }) {
           placeholder="Scrivi in modo gentile."
           className="field mt-1 min-h-[88px]"
         />
-        <div className="mt-1 text-right text-xs text-petrolio/50 tabular-nums">
+        <div className="mt-1 text-right text-xs text-cream/50 tabular-nums">
           {content.length} / {MAX}
         </div>
       </label>
       {error && (
-        <p className="text-sm text-red-700 bg-red-50 rounded-xl px-3 py-2">
+        <p className="msg-error">
           {error}
         </p>
       )}

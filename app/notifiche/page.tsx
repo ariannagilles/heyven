@@ -42,13 +42,13 @@ export default async function NotifichePage({
       <main className="mx-auto max-w-2xl px-4 py-6 space-y-4">
         <header>
           <h1 className="text-xl font-semibold">Notifiche</h1>
-          <p className="text-sm text-petrolio/60 mt-1">
+          <p className="text-sm text-cream/60 mt-1">
             Aggiornamenti sui tuoi contenuti.
           </p>
         </header>
 
         {items.length === 0 ? (
-          <div className="card p-8 text-center text-petrolio/70">
+          <div className="card p-8 text-center text-cream/70">
             Nessuna notifica, per ora.
           </div>
         ) : (
@@ -57,17 +57,17 @@ export default async function NotifichePage({
               <li key={n.id}>
                 <Link
                   href={notificationHref(n)}
-                  className="card block p-4 hover:bg-white transition"
+                  className="card block p-4 hover:bg-cream/5 transition"
                 >
-                  <p className="text-[15px] text-petrolio leading-snug">
+                  <p className="text-[15px] text-cream leading-snug">
                     {notificationText(n)}
                   </p>
                   {n.target_preview && (
-                    <p className="text-sm text-petrolio/70 mt-1.5 line-clamp-2">
+                    <p className="text-sm text-cream/70 mt-1.5 line-clamp-2">
                       &ldquo;{n.target_preview}&rdquo;
                     </p>
                   )}
-                  <p className="text-xs text-petrolio/60 mt-1.5">
+                  <p className="text-xs text-cream/60 mt-1.5">
                     @{n.actor_nickname ?? "anonimo"} · {timeAgo(n.created_at)}
                   </p>
                 </Link>
@@ -81,7 +81,7 @@ export default async function NotifichePage({
             {page > 1 ? (
               <Link
                 href={`/notifiche?page=${page - 1}`}
-                className="text-sm text-petrolio/70 hover:text-petrolio underline underline-offset-2"
+                className="text-sm text-cream/70 hover:text-cream underline underline-offset-2"
               >
                 ← Più recenti
               </Link>
@@ -91,7 +91,7 @@ export default async function NotifichePage({
             {hasMore && (
               <Link
                 href={`/notifiche?page=${page + 1}`}
-                className="text-sm text-petrolio/70 hover:text-petrolio underline underline-offset-2"
+                className="text-sm text-cream/70 hover:text-cream underline underline-offset-2"
               >
                 Più vecchie →
               </Link>

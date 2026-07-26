@@ -37,7 +37,7 @@ export default function AiutoPage() {
           <h1 className="text-2xl font-semibold leading-snug">
             Se questo è un momento difficile
           </h1>
-          <p className="text-base leading-relaxed text-petrolio/80">
+          <p className="text-base leading-relaxed text-cream/80">
             Non sei obbligato a farcela da solo. Qui trovi chi risponde davvero,
             anche adesso.
           </p>
@@ -59,7 +59,7 @@ export default function AiutoPage() {
                     <p className="text-xl font-semibold tracking-wide tabular-nums">
                       {line.number}
                     </p>
-                    <p className="text-base text-petrolio/70">{line.hours}</p>
+                    <p className="text-base text-cream/70">{line.hours}</p>
                   </div>
                   <a href={line.tel} className="btn-outline w-full sm:w-auto">
                     Chiama {line.number}
@@ -70,11 +70,11 @@ export default function AiutoPage() {
           </ul>
         </section>
 
-        <section className="space-y-3 border-t border-petrolio/10 pt-8">
+        <section className="space-y-3 border-t border-cream/10 pt-8">
           <h2 className="text-lg font-semibold leading-snug">
             Se sei preoccupato per qualcun altro
           </h2>
-          <p className="text-base leading-relaxed text-petrolio/80">
+          <p className="text-base leading-relaxed text-cream/80">
             Restare in ascolto, senza giudicare, è già molto. Se pensi che una
             persona sia in pericolo immediato, chiama il 112.
           </p>

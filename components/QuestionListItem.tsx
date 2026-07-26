@@ -29,9 +29,9 @@ export default function QuestionListItem({ question, spaceSlug, viewerId }: Prop
 
   return (
     <li className="card p-4">
-      <header className="flex items-center gap-2 text-xs text-petrolio/60 mb-2">
+      <header className="flex items-center gap-2 text-xs text-cream/60 mb-2">
         <AvatarImage src={question.avatarSrc} nickname={question.nickname} size={28} />
-        <span className="font-medium text-petrolio">@{question.nickname}</span>
+        <span className="font-medium text-cream">@{question.nickname}</span>
         <span aria-hidden>·</span>
         <ContentMetaTime
           createdAt={question.created_at}
@@ -58,14 +58,14 @@ export default function QuestionListItem({ question, spaceSlug, viewerId }: Prop
           onCancel={editable.cancelEdit}
         />
       ) : (
-        <p className="text-petrolio leading-relaxed whitespace-pre-wrap">
+        <p className="text-cream leading-relaxed whitespace-pre-wrap">
           {editable.content}
         </p>
       )}
 
       {!editable.editing && (
         <footer className="mt-3 flex items-center justify-between gap-2">
-          <span className="text-sm text-petrolio/70">
+          <span className="text-sm text-cream/70">
             {question.reply_count} rispost{question.reply_count === 1 ? "a" : "e"}
           </span>
           <Link

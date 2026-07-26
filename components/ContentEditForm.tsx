@@ -44,7 +44,7 @@ export default function ContentEditForm({
     <form onSubmit={handleSubmit} className="space-y-4">
       {showTitle && onTitleChange && (
         <label className="block">
-          <span className="text-xs font-medium text-petrolio/70">Titolo</span>
+          <span className="text-xs font-medium text-cream/70">Titolo</span>
           <input
             className="field mt-1"
             value={title}
@@ -56,7 +56,7 @@ export default function ContentEditForm({
       )}
 
       {showReplyWarning && (
-        <p className="text-sm text-petrolio/60 leading-relaxed">
+        <p className="text-sm text-cream/60 leading-relaxed">
           Ci sono già delle risposte qui sotto. Le piccole modifiche vanno bene — se
           invece vuoi dire una cosa completamente diversa, forse è meglio scrivere un
           nuovo contenuto.
@@ -64,7 +64,7 @@ export default function ContentEditForm({
       )}
 
       <label className="block">
-        <span className="text-xs font-medium text-petrolio/70">{contentLabel}</span>
+        <span className="text-xs font-medium text-cream/70">{contentLabel}</span>
         <textarea
           className={`field mt-1 ${textareaClassName}`}
           value={content}
@@ -73,14 +73,14 @@ export default function ContentEditForm({
           required
         />
         {contentMaxLength != null && (
-          <div className="mt-1 text-right text-xs text-petrolio/50 tabular-nums">
+          <div className="mt-1 text-right text-xs text-cream/50 tabular-nums">
             {content.length} / {contentMaxLength}
           </div>
         )}
       </label>
 
       {error && (
-        <p className="text-sm text-red-700 bg-red-50 rounded-xl px-3 py-2">{error}</p>
+        <p className="msg-error">{error}</p>
       )}
 
       <div className="flex items-center justify-end gap-2">

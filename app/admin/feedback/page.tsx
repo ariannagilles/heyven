@@ -69,12 +69,12 @@ export default async function AdminFeedbackPage({
       <main className="mx-auto max-w-3xl px-4 py-6 space-y-4">
         <header className="card p-5">
           <h1 className="text-lg font-semibold">Feedback beta</h1>
-          <p className="text-sm text-petrolio/70 mt-1">
+          <p className="text-sm text-cream/70 mt-1">
             {rows.length} feedback {filter !== "all" && `(filtro: ${TYPE_META[filter].label.toLowerCase()})`}
           </p>
         </header>
 
-        <nav className="flex flex-wrap items-center gap-1 border-b border-petrolio/10 -mx-4 px-4">
+        <nav className="flex flex-wrap items-center gap-1 border-b border-cream/10 -mx-4 px-4">
           {tabs.map((t) => {
             const active = filter === t.key;
             const href =
@@ -86,8 +86,8 @@ export default async function AdminFeedbackPage({
                 className={
                   "px-4 py-3 text-sm font-medium border-b-2 -mb-px transition " +
                   (active
-                    ? "border-petrolio text-petrolio"
-                    : "border-transparent text-petrolio/60 hover:text-petrolio")
+                    ? "border-petrolio text-cream"
+                    : "border-transparent text-cream/60 hover:text-cream")
                 }
               >
                 {t.label}
@@ -97,13 +97,13 @@ export default async function AdminFeedbackPage({
         </nav>
 
         {error && (
-          <p className="text-sm text-red-700 bg-red-50 rounded-xl px-3 py-2">
+          <p className="msg-error">
             {error.message}
           </p>
         )}
 
         {rows.length === 0 ? (
-          <div className="card p-8 text-center text-petrolio/70">
+          <div className="card p-8 text-center text-cream/70">
             Nessun feedback.
           </div>
         ) : (
@@ -113,10 +113,10 @@ export default async function AdminFeedbackPage({
               const nickname = f.profiles?.nickname ?? null;
               return (
                 <li key={f.id} className="card p-4">
-                  <header className="flex items-center justify-between gap-2 flex-wrap mb-2 text-xs text-petrolio/60">
+                  <header className="flex items-center justify-between gap-2 flex-wrap mb-2 text-xs text-cream/60">
                     <div className="inline-flex items-center gap-2">
                       <span className="text-base" aria-hidden>{meta.emoji}</span>
-                      <span className="font-medium text-petrolio">{meta.label}</span>
+                      <span className="font-medium text-cream">{meta.label}</span>
                       {nickname && (
                         <>
                           <span aria-hidden>·</span>
@@ -133,12 +133,12 @@ export default async function AdminFeedbackPage({
                     <time dateTime={f.created_at}>{timeAgo(f.created_at)}</time>
                   </header>
 
-                  <p className="text-petrolio leading-relaxed whitespace-pre-wrap">
+                  <p className="text-cream leading-relaxed whitespace-pre-wrap">
                     {f.content}
                   </p>
 
                   {f.current_page && (
-                    <p className="mt-2 text-xs text-petrolio/50 font-mono break-all">
+                    <p className="mt-2 text-xs text-cream/50 font-mono break-all">
                       {f.current_page}
                     </p>
                   )}

@@ -59,7 +59,7 @@ export default function StoryForm({ spaceSlug }: { spaceSlug: string }) {
     <form onSubmit={submit} className="card p-4 space-y-3">
       {expanded && (
         <label className="block">
-          <span className="text-xs font-medium text-petrolio/70">
+          <span className="text-xs font-medium text-cream/70">
             Dai un titolo alla tua storia (opzionale)
           </span>
           <input
@@ -72,7 +72,7 @@ export default function StoryForm({ spaceSlug }: { spaceSlug: string }) {
         </label>
       )}
       <label className="block">
-        <span className="text-xs font-medium text-petrolio/70">
+        <span className="text-xs font-medium text-cream/70">
           La tua storia
         </span>
         <textarea
@@ -85,7 +85,7 @@ export default function StoryForm({ spaceSlug }: { spaceSlug: string }) {
         />
       </label>
       {error && (
-        <p className="text-sm text-red-700 bg-red-50 rounded-xl px-3 py-2">
+        <p className="msg-error">
           {error}
         </p>
       )}

@@ -269,7 +269,7 @@ export default function ChatView({
       }
     >
       <header
-        className={`border-b border-petrolio/10 bg-crema/80 px-4 pb-3 backdrop-blur ${
+        className={`border-b border-cream/10 bg-cream/5 px-4 pb-3 backdrop-blur ${
           fullScreen ? "pt-[calc(0.75rem+env(safe-area-inset-top))]" : "py-3"
         }`}
       >
@@ -280,7 +280,7 @@ export default function ChatView({
                 type="button"
                 onClick={() => router.back()}
                 aria-label="Torna indietro"
-                className="-ml-1 shrink-0 p-1 text-petrolio/70 hover:text-petrolio"
+                className="-ml-1 shrink-0 p-1 text-cream/70 hover:text-cream"
               >
                 <svg
                   width="22"
@@ -300,7 +300,7 @@ export default function ChatView({
             <AvatarImage src={otherAvatarSrc} nickname={otherNickname} size={40} />
             <div className="min-w-0">
               <div className="text-sm font-semibold leading-tight truncate">@{otherNickname}</div>
-              <div className="text-xs text-petrolio/60 leading-tight">{otherRoleLabel}</div>
+              <div className="text-xs text-cream/60 leading-tight">{otherRoleLabel}</div>
             </div>
           </div>
           {!closed && iAmUser && (
@@ -310,21 +310,21 @@ export default function ChatView({
                 onClick={() => setUserMenuOpen((open) => !open)}
                 aria-label="Altre azioni"
                 aria-expanded={userMenuOpen}
-                className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-petrolio/5 text-petrolio hover:bg-petrolio/10"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-cream/5 text-cream hover:bg-cream/10"
               >
                 <span aria-hidden className="text-lg leading-none">
                   ⋯
                 </span>
               </button>
               {userMenuOpen && (
-                <div className="absolute right-0 top-full z-10 mt-1 min-w-[220px] rounded-2xl border border-petrolio/10 bg-crema py-1 shadow-soft">
+                <div className="absolute right-0 top-full z-10 mt-1 min-w-[220px] rounded-2xl border border-cream/10 bg-petrolio-2/95 backdrop-blur-xl py-1 shadow-soft">
                   <button
                     type="button"
                     onClick={() => {
                       setUserMenuOpen(false);
                       setShowChangeConfirm(true);
                     }}
-                    className="block w-full px-4 py-2.5 text-left text-sm text-petrolio hover:bg-petrolio/5"
+                    className="block w-full px-4 py-2.5 text-left text-sm text-cream hover:bg-cream/5"
                   >
                     Preferisco un altro Mentore
                   </button>
@@ -334,7 +334,7 @@ export default function ChatView({
                       setUserMenuOpen(false);
                       setShowConfirm(true);
                     }}
-                    className="block w-full px-4 py-2.5 text-left text-sm text-petrolio hover:bg-petrolio/5"
+                    className="block w-full px-4 py-2.5 text-left text-sm text-cream hover:bg-cream/5"
                   >
                     Chiudi conversazione
                   </button>
@@ -349,19 +349,19 @@ export default function ChatView({
                 onClick={() => setMenuOpen((open) => !open)}
                 aria-label="Altre azioni"
                 aria-expanded={menuOpen}
-                className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-petrolio/5 text-petrolio hover:bg-petrolio/10"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-cream/5 text-cream hover:bg-cream/10"
               >
                 <span aria-hidden className="text-lg leading-none">
                   ⋯
                 </span>
               </button>
               {menuOpen && (
-                <div className="absolute right-0 top-full z-10 mt-1 min-w-[220px] rounded-2xl border border-petrolio/10 bg-crema py-1 shadow-soft">
+                <div className="absolute right-0 top-full z-10 mt-1 min-w-[220px] rounded-2xl border border-cream/10 bg-petrolio-2/95 backdrop-blur-xl py-1 shadow-soft">
                   <button
                     type="button"
                     onClick={() => void escalateToSupervision()}
                     disabled={escalating || escalationDone}
-                    className="block w-full px-4 py-2.5 text-left text-sm text-petrolio hover:bg-petrolio/5 disabled:opacity-50"
+                    className="block w-full px-4 py-2.5 text-left text-sm text-cream hover:bg-cream/5 disabled:opacity-50"
                   >
                     {escalating
                       ? "Invio segnalazione…"
@@ -372,7 +372,7 @@ export default function ChatView({
             </div>
           )}
           {closed && (
-            <span className="text-xs rounded-full px-3 py-1.5 bg-petrolio/5 text-petrolio/60 shrink-0">
+            <span className="text-xs rounded-full px-3 py-1.5 bg-cream/5 text-cream/60 shrink-0">
               chiusa
             </span>
           )}
@@ -380,15 +380,15 @@ export default function ChatView({
       </header>
 
       {(escalationDone || escalationError) && !iAmUser && (
-        <div className="border-b border-petrolio/10 bg-crema/90 px-4 py-2">
+        <div className="border-b border-cream/10 bg-cream/5 px-4 py-2">
           <div className="mx-auto max-w-2xl text-sm">
             {escalationDone && (
-              <p className="text-petrolio/80">
+              <p className="text-cream/80">
                 Segnalazione inviata. La supervisione è stata avvisata.
               </p>
             )}
             {escalationError && (
-              <p className="text-red-700">{escalationError}</p>
+              <p className="msg-error">{escalationError}</p>
             )}
           </div>
         </div>
@@ -398,7 +398,7 @@ export default function ChatView({
         <div className="mx-auto max-w-2xl px-4 py-4 space-y-2">
           {messages.length === 0 ? (
             !iAmUser ? (
-              <div className="card p-5 text-center text-sm text-petrolio/70">
+              <div className="card p-5 text-center text-sm text-cream/70">
                 Nessun messaggio, ancora.
               </div>
             ) : null
@@ -422,7 +422,7 @@ export default function ChatView({
                       "max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap " +
                       (mine
                         ? "bg-petrolio text-crema rounded-br-md"
-                        : "bg-white text-petrolio border border-petrolio/10 rounded-bl-md")
+                        : "bg-cream/10 text-cream border border-cream/10 rounded-bl-md")
                     }
                   >
                     {m.content}
@@ -432,7 +432,7 @@ export default function ChatView({
             })
           )}
           {closed && (
-            <div className="card p-4 text-center text-sm text-petrolio/70 mt-2">
+            <div className="card p-4 text-center text-sm text-cream/70 mt-2">
               Conversazione chiusa. I messaggi restano qui, ma non puoi più scrivere.
             </div>
           )}
@@ -442,18 +442,18 @@ export default function ChatView({
       {!closed && (
         <form
           onSubmit={send}
-          className="border-t border-petrolio/10 bg-crema/90 backdrop-blur px-4 py-3"
+          className="border-t border-cream/10 bg-cream/5 backdrop-blur px-4 py-3"
         >
           {showIcebreakers && (
             <div className="mx-auto mb-3 max-w-2xl">
-              <p className="mb-2 text-xs text-petrolio/50">Se non sai da dove iniziare:</p>
+              <p className="mb-2 text-xs text-cream/50">Se non sai da dove iniziare:</p>
               <div className="flex flex-col gap-2">
                 {ICEBREAKER_PROMPTS.map((prompt) => (
                   <button
                     key={prompt}
                     type="button"
                     onClick={() => applyIcebreakerPrompt(prompt)}
-                    className="rounded-2xl bg-petrolio/5 px-4 py-2.5 text-left text-sm text-petrolio/80 transition-colors hover:bg-petrolio/10"
+                    className="rounded-2xl bg-cream/5 px-4 py-2.5 text-left text-sm text-cream/80 transition-colors hover:bg-cream/10"
                   >
                     {prompt}
                   </button>
@@ -486,7 +486,7 @@ export default function ChatView({
             </button>
           </div>
           {error && (
-            <p className="mx-auto max-w-2xl mt-2 text-sm text-red-700 bg-red-50 rounded-xl px-3 py-2">
+            <p className="mx-auto max-w-2xl mt-2 msg-error">
               {error}
             </p>
           )}
@@ -495,7 +495,7 @@ export default function ChatView({
 
       {showChangeConfirm && (
         <div
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-petrolio/40 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-cream/40 backdrop-blur-sm"
           onClick={() => !changingMentor && setShowChangeConfirm(false)}
           role="presentation"
         >
@@ -504,12 +504,12 @@ export default function ChatView({
             aria-modal="true"
             aria-labelledby="change-mentor-title"
             onClick={(e) => e.stopPropagation()}
-            className="bg-crema rounded-3xl p-6 max-w-md w-full shadow-soft border border-petrolio/10"
+            className="glass-card rounded-3xl p-6 max-w-md w-full shadow-soft border border-cream/10"
           >
             <h3 id="change-mentor-title" className="text-lg font-semibold">
               Vuoi cambiare Mentore?
             </h3>
-            <p className="text-sm text-petrolio/70 mt-2">
+            <p className="text-sm text-cream/70 mt-2">
               Cambiare va bene, e puoi farlo quando vuoi. A volte però una
               relazione ha bisogno di un po&apos; di tempo per funzionare. Se te
               la senti, va benissimo così.
@@ -546,7 +546,7 @@ export default function ChatView({
 
       {showConfirm && (
         <div
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-petrolio/40 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-cream/40 backdrop-blur-sm"
           onClick={() => !closing && setShowConfirm(false)}
           role="presentation"
         >
@@ -555,17 +555,17 @@ export default function ChatView({
             aria-modal="true"
             aria-labelledby="close-conv-title"
             onClick={(e) => e.stopPropagation()}
-            className="bg-crema rounded-3xl p-6 max-w-md w-full shadow-soft border border-petrolio/10"
+            className="glass-card rounded-3xl p-6 max-w-md w-full shadow-soft border border-cream/10"
           >
             <h3 id="close-conv-title" className="text-lg font-semibold">
               Chiudi conversazione
             </h3>
-            <p className="text-sm text-petrolio/70 mt-2">
+            <p className="text-sm text-cream/70 mt-2">
               Sei sicuro di voler chiudere questa conversazione? Non potrai più
               inviare messaggi.
             </p>
             {closeError && (
-              <p className="text-sm text-red-700 bg-red-50 rounded-xl px-3 py-2 mt-3">
+              <p className="msg-error mt-3">
                 {closeError}
               </p>
             )}

@@ -16,11 +16,11 @@ export default function ErrorBoundary({
   return (
     <main className="mx-auto max-w-md px-4 py-16 text-center space-y-4">
       <h1 className="text-xl font-semibold">Qualcosa non ha funzionato</h1>
-      <p className="text-sm text-petrolio/70">
+      <p className="text-sm text-cream/70">
         {error.message || "Si è verificato un errore inatteso."}
       </p>
       {error.digest && (
-        <p className="text-xs text-petrolio/40 font-mono">{error.digest}</p>
+        <p className="text-xs text-cream/40 font-mono">{error.digest}</p>
       )}
       <button onClick={reset} className="btn-primary">
         Riprova

@@ -54,7 +54,7 @@ export default async function AdminReportsPage() {
           <div className="flex items-center justify-between gap-3">
             <div>
               <h1 className="text-lg font-semibold">Segnalazioni contenuti</h1>
-              <p className="text-sm text-petrolio/70 mt-1">
+              <p className="text-sm text-cream/70 mt-1">
                 {reports.length} in attesa di revisione
               </p>
             </div>
@@ -65,13 +65,13 @@ export default async function AdminReportsPage() {
         </header>
 
         {error && (
-          <p className="text-sm text-red-700 bg-red-50 rounded-xl px-3 py-2">
+          <p className="msg-error">
             {error.message}
           </p>
         )}
 
         {reports.length === 0 ? (
-          <div className="card p-8 text-center text-petrolio/70">
+          <div className="card p-8 text-center text-cream/70">
             Nessuna segnalazione in attesa.
           </div>
         ) : (
@@ -80,8 +80,8 @@ export default async function AdminReportsPage() {
               <li key={r.id} className="card p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <header className="flex items-center gap-2 flex-wrap text-xs text-petrolio/60 mb-2">
-                      <span className="font-medium text-petrolio">
+                    <header className="flex items-center gap-2 flex-wrap text-xs text-cream/60 mb-2">
+                      <span className="font-medium text-cream">
                         {TARGET_TYPE_LABELS[r.target_type]}
                       </span>
                       <span aria-hidden>·</span>
@@ -89,22 +89,22 @@ export default async function AdminReportsPage() {
                     </header>
 
                     {r.reason ? (
-                      <p className="text-petrolio leading-relaxed whitespace-pre-wrap">
+                      <p className="text-cream leading-relaxed whitespace-pre-wrap">
                         {r.reason}
                       </p>
                     ) : (
-                      <p className="text-sm text-petrolio/50 italic">Nessun motivo indicato</p>
+                      <p className="text-sm text-cream/50 italic">Nessun motivo indicato</p>
                     )}
 
                     {r.contentUrl ? (
                       <Link
                         href={r.contentUrl}
-                        className="inline-block mt-2 text-sm text-petrolio/70 hover:text-petrolio underline underline-offset-2"
+                        className="inline-block mt-2 text-sm text-cream/70 hover:text-cream underline underline-offset-2"
                       >
                         Vedi contenuto originale →
                       </Link>
                     ) : (
-                      <p className="mt-2 text-xs text-petrolio/50 font-mono break-all">
+                      <p className="mt-2 text-xs text-cream/50 font-mono break-all">
                         ID: {r.target_id}
                       </p>
                     )}

@@ -38,7 +38,7 @@ export default function SpaceStoriesList({
 
   if (items.length === 0) {
     return (
-      <div className="card p-8 text-center text-petrolio/70">
+      <div className="card p-8 text-center text-cream/70">
         Nessuna storia, ancora. Vuoi raccontare la tua?
       </div>
     );

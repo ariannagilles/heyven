@@ -3,23 +3,39 @@
 @tailwind utilities;
 
 :root {
-  --color-petrolio: #1a3a3a;
-  --color-crema: #f5ead7;
+  --color-petrolio: #04342C;
+  --color-petrolio-2: #0B3F34;
+  --color-teal: #0F6E56;
+  --color-teal-mid: #1D9E75;
+  --color-mint: #5DCAA5;
+  --color-cream: #F5EFE3;
+  --color-gold: #CDA24E;
+  --color-amber: #EAC77A;
+  --color-crema: #F5EFE3;
+  --app-background:
+    radial-gradient(90% 55% at 78% 6%, rgba(226, 178, 120, 0.32), rgba(226, 178, 120, 0) 60%),
+    radial-gradient(80% 50% at 12% 2%, rgba(93, 202, 165, 0.18), rgba(93, 202, 165, 0) 55%),
+    linear-gradient(168deg, #0a2b25 0%, #0c342b 46%, #173a2b 100%);
 }
 
-html, body {
-  background-color: var(--color-crema);
-  color: var(--color-petrolio);
+html,
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  color: var(--color-cream);
   -webkit-font-smoothing: antialiased;
   font-feature-settings: "ss01", "cv11";
 }
 
 ::selection {
-  background: #1a3a3a;
-  color: #f5ead7;
+  background: rgba(93, 202, 165, 0.35);
+  color: var(--color-cream);
 }
 
-input, textarea, button, select {
+input,
+textarea,
+button,
+select {
   font: inherit;
 }
 
@@ -38,27 +54,49 @@ textarea {
   100% { opacity: 0; visibility: hidden; }
 }
 
+.font-display {
+  font-family: var(--font-display), Georgia, serif;
+}
+
+.glass-card {
+  background: rgba(245, 239, 227, 0.09);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(245, 239, 227, 0.16);
+  box-shadow: 0 10px 30px -14px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+}
+
+@layer base {
+  h1,
+  h2 {
+    @apply font-display;
+  }
+}
+
 @layer components {
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
   }
   .btn-primary {
-    @apply btn bg-petrolio text-crema hover:bg-petrolio-600;
+    @apply btn bg-teal text-cream hover:bg-teal-mid;
   }
   .btn-ghost {
-    @apply btn bg-transparent text-petrolio hover:bg-petrolio/5;
+    @apply btn bg-transparent text-cream hover:bg-cream/5;
   }
   .btn-outline {
-    @apply btn border border-petrolio/20 text-petrolio hover:bg-petrolio/5;
+    @apply btn border border-cream/20 text-cream hover:bg-cream/5;
   }
   .field {
-    @apply w-full rounded-2xl border border-petrolio/15 bg-white/60 px-4 py-3 text-petrolio placeholder:text-petrolio/40 focus:outline-none focus:border-petrolio/40 focus:bg-white;
+    @apply w-full rounded-2xl border border-cream/20 bg-cream/5 px-4 py-3 text-cream placeholder:text-cream/40 focus:outline-none focus:border-mint/40 focus:bg-cream/10;
   }
   .card {
-    @apply rounded-3xl bg-white/70 border border-petrolio/10 shadow-soft;
+    @apply glass-card;
   }
   .chip {
-    @apply inline-flex items-center rounded-full text-petrolio text-xs font-medium px-2.5 py-1;
-    background-color: rgba(26, 58, 58, 0.08);
+    @apply inline-flex items-center rounded-full text-cream/80 text-xs font-medium px-2.5 py-1 bg-cream/10;
+  }
+  .msg-error {
+    @apply text-sm text-amber bg-amber/10 border border-amber/25 rounded-xl px-3 py-2;
   }
 }

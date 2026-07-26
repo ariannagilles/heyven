@@ -85,7 +85,7 @@ export default function ProfileOwnList({
 
   if (items.length === 0) {
     return (
-      <div className="card p-8 text-center text-petrolio/70">{empty}</div>
+      <div className="card p-8 text-center text-cream/70">{empty}</div>
     );
   }
 
@@ -98,9 +98,9 @@ export default function ProfileOwnList({
             <li key={item.id}>
               <Link
                 href={item.href}
-                className="card block p-4 hover:bg-white transition"
+                className="card block p-4 hover:bg-cream/5 transition"
               >
-                <header className="flex items-center gap-2 text-xs text-petrolio/60 mb-2 flex-wrap">
+                <header className="flex items-center gap-2 text-xs text-cream/60 mb-2 flex-wrap">
                   <span className="chip">
                     {space?.emoji} {space?.name ?? item.spaceSlug}
                   </span>
@@ -110,10 +110,10 @@ export default function ProfileOwnList({
                     editedAt={item.edited_at}
                   />
                 </header>
-                <p className="text-petrolio leading-relaxed line-clamp-3">
+                <p className="text-cream leading-relaxed line-clamp-3">
                   {item.snippet}
                 </p>
-                <p className="text-xs text-petrolio/60 mt-2">{item.interactions}</p>
+                <p className="text-xs text-cream/60 mt-2">{item.interactions}</p>
               </Link>
             </li>
           );

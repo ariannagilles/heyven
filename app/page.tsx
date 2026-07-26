@@ -39,8 +39,8 @@ export default async function HomePage() {
 
         {!feed || feed.items.length === 0 ? (
           <div className="card p-8 text-center">
-            <p className="text-petrolio/80">Ancora nulla qui.</p>
-            <p className="text-sm text-petrolio/60 mt-1">
+            <p className="text-cream/80">Ancora nulla qui.</p>
+            <p className="text-sm text-cream/60 mt-1">
               Esplora gli spazi per iniziare a condividere.
             </p>
             <Link href="/spazi" className="btn-primary mt-4 inline-flex">
@@ -67,7 +67,7 @@ function MentorCard({
 }) {
   if (!preview) {
     return (
-      <section className="card p-5 bg-petrolio text-crema border-petrolio/20">
+      <section className="card p-5 bg-petrolio text-crema border-cream/20">
         <div className="flex items-start gap-4">
           <div className="hidden sm:flex w-12 h-12 rounded-full bg-crema/15 items-center justify-center text-2xl shrink-0">
             ✦
@@ -80,7 +80,7 @@ function MentorCard({
             </p>
             <Link
               href="/chat"
-              className="inline-flex items-center gap-2 mt-4 rounded-full bg-crema text-petrolio px-5 py-2.5 text-sm font-medium hover:bg-crema-200 transition"
+              className="inline-flex items-center gap-2 mt-4 rounded-full bg-crema text-cream px-5 py-2.5 text-sm font-medium hover:bg-crema-200 transition"
             >
               Inizia la chat
             </Link>
@@ -93,12 +93,12 @@ function MentorCard({
   return (
     <Link
       href="/chat"
-      className="card block p-5 hover:bg-white transition relative"
+      className="card block p-5 hover:bg-cream/5 transition relative"
     >
       {preview.unread > 0 && (
         <span
           aria-label={`${preview.unread} nuovi messaggi`}
-          className="absolute top-4 right-4 w-2.5 h-2.5 rounded-full bg-red-500"
+          className="absolute top-4 right-4 w-2.5 h-2.5 rounded-full bg-mint"
         />
       )}
       <div className="flex items-start gap-4">
@@ -109,11 +109,11 @@ function MentorCard({
           <h2 className="text-base font-semibold">
             Continua la chat con il tuo Mentore
           </h2>
-          <p className="text-xs text-petrolio/60 mt-0.5">
+          <p className="text-xs text-cream/60 mt-0.5">
             @{preview.mentorNickname ?? "mentore"} ·{" "}
             {timeAgo(preview.lastActivityAt)}
           </p>
-          <p className="text-sm text-petrolio/80 mt-2 line-clamp-2">
+          <p className="text-sm text-cream/80 mt-2 line-clamp-2">
             {preview.lastMessage ?? "Nessun messaggio ancora — scrivi tu per primə."}
           </p>
         </div>

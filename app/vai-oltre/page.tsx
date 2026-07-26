@@ -10,7 +10,7 @@ export default function VaiOltrePage() {
       <main className="mx-auto max-w-2xl px-4 py-6 space-y-8">
         <header>
           <h1 className="text-2xl font-semibold">Vai oltre</h1>
-          <p className="text-sm text-petrolio/70 mt-2 leading-relaxed">
+          <p className="text-sm text-cream/70 mt-2 leading-relaxed">
             Heyven è il posto dove hai iniziato. Quando senti di voler fare un
             passo in più, siamo qui per aiutarti.
           </p>
@@ -22,7 +22,7 @@ export default function VaiOltrePage() {
             <h2 className="text-lg font-semibold">
               Parla con uno psicologo online
             </h2>
-            <p className="text-sm text-petrolio/70 mt-1">
+            <p className="text-sm text-cream/70 mt-1">
               Sessioni con professionisti qualificati, da casa tua, ai tuoi
               tempi.
             </p>
@@ -48,21 +48,21 @@ export default function VaiOltrePage() {
             <h2 className="text-lg font-semibold">
               Trova uno psicologo vicino a te
             </h2>
-            <p className="text-sm text-petrolio/70 mt-1">
+            <p className="text-sm text-cream/70 mt-1">
               Inserisci la tua città per trovare professionisti nella tua zona.
             </p>
           </div>
 
           <CityMap />
 
-          <p className="text-xs text-petrolio/50 leading-relaxed">
+          <p className="text-xs text-cream/50 leading-relaxed">
             I professionisti mostrati sono risultati pubblici di Google Maps.
             Heyven non ha rapporti commerciali con questi professionisti.
           </p>
         </section>
 
         {/* EMERGENCY */}
-        <section className="rounded-3xl bg-petrolio-900 text-crema p-6 space-y-4">
+        <section className="rounded-3xl bg-petrolio text-crema p-6 space-y-4">
           <div>
             <h2 className="text-lg font-semibold">
               Hai bisogno di aiuto immediato?
@@ -105,19 +105,19 @@ function PartnerCard({
         <div className="w-12 h-12 rounded-2xl bg-petrolio text-crema flex items-center justify-center text-xl font-semibold shrink-0">
           {letter}
         </div>
-        <h3 className="font-semibold text-petrolio">{name}</h3>
+        <h3 className="font-semibold text-cream">{name}</h3>
       </header>
-      <p className="text-sm text-petrolio/80 leading-relaxed flex-1">
+      <p className="text-sm text-cream/80 leading-relaxed flex-1">
         {description}
       </p>
       <button
         type="button"
         disabled
-        className="btn mt-4 bg-petrolio/10 text-petrolio/60 cursor-not-allowed"
+        className="btn mt-4 bg-cream/10 text-cream/60 cursor-not-allowed"
       >
         Prossimamente
       </button>
-      <p className="text-xs text-petrolio/50 mt-2">
+      <p className="text-xs text-cream/50 mt-2">
         Stiamo lavorando a una convenzione per te.
       </p>
     </article>

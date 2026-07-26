@@ -73,7 +73,7 @@ export default async function PostDetailPage({ params }: { params: { id: string 
     <>
       <Navbar />
       <main className="mx-auto max-w-2xl px-4 py-6 space-y-6">
-        <Link href="/" className="text-sm text-petrolio/60 hover:text-petrolio">← torna al feed</Link>
+        <Link href="/" className="text-sm text-cream/60 hover:text-cream">← torna al feed</Link>
 
         <PostDetailArticle
           post={{
@@ -93,25 +93,25 @@ export default async function PostDetailPage({ params }: { params: { id: string 
         />
 
         <section className="space-y-3">
-          <h2 className="text-sm font-medium text-petrolio/70 px-1">
+          <h2 className="text-sm font-medium text-cream/70 px-1">
             Risposte {replies?.length ? `(${replies.length})` : ""}
           </h2>
 
           {(replies?.length ?? 0) === 0 ? (
-            <div className="card p-5 text-sm text-petrolio/70">
+            <div className="card p-5 text-sm text-cream/70">
               Ancora nessuna risposta. Scrivere per primə richiede coraggio.
             </div>
           ) : (
             <ul className="space-y-3">
               {(replies as unknown as Reply[]).map((r) => (
                 <li key={r.id} className="card p-4">
-                  <header className="flex items-center gap-2 text-xs text-petrolio/60 mb-1.5">
-                    <span className="font-medium text-petrolio">@{r.profiles?.nickname ?? "anonimo"}</span>
+                  <header className="flex items-center gap-2 text-xs text-cream/60 mb-1.5">
+                    <span className="font-medium text-cream">@{r.profiles?.nickname ?? "anonimo"}</span>
                     <span aria-hidden>·</span>
                     <time dateTime={r.created_at}>{timeAgo(r.created_at)}</time>
                     <ReportButton targetType="reply" targetId={r.id} className="ml-auto shrink-0" />
                   </header>
-                  <p className="whitespace-pre-wrap text-petrolio leading-relaxed">{r.content}</p>
+                  <p className="whitespace-pre-wrap text-cream leading-relaxed">{r.content}</p>
                 </li>
               ))}
             </ul>

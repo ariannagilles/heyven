@@ -108,15 +108,15 @@ export default async function ProfilePage({
                   </span>
                 )}
                 {role === "admin" && (
-                  <span className="inline-flex items-center rounded-full bg-petrolio/10 text-petrolio text-xs font-medium px-2.5 py-1">
+                  <span className="inline-flex items-center rounded-full bg-cream/10 text-cream text-xs font-medium px-2.5 py-1">
                     Admin
                   </span>
                 )}
               </div>
-              <p className="text-sm text-petrolio/70 mt-1">
+              <p className="text-sm text-cream/70 mt-1">
                 Su Heyven da {formatJoined(joinedAt)}
               </p>
-              <p className="text-xs text-petrolio/50 mt-2">
+              <p className="text-xs text-cream/50 mt-2">
                 Il tuo spazio è anonimo. Nessuno sa chi sei.
               </p>
             </div>
@@ -135,12 +135,12 @@ export default async function ProfilePage({
         {isMentor && ratings && (
           <section className="card p-5 space-y-3">
             <div className="flex items-baseline justify-between gap-3">
-              <h2 className="text-sm font-medium text-petrolio/70">
+              <h2 className="text-sm font-medium text-cream/70">
                 Mentore Heyven
               </h2>
               <Link
                 href="/mentor"
-                className="text-xs text-petrolio/70 hover:text-petrolio underline underline-offset-2"
+                className="text-xs text-cream/70 hover:text-cream underline underline-offset-2"
               >
                 Modifica la mia presentazione
               </Link>
@@ -150,11 +150,11 @@ export default async function ProfilePage({
                 {ratings.count > 0 ? ratings.avg.toFixed(2) : "—"}
               </div>
               <Stars value={ratings.avg} />
-              <span className="text-sm text-petrolio/60">
+              <span className="text-sm text-cream/60">
                 ({ratings.count} valutazion{ratings.count === 1 ? "e" : "i"})
               </span>
             </div>
-            <p className="text-sm text-petrolio/70">
+            <p className="text-sm text-cream/70">
               {closedConvs} conversazion{closedConvs === 1 ? "e" : "i"}{" "}
               completate.
             </p>
@@ -162,7 +162,7 @@ export default async function ProfilePage({
         )}
 
         {/* TABS */}
-        <nav className="flex items-center gap-1 border-b border-petrolio/10 -mx-4 px-4">
+        <nav className="flex items-center gap-1 border-b border-cream/10 -mx-4 px-4">
           {(["sfoghi", "domande", "storie"] as const).map((t) => {
             const active = t === tab;
             const labels = { sfoghi: "Sfoghi", domande: "Domande", storie: "Storie" };
@@ -173,8 +173,8 @@ export default async function ProfilePage({
                 className={
                   "px-4 py-3 text-sm font-medium border-b-2 -mb-px transition " +
                   (active
-                    ? "border-petrolio text-petrolio"
-                    : "border-transparent text-petrolio/60 hover:text-petrolio")
+                    ? "border-petrolio text-cream"
+                    : "border-transparent text-cream/60 hover:text-cream")
                 }
               >
                 {labels[t]}
@@ -209,7 +209,7 @@ function Stat({ label, value }: { label: string; value: number }) {
   return (
     <div className="card p-4 text-center">
       <div className="text-2xl font-semibold tabular-nums">{value}</div>
-      <div className="text-xs text-petrolio/60 mt-0.5">{label}</div>
+      <div className="text-xs text-cream/60 mt-0.5">{label}</div>
     </div>
   );
 }

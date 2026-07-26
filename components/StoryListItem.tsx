@@ -32,9 +32,9 @@ export default function StoryListItem({ story, viewerId }: Props) {
   return (
     <li className="card p-5">
       {showAtRiskBanner && <AtRiskBanner />}
-      <header className="flex items-center gap-2 text-xs text-petrolio/60 mb-3">
+      <header className="flex items-center gap-2 text-xs text-cream/60 mb-3">
         <AvatarImage src={story.avatarSrc} nickname={story.nickname} size={32} />
-        <span className="font-medium text-petrolio">@{story.nickname}</span>
+        <span className="font-medium text-cream">@{story.nickname}</span>
         <span aria-hidden>·</span>
         <ContentMetaTime createdAt={story.created_at} editedAt={editable.editedAt} />
         <div className="ml-auto shrink-0 flex items-center gap-0.5">
@@ -64,7 +64,7 @@ export default function StoryListItem({ story, viewerId }: Props) {
           {editable.title && (
             <h3 className="text-lg font-semibold mb-2">{editable.title}</h3>
           )}
-          <p className="text-[15px] text-petrolio leading-relaxed whitespace-pre-wrap">
+          <p className="text-[15px] text-cream leading-relaxed whitespace-pre-wrap">
             {editable.content}
           </p>
         </>

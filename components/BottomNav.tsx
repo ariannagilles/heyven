@@ -49,43 +49,51 @@ export default function BottomNav() {
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-[#04342C]/10 bg-white/80 pb-[env(safe-area-inset-bottom)] backdrop-blur-lg">
-      <div className="mx-auto flex max-w-md items-center justify-around px-2 py-2">
-        {items.map((item) => {
-          const active = isActive(item.href);
-          if (item.center) {
+    <nav
+      aria-label="Navigazione principale"
+      className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] pointer-events-none"
+    >
+      <div className="glass-card mx-auto max-w-md rounded-[26px] pointer-events-auto">
+        <div className="flex items-end justify-around px-1 pt-2 pb-2">
+          {items.map((item) => {
+            const active = isActive(item.href);
+            if (item.center) {
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  aria-label={item.label}
+                  className="-mt-7 mb-1 flex h-[3.75rem] w-[3.75rem] items-center justify-center rounded-full text-cream shadow-glass transition-transform active:scale-95"
+                  style={{
+                    background: "linear-gradient(180deg, #2CC79A 0%, #0F6E56 100%)",
+                  }}
+                >
+                  <IconWrite />
+                </Link>
+              );
+            }
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 aria-label={item.label}
-                className="-mt-6 flex h-14 w-14 items-center justify-center rounded-full bg-[#04342C] text-[#FAEEDA] shadow-lg shadow-[#04342C]/25 transition-transform active:scale-95"
+                className={`flex min-w-[3.5rem] flex-col items-center gap-1 px-2 py-1.5 text-[11px] transition-colors ${
+                  active ? "text-mint" : "text-cream/55"
+                }`}
               >
-                <IconWrite />
+                <Icon name={item.icon} active={active} />
+                <span>{item.label}</span>
               </Link>
             );
-          }
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              aria-label={item.label}
-              className={`flex flex-col items-center gap-1 px-3 py-1 text-[11px] transition-colors ${
-                active ? "text-[#04342C]" : "text-[#7A9188]"
-              }`}
-            >
-              <Icon name={item.icon} active={active} />
-              <span>{item.label}</span>
-            </Link>
-          );
-        })}
+          })}
+        </div>
       </div>
     </nav>
   );
 }
 
 function Icon({ name, active }: { name: string; active: boolean }) {
-  const className = active ? "text-[#04342C]" : "text-[#7A9188]";
+  const className = active ? "text-mint" : "text-cream/55";
 
   switch (name) {
     case "home":

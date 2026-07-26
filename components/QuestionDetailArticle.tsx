@@ -46,9 +46,9 @@ export default function QuestionDetailArticle({
   return (
     <article className="card p-5">
       {showAtRiskBanner && <AtRiskBanner />}
-      <header className="flex items-center gap-2 text-xs text-petrolio/60 mb-3">
+      <header className="flex items-center gap-2 text-xs text-cream/60 mb-3">
         <AvatarImage src={question.avatarSrc} nickname={question.nickname} size={32} />
-        <span className="font-medium text-petrolio">@{question.nickname}</span>
+        <span className="font-medium text-cream">@{question.nickname}</span>
         <span aria-hidden>·</span>
         <ContentMetaTime
           createdAt={question.created_at}
@@ -75,7 +75,7 @@ export default function QuestionDetailArticle({
           onCancel={editable.cancelEdit}
         />
       ) : (
-        <p className="text-[15px] text-petrolio leading-relaxed whitespace-pre-wrap">
+        <p className="text-[15px] text-cream leading-relaxed whitespace-pre-wrap">
           {editable.content}
         </p>
       )}

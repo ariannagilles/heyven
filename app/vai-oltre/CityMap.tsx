@@ -40,7 +40,7 @@ export default function CityMap() {
       </form>
 
       {embedSrc ? (
-        <div className="rounded-3xl overflow-hidden border border-petrolio/10 bg-white">
+        <div className="rounded-3xl overflow-hidden border border-cream/10 bg-cream/5">
           <iframe
             src={embedSrc}
             title={`Psicologi a ${query}`}
@@ -50,7 +50,7 @@ export default function CityMap() {
           />
         </div>
       ) : (
-        <div className="card p-8 text-center text-petrolio/60">
+        <div className="card p-8 text-center text-cream/60">
           La mappa appare qui dopo la ricerca.
         </div>
       )}

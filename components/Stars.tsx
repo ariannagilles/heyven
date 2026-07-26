@@ -14,7 +14,7 @@ export default function Stars({ value, size = "md", label }: Props) {
       aria-label={label ?? `${value} stelle su 5`}
     >
       {[1, 2, 3, 4, 5].map((n) => (
-        <span key={n} className={n <= filled ? "text-petrolio" : "text-petrolio/20"}>
+        <span key={n} className={n <= filled ? "text-cream" : "text-cream/20"}>
           ★
         </span>
       ))}

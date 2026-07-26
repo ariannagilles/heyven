@@ -54,10 +54,10 @@ export default function PostDetailArticle({
   return (
     <article className="card p-6">
       {showAtRiskBanner && <AtRiskBanner />}
-      <header className="flex items-center gap-2 text-xs text-petrolio/60 mb-3">
-        <span className="font-medium text-petrolio">@{post.nickname}</span>
+      <header className="flex items-center gap-2 text-xs text-cream/60 mb-3">
+        <span className="font-medium text-cream">@{post.nickname}</span>
         <span aria-hidden>·</span>
-        <Link href={`/spazi/${post.space_slug}`} className="chip hover:bg-petrolio/15">
+        <Link href={`/spazi/${post.space_slug}`} className="chip hover:bg-cream/15">
           {space?.name ?? post.space_slug}
         </Link>
         <span aria-hidden>·</span>
@@ -83,7 +83,7 @@ export default function PostDetailArticle({
           onCancel={editable.cancelEdit}
         />
       ) : (
-        <p className="whitespace-pre-wrap text-petrolio leading-relaxed text-[15px]">
+        <p className="whitespace-pre-wrap text-cream leading-relaxed text-[15px]">
           {editable.content}
         </p>
       )}

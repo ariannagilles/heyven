@@ -45,7 +45,7 @@ export default function RatingForm({ conversationId }: { conversationId: string 
   return (
     <form onSubmit={submit} className="card p-5 space-y-4">
       <div>
-        <span className="text-xs font-medium text-petrolio/70 block mb-2">
+        <span className="text-xs font-medium text-cream/70 block mb-2">
           La tua valutazione
         </span>
         <div
@@ -67,20 +67,20 @@ export default function RatingForm({ conversationId }: { conversationId: string 
                 onClick={() => setRating(n)}
                 className="p-1 text-3xl leading-none transition"
               >
-                <span className={active ? "text-petrolio" : "text-petrolio/20"}>
+                <span className={active ? "text-cream" : "text-cream/20"}>
                   ★
                 </span>
               </button>
             );
           })}
-          <span className="ml-2 text-sm text-petrolio/60 tabular-nums">
+          <span className="ml-2 text-sm text-cream/60 tabular-nums">
             {rating > 0 ? `${rating}/5` : ""}
           </span>
         </div>
       </div>
 
       <label className="block">
-        <span className="text-xs font-medium text-petrolio/70">
+        <span className="text-xs font-medium text-cream/70">
           Vuoi raccontarci com'è andata? (opzionale)
         </span>
         <textarea
@@ -90,13 +90,13 @@ export default function RatingForm({ conversationId }: { conversationId: string 
           placeholder="La tua esperienza, in libertà."
           maxLength={MAX}
         />
-        <div className="mt-1 text-right text-xs text-petrolio/50 tabular-nums">
+        <div className="mt-1 text-right text-xs text-cream/50 tabular-nums">
           {feedback.length} / {MAX}
         </div>
       </label>
 
       {error && (
-        <p className="text-sm text-red-700 bg-red-50 rounded-xl px-3 py-2">
+        <p className="msg-error">
           {error}
         </p>
       )}

@@ -54,16 +54,16 @@ export default function MixedFeedItemClient({ item, viewerId }: Props) {
 
   return (
     <article className="card p-5">
-      <header className="flex items-center gap-2 text-xs text-petrolio/60 mb-3 flex-wrap">
+      <header className="flex items-center gap-2 text-xs text-cream/60 mb-3 flex-wrap">
         <AvatarImage src={item.avatarSrc} nickname={item.nickname} size={32} />
-        <span className="font-medium text-petrolio">@{item.nickname}</span>
+        <span className="font-medium text-cream">@{item.nickname}</span>
         <span aria-hidden>·</span>
         <span className="inline-flex items-center gap-1">
           <span aria-hidden>{meta.emoji}</span>
           <span>{meta.label}</span>
         </span>
         <span aria-hidden>·</span>
-        <Link href={`/spazi/${item.space_slug}`} className="chip hover:bg-petrolio/15">
+        <Link href={`/spazi/${item.space_slug}`} className="chip hover:bg-cream/15">
           {space?.name ?? item.space_slug}
         </Link>
         <span aria-hidden>·</span>
@@ -106,19 +106,19 @@ export default function MixedFeedItemClient({ item, viewerId }: Props) {
 
           {item.kind === "sfogo" ? (
             <Link href={`/post/${item.id}`} className="block">
-              <p className="whitespace-pre-wrap text-petrolio leading-relaxed line-clamp-6">
+              <p className="whitespace-pre-wrap text-cream leading-relaxed line-clamp-6">
                 {editable.content}
               </p>
             </Link>
           ) : item.kind === "domanda" ? (
             <Link href={`/spazi/${item.space_slug}/domande/${item.id}`} className="block">
-              <p className="whitespace-pre-wrap text-petrolio leading-relaxed">
+              <p className="whitespace-pre-wrap text-cream leading-relaxed">
                 {editable.content}
               </p>
             </Link>
           ) : (
             <Link href={`/spazi/${item.space_slug}/storie`} className="block">
-              <p className="whitespace-pre-wrap text-petrolio leading-relaxed line-clamp-6">
+              <p className="whitespace-pre-wrap text-cream leading-relaxed line-clamp-6">
                 {editable.content}
               </p>
             </Link>
@@ -137,7 +137,7 @@ export default function MixedFeedItemClient({ item, viewerId }: Props) {
               />
               <Link
                 href={`/post/${item.id}`}
-                className="inline-flex items-center gap-1.5 rounded-full bg-petrolio/5 text-petrolio px-3 py-1.5 text-sm hover:bg-petrolio/10"
+                className="inline-flex items-center gap-1.5 rounded-full bg-cream/5 text-cream px-3 py-1.5 text-sm hover:bg-cream/10"
               >
                 <span aria-hidden>💬</span>
                 <span>risposte</span>
@@ -148,7 +148,7 @@ export default function MixedFeedItemClient({ item, viewerId }: Props) {
           {item.kind === "domanda" && (
             <Link
               href={`/spazi/${item.space_slug}/domande/${item.id}`}
-              className="inline-flex items-center gap-1.5 rounded-full bg-petrolio/5 text-petrolio px-3 py-1.5 text-sm hover:bg-petrolio/10"
+              className="inline-flex items-center gap-1.5 rounded-full bg-cream/5 text-cream px-3 py-1.5 text-sm hover:bg-cream/10"
             >
               <span aria-hidden>💬</span>
               <span>

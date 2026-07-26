@@ -16,12 +16,12 @@ export default function NewSfogoPage({
     <>
       <Navbar />
       <main className="mx-auto max-w-2xl px-4 py-6 space-y-4">
-        <Link href="/new" className="text-sm text-petrolio/60 hover:text-petrolio">
+        <Link href="/new" className="text-sm text-cream/60 hover:text-cream">
           ← indietro
         </Link>
         <div>
           <h1 className="text-xl font-semibold">🌊 Sfogati</h1>
-          <p className="text-sm text-petrolio/70 mt-1">
+          <p className="text-sm text-cream/70 mt-1">
             Pubblichi in anonimo. Solo il tuo nickname sarà visibile.
           </p>
         </div>

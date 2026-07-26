@@ -39,7 +39,7 @@ export default async function RateChatPage({
       <main className="mx-auto max-w-md px-4 py-8 space-y-4">
         <header>
           <h1 className="text-xl font-semibold">Vuoi raccontarci com'è andata?</h1>
-          <p className="text-sm text-petrolio/70 mt-1">
+          <p className="text-sm text-cream/70 mt-1">
             La tua valutazione di @{mentorProfile?.nickname ?? "il tuo mentore"}{" "}
             ci aiuta a prenderci cura della community.
           </p>

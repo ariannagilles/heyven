@@ -38,7 +38,7 @@ export default function SpacePostsList({
 
   if (items.length === 0) {
     return (
-      <div className="card p-8 text-center text-petrolio/70">
+      <div className="card p-8 text-center text-cream/70">
         Nessun post in questo spazio.
       </div>
     );

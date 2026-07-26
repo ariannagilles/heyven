@@ -28,7 +28,7 @@ export default async function UserChatPage() {
   ]);
 
   return (
-    <div className="-mb-24 h-dvh">
+    <div className="-mb-28 h-dvh">
       <ChatView
         conversationId={conversation.id}
         meId={user.id}

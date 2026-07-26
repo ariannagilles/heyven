@@ -514,7 +514,7 @@ function GlassInput({
 }
 
 const inputClassName =
-  "mt-2 w-full rounded-2xl border border-[#04342C]/15 bg-white/60 px-4 py-3 text-[#04342C] outline-none placeholder:text-[#7A9188] focus:border-[#04342C]/40";
+  "mt-2 w-full rounded-2xl border border-[#04342C]/15 bg-cream/5 px-4 py-3 text-[#04342C] outline-none placeholder:text-[#7A9188] focus:border-[#04342C]/40";
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -742,7 +742,7 @@ export default function RegisterForm() {
 
         <form
           onSubmit={onSubmit}
-          className="mt-6 rounded-3xl border border-white/60 bg-white/50 p-5 shadow-sm"
+          className="mt-6 rounded-3xl border border-white/60 bg-cream/10 p-5 shadow-sm"
         >
           <div className="space-y-4">
             <GlassInput label="Nickname anonimo">
@@ -812,7 +812,7 @@ export default function RegisterForm() {
             </p>
           )}
           {info && (
-            <p className="mt-4 rounded-2xl border border-[#04342C]/10 bg-white/60 px-3 py-2 text-sm text-[#04342C]">
+            <p className="mt-4 rounded-2xl border border-[#04342C]/10 bg-cream/5 px-3 py-2 text-sm text-[#04342C]">
               {info}
             </p>
           )}
@@ -847,7 +847,7 @@ export default function RegisterForm() {
           Due dettagli in più, poi si va avanti.
         </p>
 
-        <div className="mt-6 space-y-4 rounded-3xl border border-white/60 bg-white/50 p-5 shadow-sm">
+        <div className="mt-6 space-y-4 rounded-3xl border border-white/60 bg-cream/10 p-5 shadow-sm">
           <GlassInput label="Data di nascita">
             <input
               type="date"
@@ -927,7 +927,7 @@ export default function RegisterForm() {
                     className={
                       active
                         ? "rounded-full bg-[#04342C] px-4 py-2 text-sm font-medium text-[#FAEEDA]"
-                        : "rounded-full border border-[#04342C]/20 bg-white/40 px-4 py-2 text-sm text-[#4A6158]"
+                        : "rounded-full border border-[#04342C]/20 bg-cream/10 px-4 py-2 text-sm text-[#4A6158]"
                     }
                   >
                     {space.emoji} {space.label}
@@ -952,7 +952,7 @@ export default function RegisterForm() {
                     className={
                       active
                         ? "rounded-full bg-[#04342C] px-4 py-2 text-sm font-medium text-[#FAEEDA]"
-                        : "rounded-full border border-[#04342C]/20 bg-white/40 px-4 py-2 text-sm text-[#4A6158]"
+                        : "rounded-full border border-[#04342C]/20 bg-cream/10 px-4 py-2 text-sm text-[#4A6158]"
                     }
                   >
                     {option}
@@ -964,7 +964,7 @@ export default function RegisterForm() {
         </div>
 
         {step2Error && (
-          <p className="mt-4 rounded-2xl border border-[#04342C]/10 bg-white/60 px-3 py-2 text-sm text-[#04342C]">
+          <p className="mt-4 rounded-2xl border border-[#04342C]/10 bg-cream/5 px-3 py-2 text-sm text-[#04342C]">
             {step2Error}
           </p>
         )}
@@ -992,7 +992,7 @@ export default function RegisterForm() {
         {PREVIEW_POSTS.map((post) => (
           <article
             key={post.nickname}
-            className="rounded-3xl border border-white/60 bg-white/50 p-5 shadow-sm"
+            className="rounded-3xl border border-white/60 bg-cream/10 p-5 shadow-sm"
           >
             <header className="flex items-center gap-3">
               <div
@@ -1034,7 +1034,7 @@ export default function RegisterForm() {
         </article>
 
         {selectedSpace === "vuole-aiutare" && (
-          <div className="mt-3 rounded-2xl border border-[#04342C]/15 bg-white/50 p-4">
+          <div className="mt-3 rounded-2xl border border-[#04342C]/15 bg-cream/10 p-4">
             <p className="text-sm font-medium text-[#04342C]">Grazie di cuore 💚</p>
             <p className="mt-1 text-sm leading-relaxed text-[#4A6158]">
               Quando sarai più presente nella community, potrai candidarti come Mentore. Te lo

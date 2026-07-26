@@ -13,7 +13,7 @@ export default function SpaceTabs({ slug }: { slug: string }) {
   ];
 
   return (
-    <nav className="flex items-center gap-1 border-b border-petrolio/10 -mx-4 px-4">
+    <nav className="flex items-center gap-1 border-b border-cream/10 -mx-4 px-4">
       {tabs.map((t) => {
         const active =
           t.href === base
@@ -26,8 +26,8 @@ export default function SpaceTabs({ slug }: { slug: string }) {
             className={
               "px-4 py-3 text-sm font-medium border-b-2 -mb-px transition " +
               (active
-                ? "border-petrolio text-petrolio"
-                : "border-transparent text-petrolio/60 hover:text-petrolio")
+                ? "border-petrolio text-cream"
+                : "border-transparent text-cream/60 hover:text-cream")
             }
           >
             {t.label}

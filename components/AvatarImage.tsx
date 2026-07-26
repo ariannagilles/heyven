@@ -21,7 +21,7 @@ export function AvatarImage({
       loading="lazy"
       decoding="async"
       style={{ width: size, height: size }}
-      className={`rounded-full bg-petrolio/10 shrink-0 ${className}`}
+      className={`rounded-full bg-cream/10 shrink-0 ${className}`}
     />
   );
 }

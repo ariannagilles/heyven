@@ -76,7 +76,7 @@ export default function MeTooButton({ postId, initialCount, initialActive }: Pro
         "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm transition " +
         (active
           ? "bg-petrolio text-crema"
-          : "bg-petrolio/5 text-petrolio hover:bg-petrolio/10")
+          : "bg-cream/5 text-cream hover:bg-cream/10")
       }
     >
       <span aria-hidden>♡</span>

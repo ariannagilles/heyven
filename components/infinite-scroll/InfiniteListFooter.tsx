@@ -15,7 +15,7 @@ export default function InfiniteListFooter({
 
   if (isLoading) {
     return (
-      <p className="py-6 text-center text-sm text-petrolio/60" aria-live="polite">
+      <p className="py-6 text-center text-sm text-cream/60" aria-live="polite">
         Caricamento…
       </p>
     );
@@ -23,7 +23,7 @@ export default function InfiniteListFooter({
 
   if (!hasMore) {
     return (
-      <p className="py-6 text-center text-sm text-petrolio/50" aria-live="polite">
+      <p className="py-6 text-center text-sm text-cream/50" aria-live="polite">
         Hai visto tutto
       </p>
     );

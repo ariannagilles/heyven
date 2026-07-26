@@ -36,7 +36,7 @@ export default function ClearFlagButton({ mentorId }: { mentorId: string }) {
         {loading ? "…" : "Rimuovi flag"}
       </button>
       {error && (
-        <p className="text-xs text-red-700 max-w-[180px] text-right">{error}</p>
+        <p className="msg-error max-w-[180px] text-right">{error}</p>
       )}
     </div>
   );

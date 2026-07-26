@@ -40,9 +40,9 @@ export default function StartChatButton() {
 
   if (phase === "searching") {
     return (
-      <div className="flex items-center gap-3 text-petrolio/80">
+      <div className="flex items-center gap-3 text-cream/80">
         <span
-          className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-petrolio/30 border-t-petrolio"
+          className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-cream/30 border-t-petrolio"
           aria-hidden
         />
         <span className="text-sm">Stiamo trovando il Mentore più adatto a te…</span>
@@ -53,7 +53,7 @@ export default function StartChatButton() {
   if (phase === "found") {
     return (
       <div className="space-y-3">
-        <p className="flex items-center gap-2 text-sm font-medium text-petrolio">
+        <p className="flex items-center gap-2 text-sm font-medium text-cream">
           <span aria-hidden>✦</span> Trovato!
         </p>
         <button onClick={goToMeeting} className="btn-primary">

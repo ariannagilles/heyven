@@ -43,12 +43,12 @@ export default async function AdminPage() {
           <div className="flex items-center justify-between gap-3">
             <div>
               <h1 className="text-lg font-semibold">Dashboard admin</h1>
-              <p className="text-sm text-petrolio/70 mt-1">
+              <p className="text-sm text-cream/70 mt-1">
                 {mentors.length} mentori
                 {flaggedCount > 0 && (
                   <>
                     {" · "}
-                    <span className="text-red-700 font-medium">
+                    <span className="text-amber font-medium">
                       {flaggedCount} segnalat{flaggedCount === 1 ? "o" : "i"}
                     </span>
                   </>
@@ -59,7 +59,7 @@ export default async function AdminPage() {
               <Link href="/admin/reports" className="btn-outline text-sm relative">
                 Segnalazioni
                 {(pendingReportsCount ?? 0) > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 inline-flex items-center justify-center min-w-[1.25rem] h-5 rounded-full bg-red-600 text-crema text-[10px] font-semibold px-1">
+                  <span className="absolute -top-1.5 -right-1.5 inline-flex items-center justify-center min-w-[1.25rem] h-5 rounded-full bg-gold text-cream text-[10px] font-semibold px-1">
                     {pendingReportsCount}
                   </span>
                 )}
@@ -72,13 +72,13 @@ export default async function AdminPage() {
         </header>
 
         {error && (
-          <p className="text-sm text-red-700 bg-red-50 rounded-xl px-3 py-2">
+          <p className="msg-error">
             {error.message}
           </p>
         )}
 
         {mentors.length === 0 ? (
-          <div className="card p-8 text-center text-petrolio/70">
+          <div className="card p-8 text-center text-cream/70">
             Nessun mentore registrato.
           </div>
         ) : (
@@ -92,21 +92,21 @@ export default async function AdminPage() {
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-semibold">@{m.nickname}</span>
                         {m.is_flagged && (
-                          <span className="inline-flex items-center rounded-full bg-red-100 text-red-700 text-xs font-medium px-2.5 py-1">
+                          <span className="inline-flex items-center rounded-full bg-amber/15 text-amber text-xs font-medium px-2.5 py-1">
                             segnalato
                           </span>
                         )}
                         {!m.is_available && (
-                          <span className="chip text-petrolio/60">non disponibile</span>
+                          <span className="chip text-cream/60">non disponibile</span>
                         )}
                       </div>
-                      <div className="text-sm text-petrolio/70 mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5">
+                      <div className="text-sm text-cream/70 mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5">
                         <span>
                           ★{" "}
                           <span className="font-medium tabular-nums">
                             {m.ratings_count > 0 ? avg.toFixed(2) : "—"}
                           </span>{" "}
-                          <span className="text-petrolio/50">
+                          <span className="text-cream/50">
                             ({m.ratings_count} valutazion{m.ratings_count === 1 ? "e" : "i"})
                           </span>
                         </span>

@@ -85,19 +85,19 @@ export default function ResetConfirmForm() {
     <main className="mx-auto max-w-md px-4 pt-10 pb-20">
       <Link
         href="/login"
-        className="text-sm text-petrolio/60 hover:text-petrolio"
+        className="text-sm text-cream/60 hover:text-cream"
       >
         ← torna al login
       </Link>
 
       <h1 className="text-2xl font-semibold mb-1 mt-4">Nuova password</h1>
-      <p className="text-petrolio/70 text-sm mb-6">
+      <p className="text-cream/70 text-sm mb-6">
         Scegli una nuova password per il tuo account.
       </p>
 
       {sessionError ? (
         <div className="card p-5 space-y-3">
-          <p className="text-sm text-red-700 bg-red-50 rounded-xl px-3 py-2">
+          <p className="msg-error">
             {sessionError}
           </p>
           <Link
@@ -108,13 +108,13 @@ export default function ResetConfirmForm() {
           </Link>
         </div>
       ) : !ready ? (
-        <div className="card p-5 text-sm text-petrolio/70 text-center">
+        <div className="card p-5 text-sm text-cream/70 text-center">
           Verifica del link in corso…
         </div>
       ) : (
         <form onSubmit={onSubmit} className="space-y-3 card p-5">
           <label className="block">
-            <span className="text-xs font-medium text-petrolio/70">
+            <span className="text-xs font-medium text-cream/70">
               Nuova password
             </span>
             <input
@@ -128,7 +128,7 @@ export default function ResetConfirmForm() {
             />
           </label>
           <label className="block">
-            <span className="text-xs font-medium text-petrolio/70">
+            <span className="text-xs font-medium text-cream/70">
               Conferma nuova password
             </span>
             <input
@@ -143,7 +143,7 @@ export default function ResetConfirmForm() {
           </label>
 
           {error && (
-            <p className="text-sm text-red-700 bg-red-50 rounded-xl px-3 py-2">
+            <p className="msg-error">
               {error}
             </p>
           )}

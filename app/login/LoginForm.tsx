@@ -6,7 +6,7 @@ import { FormEvent, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 const inputClassName =
-  "mt-1 w-full rounded-2xl border border-[#04342C]/15 bg-white/60 px-4 py-3 text-[#04342C] outline-none focus:border-[#0F6E56]";
+  "mt-1 w-full rounded-2xl border border-[#04342C]/15 bg-cream/5 px-4 py-3 text-[#04342C] outline-none focus:border-[#0F6E56]";
 
 const messageClassName =
   "rounded-xl bg-[#D4EDE5] px-3 py-2 text-sm text-[#04342C]";
@@ -70,7 +70,7 @@ export default function LoginForm() {
 
         <form
           onSubmit={onSubmit}
-          className="rounded-3xl border border-white/60 bg-white/50 p-5"
+          className="rounded-3xl border border-white/60 bg-cream/10 p-5"
         >
           <div className="space-y-3">
             <label className="block">

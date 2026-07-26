@@ -105,7 +105,7 @@ export default function ReportButton({ targetType, targetId, className = "" }: P
         onClick={() => setOpen(true)}
         aria-label="Segnala contenuto"
         className={
-          "inline-flex items-center justify-center w-7 h-7 rounded-full text-petrolio/35 hover:text-petrolio/70 hover:bg-petrolio/5 transition " +
+          "inline-flex items-center justify-center w-7 h-7 rounded-full text-cream/35 hover:text-cream/70 hover:bg-cream/5 transition " +
           className
         }
       >
@@ -114,7 +114,7 @@ export default function ReportButton({ targetType, targetId, className = "" }: P
 
       {open && (
         <div
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-petrolio/40 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-cream/40 backdrop-blur-sm"
           onClick={() => !loading && close()}
           role="presentation"
         >
@@ -123,14 +123,14 @@ export default function ReportButton({ targetType, targetId, className = "" }: P
             aria-modal="true"
             aria-labelledby="report-title"
             onClick={(e) => e.stopPropagation()}
-            className="bg-crema rounded-3xl p-6 max-w-md w-full shadow-soft border border-petrolio/10 relative"
+            className="glass-card rounded-3xl p-6 max-w-md w-full shadow-soft border border-cream/10 relative"
           >
             <button
               type="button"
               onClick={close}
               disabled={loading}
               aria-label="Chiudi"
-              className="absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center text-petrolio/60 hover:bg-petrolio/5"
+              className="absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center text-cream/60 hover:bg-cream/5"
             >
               ✕
             </button>
@@ -138,7 +138,7 @@ export default function ReportButton({ targetType, targetId, className = "" }: P
             {done ? (
               <div className="text-center py-4">
                 <p className="text-lg font-semibold">Grazie</p>
-                <p className="text-sm text-petrolio/70 mt-1">
+                <p className="text-sm text-cream/70 mt-1">
                   Il nostro team lo revisionerà.
                 </p>
               </div>
@@ -148,7 +148,7 @@ export default function ReportButton({ targetType, targetId, className = "" }: P
                   <h2 id="report-title" className="text-lg font-semibold">
                     Segnala contenuto
                   </h2>
-                  <p className="text-sm text-petrolio/70 mt-1">
+                  <p className="text-sm text-cream/70 mt-1">
                     Scegli un motivo. La segnalazione è anonima per gli altri utenti.
                   </p>
                 </header>
@@ -171,7 +171,7 @@ export default function ReportButton({ targetType, targetId, className = "" }: P
                           "w-full flex items-center gap-3 rounded-2xl px-4 py-2.5 text-sm text-left transition " +
                           (active
                             ? "bg-petrolio text-crema"
-                            : "bg-petrolio/5 text-petrolio hover:bg-petrolio/10")
+                            : "bg-cream/5 text-cream hover:bg-cream/10")
                         }
                       >
                         <span>{reason}</span>
@@ -182,7 +182,7 @@ export default function ReportButton({ targetType, targetId, className = "" }: P
 
                 {selected === OTHER_REASON && (
                   <label className="block">
-                    <span className="text-sm text-petrolio/70 mb-1.5 block">
+                    <span className="text-sm text-cream/70 mb-1.5 block">
                       Dettagli (opzionale)
                     </span>
                     <textarea
@@ -196,7 +196,7 @@ export default function ReportButton({ targetType, targetId, className = "" }: P
                 )}
 
                 {error && (
-                  <p className="text-sm text-red-700 bg-red-50 rounded-xl px-3 py-2">
+                  <p className="msg-error">
                     {error}
                   </p>
                 )}

@@ -38,7 +38,7 @@ export default function ProfileSettings({
 
   return (
     <section id="impostazioni" className="card p-5 space-y-3 scroll-mt-20">
-      <h2 className="text-sm font-medium text-petrolio/70">Impostazioni</h2>
+      <h2 className="text-sm font-medium text-cream/70">Impostazioni</h2>
 
       <div className="flex flex-col gap-2">
         <button
@@ -51,7 +51,7 @@ export default function ProfileSettings({
         <button
           type="button"
           onClick={() => setModal("delete")}
-          className="btn-outline w-full sm:w-auto sm:inline-flex justify-start text-red-700 border-red-200 hover:bg-red-50"
+          className="btn-outline w-full sm:w-auto sm:inline-flex justify-start text-amber border-amber/30 hover:bg-amber/10"
         >
           Elimina account
         </button>
@@ -130,13 +130,13 @@ function ChangeNicknameModal({
 
   return (
     <ModalShell onClose={onClose} title="Cambia nickname">
-      <p className="text-sm text-petrolio/70">
+      <p className="text-sm text-cream/70">
         Il vecchio nickname non sarà più riconoscibile. I tuoi post resteranno,
         ma appariranno con il nuovo nickname.
       </p>
       <form onSubmit={save} className="space-y-3 mt-4">
         <label className="block">
-          <span className="text-xs font-medium text-petrolio/70">
+          <span className="text-xs font-medium text-cream/70">
             Nuovo nickname
           </span>
           <input
@@ -148,7 +148,7 @@ function ChangeNicknameModal({
           />
         </label>
         {error && (
-          <p className="text-sm text-red-700 bg-red-50 rounded-xl px-3 py-2">
+          <p className="msg-error">
             {error}
           </p>
         )}
@@ -192,13 +192,13 @@ function DeleteAccountModal({ onClose }: { onClose: () => void }) {
 
   return (
     <ModalShell onClose={onClose} title="Elimina account">
-      <p className="text-sm text-petrolio/70">
+      <p className="text-sm text-cream/70">
         Stai per eliminare definitivamente il tuo account. Verranno cancellati
         nickname, post, domande, storie, messaggi e chat. Questa azione non
         può essere annullata.
       </p>
       {error && (
-        <p className="text-sm text-red-700 bg-red-50 rounded-xl px-3 py-2 mt-3">
+        <p className="msg-error mt-3">
           {error}
         </p>
       )}
@@ -215,7 +215,7 @@ function DeleteAccountModal({ onClose }: { onClose: () => void }) {
           type="button"
           onClick={confirm}
           disabled={loading}
-          className="btn bg-red-600 text-white hover:bg-red-700"
+          className="btn bg-teal text-cream hover:bg-teal-mid"
         >
           {loading ? "Elimino…" : "Sì, elimina"}
         </button>
@@ -235,7 +235,7 @@ function ModalShell({
 }) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-petrolio/40 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-cream/40 backdrop-blur-sm"
       onClick={onClose}
       role="presentation"
     >
@@ -244,13 +244,13 @@ function ModalShell({
         aria-modal="true"
         aria-labelledby="modal-title"
         onClick={(e) => e.stopPropagation()}
-        className="bg-crema rounded-3xl p-6 max-w-md w-full shadow-soft border border-petrolio/10 relative"
+        className="glass-card rounded-3xl p-6 max-w-md w-full shadow-soft border border-cream/10 relative"
       >
         <button
           type="button"
           onClick={onClose}
           aria-label="Chiudi"
-          className="absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center text-petrolio/60 hover:bg-petrolio/5"
+          className="absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center text-cream/60 hover:bg-cream/5"
         >
           ✕
         </button>

@@ -20,7 +20,7 @@ export default function SpaceLayout({
       <main className="mx-auto max-w-2xl px-4 py-6 space-y-4">
         <Link
           href="/spazi"
-          className="text-sm text-petrolio/60 hover:text-petrolio"
+          className="text-sm text-cream/60 hover:text-cream"
         >
           ← tutti gli spazi
         </Link>
@@ -33,7 +33,7 @@ export default function SpaceLayout({
               </div>
               <div className="min-w-0">
                 <h1 className="text-lg font-semibold">{space.name}</h1>
-                <p className="text-sm text-petrolio/70 mt-1">
+                <p className="text-sm text-cream/70 mt-1">
                   {space.description}
                 </p>
               </div>

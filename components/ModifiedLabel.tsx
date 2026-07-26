@@ -6,7 +6,7 @@ type Props = {
 
 export default function ModifiedLabel({ editedAt }: Props) {
   return (
-    <span className="text-petrolio/40">
+    <span className="text-cream/40">
       Modificato · {formatShortDate(editedAt)}
     </span>
   );

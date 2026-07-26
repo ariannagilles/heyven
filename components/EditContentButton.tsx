@@ -16,7 +16,7 @@ export default function EditContentButton({
       disabled={disabled}
       aria-label="Modifica contenuto"
       className={
-        "inline-flex items-center justify-center w-7 h-7 rounded-full text-petrolio/35 hover:text-petrolio/70 hover:bg-petrolio/5 transition disabled:opacity-40 " +
+        "inline-flex items-center justify-center w-7 h-7 rounded-full text-cream/35 hover:text-cream/70 hover:bg-cream/5 transition disabled:opacity-40 " +
         className
       }
     >

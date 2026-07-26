@@ -41,7 +41,7 @@ export default async function MentorDashboard() {
                 <h1 className="text-lg font-semibold truncate">
                   @{profile.nickname}
                 </h1>
-                <p className="text-sm text-petrolio/70">
+                <p className="text-sm text-cream/70">
                   Dashboard mentore · {chats.length} chat
                 </p>
               </div>
@@ -49,7 +49,7 @@ export default async function MentorDashboard() {
             <span
               className={
                 "chip shrink-0 " +
-                (mentorRow?.is_available ? "text-petrolio" : "text-petrolio/50")
+                (mentorRow?.is_available ? "text-cream" : "text-cream/50")
               }
             >
               {mentorRow?.is_available ? "disponibile" : "non disponibile"}
@@ -59,10 +59,10 @@ export default async function MentorDashboard() {
 
         <section className="card p-5 space-y-3">
           <div>
-            <h2 className="text-sm font-medium text-petrolio/70">
+            <h2 className="text-sm font-medium text-cream/70">
               La tua presentazione
             </h2>
-            <p className="text-xs text-petrolio/60 mt-1">
+            <p className="text-xs text-cream/60 mt-1">
               Questa frase appare nel tuo profilo prima che l'utente apra la
               chat.
             </p>
@@ -74,8 +74,8 @@ export default async function MentorDashboard() {
         </section>
 
         <section className="card p-5 space-y-3">
-          <h2 className="text-sm font-medium text-petrolio/70">Di cosa ti occupi</h2>
-          <p className="text-sm text-petrolio/70">
+          <h2 className="text-sm font-medium text-cream/70">Di cosa ti occupi</h2>
+          <p className="text-sm text-cream/70">
             Scegli fino a 4 aree che hai attraversato in prima persona. Ci aiutano a farti
             incontrare le persone che vivono qualcosa di simile.
           </p>
@@ -85,11 +85,11 @@ export default async function MentorDashboard() {
         <RatingsSection summary={ratings} />
 
         <section className="space-y-3">
-          <h2 className="text-sm font-medium text-petrolio/70 px-1">
+          <h2 className="text-sm font-medium text-cream/70 px-1">
             Le tue chat
           </h2>
           {chats.length === 0 ? (
-            <div className="card p-8 text-center text-petrolio/70">
+            <div className="card p-8 text-center text-cream/70">
               Ancora nessuna chat assegnata.
             </div>
           ) : (
@@ -98,7 +98,7 @@ export default async function MentorDashboard() {
                 <li key={c.conversation_id}>
                   <Link
                     href={`/mentor/c/${c.conversation_id}`}
-                    className="card block p-4 hover:bg-white transition"
+                    className="card block p-4 hover:bg-cream/5 transition"
                   >
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-3 min-w-0">
@@ -107,7 +107,7 @@ export default async function MentorDashboard() {
                           <div className="flex items-center gap-2">
                             <span className="font-medium truncate">@{c.user_nickname}</span>
                             {c.status === "closed" && (
-                              <span className="chip text-petrolio/60">chiusa</span>
+                              <span className="chip text-cream/60">chiusa</span>
                             )}
                             {c.unread_for_mentor > 0 && (
                               <span className="inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-petrolio text-crema text-[11px] font-semibold tabular-nums">
@@ -115,13 +115,13 @@ export default async function MentorDashboard() {
                               </span>
                             )}
                           </div>
-                          <div className="text-sm text-petrolio/70 truncate">
+                          <div className="text-sm text-cream/70 truncate">
                             {c.last_message ?? "—"}
                           </div>
                         </div>
                       </div>
                       <time
-                        className="text-xs text-petrolio/50 shrink-0"
+                        className="text-xs text-cream/50 shrink-0"
                         dateTime={c.last_activity_at}
                       >
                         {timeAgo(c.last_activity_at)}
@@ -146,16 +146,16 @@ function RatingsSection({
   return (
     <section className="card p-5 space-y-4">
       <div className="flex items-baseline justify-between gap-3">
-        <h2 className="text-sm font-medium text-petrolio/70">
+        <h2 className="text-sm font-medium text-cream/70">
           Le tue valutazioni
         </h2>
-        <span className="text-xs text-petrolio/50 tabular-nums">
+        <span className="text-xs text-cream/50 tabular-nums">
           {summary.count} valutazion{summary.count === 1 ? "e" : "i"}
         </span>
       </div>
 
       {summary.count === 0 ? (
-        <p className="text-sm text-petrolio/70">
+        <p className="text-sm text-cream/70">
           Nessuna valutazione ancora. Apparirà qui dopo che un utente avrà
           chiuso una chat con te.
         </p>
@@ -168,17 +168,17 @@ function RatingsSection({
             <Stars value={summary.avg} />
           </div>
 
-          <ul className="space-y-2 pt-2 border-t border-petrolio/10">
+          <ul className="space-y-2 pt-2 border-t border-cream/10">
             {summary.ratings.map((r) => (
               <li key={r.id} className="py-2">
                 <div className="flex items-center justify-between gap-2">
                   <Stars value={r.rating} size="sm" />
-                  <time className="text-xs text-petrolio/50" dateTime={r.created_at}>
+                  <time className="text-xs text-cream/50" dateTime={r.created_at}>
                     {timeAgo(r.created_at)}
                   </time>
                 </div>
                 {r.feedback && (
-                  <p className="text-sm text-petrolio/80 mt-1.5 whitespace-pre-wrap">
+                  <p className="text-sm text-cream/80 mt-1.5 whitespace-pre-wrap">
                     {r.feedback}
                   </p>
                 )}
