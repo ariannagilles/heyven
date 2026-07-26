@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import Navbar from "@/components/Navbar";
 import ChatView from "@/components/ChatView";
 import { createClient } from "@/lib/supabase/server";
 import { avatarDataUri } from "@/lib/avatar";
@@ -29,8 +28,7 @@ export default async function UserChatPage() {
   ]);
 
   return (
-    <>
-      <Navbar />
+    <div className="-mb-24 h-dvh">
       <ChatView
         conversationId={conversation.id}
         meId={user.id}
@@ -40,7 +38,8 @@ export default async function UserChatPage() {
         initialMessages={messages}
         initialClosed={conversation.status === "closed"}
         iAmUser
+        fullScreen
       />
-    </>
+    </div>
   );
 }

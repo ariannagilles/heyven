@@ -37,7 +37,7 @@ export default function BottomNav() {
     return () => subscription.unsubscribe();
   }, []);
 
-  const hiddenPrefixes = ["/login", "/register", "/reset-password", "/admin"];
+  const hiddenPrefixes = ["/login", "/register", "/reset-password", "/admin", "/chat/c"];
   if (
     !isLoggedIn ||
     hiddenPrefixes.some((p) => pathname === p || pathname.startsWith(`${p}/`))

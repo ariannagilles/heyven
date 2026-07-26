@@ -24,6 +24,7 @@ type Props = {
   initialMessages: Message[];
   initialClosed: boolean;
   iAmUser: boolean;
+  fullScreen?: boolean;
 };
 
 export default function ChatView({
@@ -35,6 +36,7 @@ export default function ChatView({
   initialMessages,
   initialClosed,
   iAmUser,
+  fullScreen = false,
 }: Props) {
   const router = useRouter();
   const [supabase] = useState(() => createClient());
@@ -259,10 +261,42 @@ export default function ChatView({
   }
 
   return (
-    <div className="flex flex-col h-[calc(100dvh-3.5rem-1px)]">
-      <header className="px-4 py-3 border-b border-petrolio/10 bg-crema/80 backdrop-blur">
-        <div className="mx-auto max-w-2xl flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 min-w-0">
+    <div
+      className={
+        fullScreen
+          ? "flex h-dvh flex-col"
+          : "flex h-[calc(100dvh-3.5rem-1px)] flex-col"
+      }
+    >
+      <header
+        className={`border-b border-petrolio/10 bg-crema/80 px-4 pb-3 backdrop-blur ${
+          fullScreen ? "pt-[calc(0.75rem+env(safe-area-inset-top))]" : "py-3"
+        }`}
+      >
+        <div className="mx-auto flex max-w-2xl items-center justify-between gap-2">
+          <div className="flex min-w-0 items-center gap-2">
+            {fullScreen && (
+              <button
+                type="button"
+                onClick={() => router.back()}
+                aria-label="Torna indietro"
+                className="-ml-1 shrink-0 p-1 text-petrolio/70 hover:text-petrolio"
+              >
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden
+                >
+                  <path d="M15 18l-6-6 6-6" />
+                </svg>
+              </button>
+            )}
             <AvatarImage src={otherAvatarSrc} nickname={otherNickname} size={40} />
             <div className="min-w-0">
               <div className="text-sm font-semibold leading-tight truncate">@{otherNickname}</div>
