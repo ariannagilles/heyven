@@ -25,6 +25,7 @@ export default async function ChatPage() {
 
   if (conversation) {
     const mentorProfile = await getAssignedMentorProfile(supabase);
+    console.log("MENTOR PROFILE su /chat:", JSON.stringify(mentorProfile));
     if (!mentorProfile) redirect("/chat/c");
 
     return (
