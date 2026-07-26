@@ -66,21 +66,17 @@ function ActiveConversationCard({
     <>
       <article className="glass-card relative p-4">
         <div className="flex items-start gap-3">
-          <Link href="/chat/incontro" className="shrink-0">
-            <MentorAvatar
-              src={item.mentor_avatar_src}
-              nickname={item.mentor_nickname}
-              size={48}
-            />
-          </Link>
+          <MentorAvatar
+            src={item.mentor_avatar_src}
+            nickname={item.mentor_nickname}
+            size={48}
+          />
           <div className="min-w-0 flex-1">
-            <Link href="/chat/incontro" className="block">
-              <p className="text-[15px] font-semibold leading-tight text-cream">
-                @{item.mentor_nickname}
-              </p>
-              <p className="mt-0.5 text-[12px] text-mint">● attivo</p>
-              <p className="mt-1 text-[12px] text-cream/55">{presence}</p>
-            </Link>
+            <p className="text-[15px] font-semibold leading-tight text-cream">
+              @{item.mentor_nickname}
+            </p>
+            <p className="mt-0.5 text-[12px] text-mint">● attivo</p>
+            <p className="mt-1 text-[12px] text-cream/55">{presence}</p>
           </div>
           <div className="relative shrink-0">
             <button
@@ -103,6 +99,13 @@ function ActiveConversationCard({
                   onClick={() => setMenuOpen(false)}
                 />
                 <div className="absolute right-0 top-full z-20 mt-1 min-w-[200px] rounded-2xl border border-cream/10 bg-petrolio-2/95 py-1 shadow-soft backdrop-blur-xl">
+                  <Link
+                    href="/chat/incontro"
+                    onClick={() => setMenuOpen(false)}
+                    className="block w-full px-4 py-2.5 text-left text-sm text-cream hover:bg-cream/5"
+                  >
+                    Vedi profilo
+                  </Link>
                   <button
                     type="button"
                     onClick={() => {
@@ -136,12 +139,6 @@ function ActiveConversationCard({
           className="mt-4 block rounded-full bg-cream py-2.5 text-center text-sm font-semibold text-petrolio transition-transform active:scale-[0.98]"
         >
           Apri la conversazione ›
-        </Link>
-        <Link
-          href="/chat/incontro"
-          className="mt-2 block text-center text-[12px] text-cream/50 underline underline-offset-2 hover:text-cream/70"
-        >
-          Profilo del Mentore
         </Link>
       </article>
 

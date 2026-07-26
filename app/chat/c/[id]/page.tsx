@@ -24,9 +24,17 @@ export default async function UserConversationPage({
   const conversation = await getConversationById(supabase, params.id);
   if (!conversation || conversation.user_id !== user.id) notFound();
 
-  const [mentorProfile, messages] = await Promise.all([
+  const [mentorProfile, messages, lastMentorMessage] = await Promise.all([
     getProfile(supabase, conversation.mentor_id),
     getMessages(supabase, conversation.id),
+    supabase
+      .from("messages")
+      .select("created_at")
+      .eq("conversation_id", conversation.id)
+      .eq("sender_id", conversation.mentor_id)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
   ]);
 
   return (
@@ -39,6 +47,7 @@ export default async function UserConversationPage({
         otherRoleLabel="il tuo mentore"
         initialMessages={messages}
         initialClosed={conversation.status === "closed"}
+        mentorLastActivityAt={lastMentorMessage.data?.created_at ?? null}
         iAmUser
         fullScreen
       />

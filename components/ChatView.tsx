@@ -1,9 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { Message } from "@/lib/chat";
+import { mentorPresenceLabel } from "@/lib/mentor-list-types";
 import { formatMessageTime } from "@/lib/time";
 import { AvatarImage } from "./AvatarImage";
 
@@ -25,6 +27,7 @@ type Props = {
   initialClosed: boolean;
   iAmUser: boolean;
   fullScreen?: boolean;
+  mentorLastActivityAt?: string | null;
 };
 
 export default function ChatView({
@@ -37,6 +40,7 @@ export default function ChatView({
   initialClosed,
   iAmUser,
   fullScreen = false,
+  mentorLastActivityAt = null,
 }: Props) {
   const router = useRouter();
   const [supabase] = useState(() => createClient());
@@ -301,6 +305,7 @@ export default function ChatView({
   }
 
   const useMentorChrome = fullScreen && iAmUser;
+  const mentorPresence = mentorPresenceLabel(mentorLastActivityAt);
   const composerPlaceholder = iAmUser
     ? `Scrivi a ${otherNickname}…`
     : `Scrivi a @${otherNickname}…`;
@@ -333,39 +338,45 @@ export default function ChatView({
                 </button>
               )}
               {useMentorChrome ? (
-                <div
-                  className="shrink-0 overflow-hidden border border-cream/15 p-0.5"
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 14,
-                    background: "linear-gradient(145deg, #1D9E75 0%, #0B3F34 100%)",
-                  }}
-                >
-                  <AvatarImage
-                    src={otherAvatarSrc}
-                    nickname={otherNickname}
-                    size={36}
-                    className="!rounded-[10px]"
-                  />
-                </div>
-              ) : (
-                <AvatarImage src={otherAvatarSrc} nickname={otherNickname} size={40} />
-              )}
-              <div className="min-w-0">
-                <div className="truncate text-[15px] font-semibold leading-tight text-cream">
-                  @{otherNickname}
-                </div>
-                {useMentorChrome ? (
-                  <p className="text-[11.5px] leading-snug text-mint">
-                    ● Il tuo Mentore
-                  </p>
-                ) : (
-                  <div className="text-xs leading-tight text-cream/60">
-                    {otherRoleLabel}
+                <Link href="/chat/incontro" className="flex min-w-0 items-center gap-3">
+                  <div
+                    className="shrink-0 overflow-hidden border border-cream/15 p-0.5"
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 14,
+                      background: "linear-gradient(145deg, #1D9E75 0%, #0B3F34 100%)",
+                    }}
+                  >
+                    <AvatarImage
+                      src={otherAvatarSrc}
+                      nickname={otherNickname}
+                      size={36}
+                      className="!rounded-[10px]"
+                    />
                   </div>
-                )}
-              </div>
+                  <div className="min-w-0">
+                    <div className="truncate text-[15px] font-semibold leading-tight text-cream">
+                      @{otherNickname}
+                    </div>
+                    <p className="text-[11.5px] leading-snug text-mint">
+                      {mentorPresence}
+                    </p>
+                  </div>
+                </Link>
+              ) : (
+                <>
+                  <AvatarImage src={otherAvatarSrc} nickname={otherNickname} size={40} />
+                  <div className="min-w-0">
+                    <div className="truncate text-[15px] font-semibold leading-tight text-cream">
+                      @{otherNickname}
+                    </div>
+                    <div className="text-xs leading-tight text-cream/60">
+                      {otherRoleLabel}
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
             {!closed && iAmUser && (
               <div ref={userMenuRef} className="relative shrink-0">
@@ -382,6 +393,13 @@ export default function ChatView({
                 </button>
                 {userMenuOpen && (
                   <div className="absolute right-0 top-full z-10 mt-1 min-w-[220px] rounded-2xl border border-cream/10 bg-petrolio-2/95 py-1 shadow-soft backdrop-blur-xl">
+                    <Link
+                      href="/chat/incontro"
+                      onClick={() => setUserMenuOpen(false)}
+                      className="block w-full px-4 py-2.5 text-left text-sm text-cream hover:bg-cream/5"
+                    >
+                      Vedi profilo
+                    </Link>
                     <button
                       type="button"
                       onClick={() => {
@@ -450,12 +468,6 @@ export default function ChatView({
           </div>
         )}
 
-        {useMentorChrome && !closed && (
-          <p className="mx-auto max-w-2xl px-4 pb-3 text-center text-[11.5px] leading-snug text-cream/50">
-            {otherNickname} non è sempre online, e va bene così. Ti risponde entro
-            domani sera.
-          </p>
-        )}
       </div>
 
       {(escalationDone || escalationError) && !iAmUser && (
