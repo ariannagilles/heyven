@@ -10,6 +10,7 @@ export type ConversationListItem = {
   last_message_at: string | null;
   mentor_last_activity_at: string | null;
   has_at_risk_content: boolean;
+  has_rated: boolean;
 };
 
 export function mentorPresenceLabel(lastActivityIso: string | null): string {

@@ -1,13 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
   mentorPresenceLabel,
   type ConversationListItem,
 } from "@/lib/mentor-list-types";
+import { markAutoRatingPromptDismissed } from "@/lib/mentor-rating-prompt";
 import { AvatarImage } from "@/components/AvatarImage";
 import CloseConversationSheet from "./CloseConversationSheet";
+import MentorConversationRatingSheet from "./MentorConversationRatingSheet";
 
 function MentorAvatar({
   src,
@@ -53,7 +56,14 @@ function ActiveConversationCard({
   userNickname: string;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [sheetOpen, setSheetOpen] = useState(false);
+  const [closeSheetOpen, setCloseSheetOpen] = useState(false);
+  const [ratingSheetOpen, setRatingSheetOpen] = useState(false);
+  const [hasRated, setHasRated] = useState(item.has_rated);
+  const router = useRouter();
+
+  useEffect(() => {
+    setHasRated(item.has_rated);
+  }, [item.has_rated]);
   const presence = mentorPresenceLabel(item.mentor_last_activity_at);
   const previewAuthor =
     item.last_message_sender_nickname === userNickname
@@ -106,11 +116,23 @@ function ActiveConversationCard({
                   >
                     Vedi profilo
                   </Link>
+                  {!hasRated && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        setRatingSheetOpen(true);
+                      }}
+                      className="block w-full px-4 py-2.5 text-left text-sm text-cream hover:bg-cream/5"
+                    >
+                      Valuta il Mentore
+                    </button>
+                  )}
                   <button
                     type="button"
                     onClick={() => {
                       setMenuOpen(false);
-                      setSheetOpen(true);
+                      setCloseSheetOpen(true);
                     }}
                     className="block w-full px-4 py-2.5 text-left text-sm text-cream hover:bg-cream/5"
                   >
@@ -143,12 +165,30 @@ function ActiveConversationCard({
       </article>
 
       <CloseConversationSheet
-        open={sheetOpen}
-        onClose={() => setSheetOpen(false)}
+        open={closeSheetOpen}
+        onClose={() => setCloseSheetOpen(false)}
         conversationId={item.id}
         mentorNickname={item.mentor_nickname}
         skipRating={item.has_at_risk_content}
+        onComplete={() => router.refresh()}
       />
+
+      {ratingSheetOpen && (
+        <MentorConversationRatingSheet
+          open
+          conversationId={item.id}
+          mentorNickname={item.mentor_nickname}
+          onSubmitted={() => {
+            markAutoRatingPromptDismissed(item.id);
+            setRatingSheetOpen(false);
+            setHasRated(true);
+            router.refresh();
+          }}
+          onSkipped={() => {
+            setRatingSheetOpen(false);
+          }}
+        />
+      )}
     </>
   );
 }

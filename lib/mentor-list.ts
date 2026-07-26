@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { avatarDataUri } from "@/lib/avatar";
 import { detectAtRisk } from "@/lib/at-risk";
 import { getProfile } from "@/lib/chat";
+import { hasRatedConversation } from "@/lib/mentor-rating-rpc";
 import type { ConversationListItem } from "@/lib/mentor-list-types";
 
 export type { ConversationListItem } from "@/lib/mentor-list-types";
@@ -108,6 +109,7 @@ async function enrichConversations(
       last_message_at: last?.created_at ?? null,
       mentor_last_activity_at: mentorLast?.created_at ?? null,
       has_at_risk_content: atRiskByConv.get(row.id) ?? false,
+      has_rated: false,
     };
   });
 }
@@ -128,7 +130,11 @@ export async function getUserActiveConversationListItem(
   const enriched = await enrichConversations(supabase, [data as ConversationRow], {
     checkAtRisk: true,
   });
-  return enriched[0] ?? null;
+  const item = enriched[0];
+  if (!item) return null;
+
+  const hasRated = await hasRatedConversation(supabase, item.id);
+  return { ...item, has_rated: hasRated };
 }
 
 export async function getUserClosedConversations(
