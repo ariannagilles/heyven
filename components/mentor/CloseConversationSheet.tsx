@@ -99,7 +99,11 @@ export default function CloseConversationSheet({
           La sposta tra le tue chat passate, dove resta tua da rileggere quando
           vuoi. Da lì potrai iniziare con un nuovo Mentore.
         </p>
-        {error && <p className="msg-error mt-3">{error}</p>}
+        {error && (
+          <p className="mt-3 rounded-xl bg-[#D4EDE5] px-3 py-2 text-sm text-[#04342C]">
+            {error}
+          </p>
+        )}
         <div className="mt-6 space-y-3">
           <button
             type="button"

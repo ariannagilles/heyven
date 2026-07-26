@@ -85,22 +85,28 @@ export default function MentorConversationRatingSheet({
               onClick={() => setStars(n)}
               className="p-1 text-[32px] leading-none transition-transform active:scale-95 disabled:opacity-50"
             >
-              <span className={active >= n ? "text-[#CDA24E]" : "text-cream/18"}>
+              <span className={active >= n ? "text-mint" : "text-cream/18"}>
                 ★
               </span>
             </button>
           ))}
         </div>
-        {error && <p className="msg-error mt-3 text-center">{error}</p>}
+        {error && (
+          <p className="mt-3 rounded-xl bg-[#D4EDE5] px-3 py-2 text-center text-sm text-[#04342C]">
+            {error}
+          </p>
+        )}
         <div className="mt-6 space-y-3">
-          <button
-            type="button"
-            onClick={() => void submitRating()}
-            disabled={loading || stars < 1}
-            className="w-full rounded-full bg-cream py-3.5 text-[15px] font-semibold text-petrolio transition-transform active:scale-[0.98] disabled:opacity-50"
-          >
-            {loading ? "Invio…" : "Invia valutazione"}
-          </button>
+          {stars >= 1 && (
+            <button
+              type="button"
+              onClick={() => void submitRating()}
+              disabled={loading}
+              className="w-full rounded-full bg-cream py-3.5 text-[15px] font-semibold text-petrolio transition-transform active:scale-[0.98] disabled:opacity-50"
+            >
+              {loading ? "Invio…" : "Invia valutazione"}
+            </button>
+          )}
           <button
             type="button"
             onClick={finish}

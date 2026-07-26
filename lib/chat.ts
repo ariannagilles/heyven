@@ -1,5 +1,6 @@
 import { cache } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { fetchMentorRatingSummary } from "@/lib/mentor-rating";
 
 export type Message = {
   id: string;
@@ -127,36 +128,16 @@ export async function getAssignedMentorProfile(
   };
 }
 
-export type MentorRating = {
-  id: string;
-  rating: number;
-  feedback: string | null;
-  created_at: string;
-};
-
 export type MentorRatingsSummary = {
   avg: number;
   count: number;
-  ratings: MentorRating[];
 };
 
 export async function getMentorRatingsSummary(
   supabase: SupabaseClient,
   mentorId: string,
 ): Promise<MentorRatingsSummary> {
-  const { data } = await supabase
-    .from("mentor_ratings")
-    .select("id, rating, feedback, created_at")
-    .eq("mentor_id", mentorId)
-    .order("created_at", { ascending: false });
-
-  const ratings = (data as MentorRating[] | null) ?? [];
-  const count = ratings.length;
-  const avg =
-    count === 0
-      ? 0
-      : ratings.reduce((acc, r) => acc + r.rating, 0) / count;
-  return { avg, count, ratings };
+  return fetchMentorRatingSummary(supabase, mentorId);
 }
 
 export const getUnreadCount = cache(async function getUnreadCount(

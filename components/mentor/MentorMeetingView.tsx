@@ -100,7 +100,8 @@ export default function MentorMeetingView({
         )}
 
         <section className="glass-card p-4">
-          <div className="grid grid-cols-3 gap-3">
+          <BlockLabel>Segnali</BlockLabel>
+          <div className="mt-3 grid grid-cols-3 gap-3">
             <Signal value={mentor.months_here} label="mesi qui" />
             <Signal
               value={mentor.people_accompanied}

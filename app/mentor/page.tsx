@@ -2,9 +2,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Avatar from "@/components/Avatar";
-import Stars from "@/components/Stars";
 import IntroEditor from "./IntroEditor";
 import ExperienceAreasEditor from "./ExperienceAreasEditor";
+import MentorRatingBlock from "@/components/mentor/MentorRatingBlock";
 import { createClient } from "@/lib/supabase/server";
 import { getProfile, getMentorChats, getMentorRatingsSummary } from "@/lib/chat";
 import { timeAgo } from "@/lib/time";
@@ -144,49 +144,9 @@ function RatingsSection({
   summary: Awaited<ReturnType<typeof getMentorRatingsSummary>>;
 }) {
   return (
-    <section className="card p-5 space-y-4">
-      <div className="flex items-baseline justify-between gap-3">
-        <h2 className="text-sm font-medium text-cream/70">
-          Le tue valutazioni
-        </h2>
-        <span className="text-xs text-cream/50 tabular-nums">
-          {summary.count} valutazion{summary.count === 1 ? "e" : "i"}
-        </span>
-      </div>
-
-      {summary.count === 0 ? (
-        <p className="text-sm text-cream/70">
-          Nessuna valutazione ancora. Apparirà qui dopo che un utente avrà
-          chiuso una chat con te.
-        </p>
-      ) : (
-        <>
-          <div className="flex items-center gap-3">
-            <div className="text-3xl font-semibold tabular-nums">
-              {summary.avg.toFixed(2)}
-            </div>
-            <Stars value={summary.avg} />
-          </div>
-
-          <ul className="space-y-2 pt-2 border-t border-cream/10">
-            {summary.ratings.map((r) => (
-              <li key={r.id} className="py-2">
-                <div className="flex items-center justify-between gap-2">
-                  <Stars value={r.rating} size="sm" />
-                  <time className="text-xs text-cream/50" dateTime={r.created_at}>
-                    {timeAgo(r.created_at)}
-                  </time>
-                </div>
-                {r.feedback && (
-                  <p className="text-sm text-cream/80 mt-1.5 whitespace-pre-wrap">
-                    {r.feedback}
-                  </p>
-                )}
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
+    <section className="space-y-2">
+      <h2 className="px-1 text-sm font-medium text-cream/70">Le tue valutazioni</h2>
+      <MentorRatingBlock summary={summary} />
     </section>
   );
 }

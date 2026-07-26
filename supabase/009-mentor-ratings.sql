@@ -1,16 +1,17 @@
--- 009: mentor_ratings (allineamento colonne) + riepilogo pubblico per profilo
+-- 009: mentor_ratings — raccolta anonima + riepilogo pubblico (media/conteggio)
 -- Eseguire manualmente nel SQL Editor di Supabase dopo revisione.
--- Nota: la tabella mentor_ratings può già esistere con user_id / rating.
+-- NON eseguire automaticamente da questo repo.
 
 create table if not exists public.mentor_ratings (
   id uuid primary key default gen_random_uuid(),
   mentor_id uuid not null references public.profiles(id) on delete cascade,
-  conversation_id uuid references public.conversations(id) on delete set null,
-  rater_user_id uuid references public.profiles(id) on delete set null,
+  conversation_id uuid not null references public.conversations(id) on delete cascade,
+  rater_user_id uuid not null references public.profiles(id) on delete cascade,
   stars int not null check (stars between 1 and 5),
   created_at timestamptz not null default now()
 );
 
+-- Allinea colonne legacy (user_id / rating) se la tabella esisteva già.
 do $$
 begin
   if exists (
@@ -53,8 +54,13 @@ create index if not exists mentor_ratings_mentor_idx
 
 alter table public.mentor_ratings enable row level security;
 
--- Inserimento solo via RPC; nessuna policy SELECT per anonimato verso il Mentore.
+-- Nessuna policy SELECT/INSERT/UPDATE/DELETE: accesso solo via RPC security definer.
+drop policy if exists "mentor_ratings_select_self" on public.mentor_ratings;
+drop policy if exists "mentor_ratings_insert_own" on public.mentor_ratings;
 
+revoke all on table public.mentor_ratings from anon, authenticated;
+
+-- Inserimento solo via RPC; l'RPC verifica che l'utente sia il titolare della conversazione.
 create or replace function public.submit_rating(
   p_conversation_id uuid,
   p_rating int,
@@ -69,6 +75,7 @@ declare
   uid uuid := auth.uid();
   conv_user uuid;
   conv_mentor uuid;
+  conv_status text;
 begin
   if uid is null then
     raise exception 'not authenticated';
@@ -77,8 +84,8 @@ begin
     raise exception 'invalid rating';
   end if;
 
-  select user_id, mentor_id
-    into conv_user, conv_mentor
+  select user_id, mentor_id, status
+    into conv_user, conv_mentor, conv_status
   from public.conversations
   where id = p_conversation_id;
 
@@ -87,6 +94,9 @@ begin
   end if;
   if conv_user <> uid then
     raise exception 'only the user can rate';
+  end if;
+  if conv_status is distinct from 'closed' then
+    raise exception 'conversation must be closed before rating';
   end if;
 
   insert into public.mentor_ratings (
@@ -105,6 +115,7 @@ returns boolean
 language sql
 security definer
 set search_path = public
+stable
 as $$
   select exists (
     select 1 from public.mentor_ratings
@@ -113,6 +124,7 @@ as $$
   );
 $$;
 
+-- Solo media arrotondata (1 decimale) e conteggio: nessun voto singolo esposto.
 create or replace function public.get_mentor_rating_summary(p_mentor_id uuid)
 returns table (avg_stars numeric, rating_count int)
 language sql
