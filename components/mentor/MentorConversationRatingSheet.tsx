@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { submitConversationRating } from "@/lib/mentor-rating-rpc";
 
 type Props = {
   open: boolean;
@@ -35,11 +36,11 @@ export default function MentorConversationRatingSheet({
     setLoading(true);
     setError(null);
     const supabase = createClient();
-    const { error: submitError } = await supabase.rpc("submit_rating", {
-      p_conversation_id: conversationId,
-      p_rating: stars,
-      p_feedback: null,
-    });
+    const { error: submitError } = await submitConversationRating(
+      supabase,
+      conversationId,
+      stars,
+    );
     setLoading(false);
     if (submitError) {
       setError(submitError.message);

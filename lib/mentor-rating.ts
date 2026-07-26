@@ -1,3 +1,5 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+
 export const MIN_MENTOR_RATINGS_DISPLAY = 5;
 
 export type MentorRatingSummary = {
@@ -16,8 +18,11 @@ export function starFillForIndex(avg: number, index: number): number {
   return Math.min(1, Math.max(0, avg - (index - 1)));
 }
 
+type SummaryRow = { avg_stars: number; rating_count: number };
+
+/** Media e conteggio via RPC get_mentor_rating_summary (nessun voto singolo). */
 export async function fetchMentorRatingSummary(
-  supabase: import("@supabase/supabase-js").SupabaseClient,
+  supabase: SupabaseClient,
   mentorId: string,
   fallback?: MentorRatingSummary,
 ): Promise<MentorRatingSummary> {
@@ -25,12 +30,16 @@ export async function fetchMentorRatingSummary(
     p_mentor_id: mentorId,
   });
 
-  if (!error && data && (data as { avg_stars: number; rating_count: number }[]).length > 0) {
-    const row = (data as { avg_stars: number; rating_count: number }[])[0];
-    return {
-      avg: Number(row.avg_stars),
-      count: Number(row.rating_count),
-    };
+  if (!error && data) {
+    const row = Array.isArray(data)
+      ? (data as SummaryRow[])[0]
+      : (data as SummaryRow);
+    if (row) {
+      return {
+        avg: Number(row.avg_stars),
+        count: Number(row.rating_count),
+      };
+    }
   }
 
   return fallback ?? { avg: 0, count: 0 };

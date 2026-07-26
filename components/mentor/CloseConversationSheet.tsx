@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { hasRatedConversation } from "@/lib/mentor-rating-rpc";
 import MentorConversationRatingSheet from "./MentorConversationRatingSheet";
 
 type Props = {
@@ -51,6 +52,13 @@ export default function CloseConversationSheet({
     onClosed?.();
 
     if (skipRating) {
+      if (onComplete) onComplete();
+      else router.refresh();
+      return;
+    }
+
+    const alreadyRated = await hasRatedConversation(supabase, conversationId);
+    if (alreadyRated) {
       if (onComplete) onComplete();
       else router.refresh();
       return;
