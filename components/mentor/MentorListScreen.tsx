@@ -146,6 +146,8 @@ function ActiveConversationCard({
         open={sheetOpen}
         onClose={() => setSheetOpen(false)}
         conversationId={item.id}
+        mentorNickname={item.mentor_nickname}
+        skipRating={item.has_at_risk_content}
       />
     </>
   );

@@ -3,23 +3,29 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import MentorConversationRatingSheet from "./MentorConversationRatingSheet";
 
 type Props = {
   open: boolean;
   onClose: () => void;
   conversationId: string;
+  mentorNickname: string;
+  skipRating: boolean;
 };
 
 export default function CloseConversationSheet({
   open,
   onClose,
   conversationId,
+  mentorNickname,
+  skipRating,
 }: Props) {
   const router = useRouter();
   const [closing, setClosing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showRating, setShowRating] = useState(false);
 
-  if (!open) return null;
+  if (!open && !showRating) return null;
 
   async function confirmClose() {
     setClosing(true);
@@ -36,7 +42,28 @@ export default function CloseConversationSheet({
     }
 
     onClose();
-    router.refresh();
+
+    if (skipRating) {
+      router.refresh();
+      return;
+    }
+
+    setShowRating(true);
+  }
+
+  function onRatingDone() {
+    setShowRating(false);
+  }
+
+  if (showRating) {
+    return (
+      <MentorConversationRatingSheet
+        open
+        conversationId={conversationId}
+        mentorNickname={mentorNickname}
+        onDone={onRatingDone}
+      />
+    );
   }
 
   return (

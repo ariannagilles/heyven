@@ -9,6 +9,7 @@ export type ConversationListItem = {
   last_message_sender_nickname: string | null;
   last_message_at: string | null;
   mentor_last_activity_at: string | null;
+  has_at_risk_content: boolean;
 };
 
 export function mentorPresenceLabel(lastActivityIso: string | null): string {

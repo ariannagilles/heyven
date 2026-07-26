@@ -8,6 +8,7 @@ import {
 import { getUserActiveConversationListItem } from "@/lib/mentor-list";
 import { mentorPresenceLabel } from "@/lib/mentor-list-types";
 import { MENTOR_PREVIEW, monthsSince } from "@/lib/mentor-display";
+import { fetchMentorRatingSummary } from "@/lib/mentor-rating";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
@@ -61,6 +62,15 @@ export default async function MentorIncontroPage() {
     ? monthsSince(mentorRow.data.created_at)
     : MENTOR_PREVIEW.months_here;
 
+  const ratingSummary = await fetchMentorRatingSummary(
+    supabase,
+    conversation.mentor_id,
+    {
+      avg: assignedProfile?.avg_rating ?? 0,
+      count: assignedProfile?.ratings_count ?? 0,
+    },
+  );
+
   return (
     <MentorMeetingView
       mode="profile"
@@ -68,6 +78,7 @@ export default async function MentorIncontroPage() {
       presenceLabel={mentorPresenceLabel(
         activeItem?.mentor_last_activity_at ?? null,
       )}
+      ratingSummary={ratingSummary}
       mentor={{
         nickname:
           mentorUserProfile?.nickname ??

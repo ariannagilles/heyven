@@ -1,7 +1,9 @@
 import Link from "next/link";
 import MentorMeetingAvatar from "./MentorMeetingAvatar";
 import ActivateMentorButton from "./ActivateMentorButton";
+import MentorRatingBlock from "./MentorRatingBlock";
 import { experienceAreaLabels } from "@/lib/mentor-display";
+import type { MentorRatingSummary } from "@/lib/mentor-rating";
 
 export type MentorMeetingData = {
   nickname: string;
@@ -16,6 +18,7 @@ type Props = {
   mentor: MentorMeetingData;
   presenceLabel: string;
   conversationId?: string;
+  ratingSummary?: MentorRatingSummary | null;
 };
 
 function BlockLabel({ children }: { children: React.ReactNode }) {
@@ -46,6 +49,7 @@ export default function MentorMeetingView({
   mentor,
   presenceLabel,
   conversationId,
+  ratingSummary,
 }: Props) {
   const areas = experienceAreaLabels(mentor.experience_areas);
 
@@ -79,6 +83,17 @@ export default function MentorMeetingView({
           </p>
         </section>
 
+        <section className="glass-card p-4">
+          <div className="grid grid-cols-3 gap-3">
+            <Signal value={mentor.months_here} label="mesi qui" />
+            <Signal
+              value={mentor.people_accompanied}
+              label="persone accompagnate"
+            />
+            <Signal value="☾" label="supervisionato" />
+          </div>
+        </section>
+
         {areas.length > 0 && (
           <section className="glass-card p-4">
             <BlockLabel>Aree di esperienza</BlockLabel>
@@ -95,16 +110,9 @@ export default function MentorMeetingView({
           </section>
         )}
 
-        <section className="glass-card p-4">
-          <div className="grid grid-cols-3 gap-3">
-            <Signal value={mentor.months_here} label="mesi qui" />
-            <Signal
-              value={mentor.people_accompanied}
-              label="persone accompagnate"
-            />
-            <Signal value="☾" label="supervisionato" />
-          </div>
-        </section>
+        {mode === "profile" && ratingSummary && (
+          <MentorRatingBlock summary={ratingSummary} />
+        )}
       </div>
 
       <div className="fixed bottom-[calc(5.75rem+env(safe-area-inset-bottom))] left-0 right-0 z-40 px-4">

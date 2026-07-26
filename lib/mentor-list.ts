@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { avatarDataUri } from "@/lib/avatar";
+import { detectAtRisk } from "@/lib/at-risk";
 import { getProfile } from "@/lib/chat";
 import type { ConversationListItem } from "@/lib/mentor-list-types";
 
@@ -23,6 +24,7 @@ type ConversationRow = {
 async function enrichConversations(
   supabase: SupabaseClient,
   rows: ConversationRow[],
+  options?: { checkAtRisk?: boolean },
 ): Promise<ConversationListItem[]> {
   if (rows.length === 0) return [];
 
@@ -70,6 +72,23 @@ async function enrichConversations(
     }),
   );
 
+  const atRiskByConv = new Map<string, boolean>();
+  if (options?.checkAtRisk && ids.length > 0) {
+    const { data: allContents } = await supabase
+      .from("messages")
+      .select("conversation_id, content")
+      .in("conversation_id", ids);
+    for (const id of ids) {
+      const convMessages = (allContents ?? []).filter(
+        (m) => m.conversation_id === id,
+      );
+      atRiskByConv.set(
+        id,
+        convMessages.some((m) => detectAtRisk(m.content)),
+      );
+    }
+  }
+
   return rows.map((row) => {
     const last = lastByConv.get(row.id);
     const mentorLast = lastMentorByConv.get(row.id);
@@ -88,6 +107,7 @@ async function enrichConversations(
         : null,
       last_message_at: last?.created_at ?? null,
       mentor_last_activity_at: mentorLast?.created_at ?? null,
+      has_at_risk_content: atRiskByConv.get(row.id) ?? false,
     };
   });
 }
@@ -105,7 +125,9 @@ export async function getUserActiveConversationListItem(
 
   if (!data) return null;
 
-  const enriched = await enrichConversations(supabase, [data as ConversationRow]);
+  const enriched = await enrichConversations(supabase, [data as ConversationRow], {
+    checkAtRisk: true,
+  });
   return enriched[0] ?? null;
 }
 
