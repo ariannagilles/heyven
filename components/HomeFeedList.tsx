@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
-import MixedFeedItemClient from "@/components/MixedFeedItemClient";
+import HomeFeedCard from "@/components/home/HomeFeedCard";
 import BreakReminderBanner from "@/components/infinite-scroll/BreakReminderBanner";
 import InfiniteListFooter from "@/components/infinite-scroll/InfiniteListFooter";
 import { usePaginatedFeed } from "@/components/infinite-scroll/usePaginatedFeed";
@@ -9,14 +9,12 @@ import { loadMoreHomeFeed } from "@/lib/feed-actions";
 import type { MixedFeedItem, UnifiedFeedCursor } from "@/lib/unified-feed";
 
 type HomeFeedListProps = {
-  viewerId: string;
   initialItems: MixedFeedItem[];
   initialNextCursor: UnifiedFeedCursor | null;
   initialHasMore: boolean;
 };
 
 export default function HomeFeedList({
-  viewerId,
   initialItems,
   initialNextCursor,
   initialHasMore,
@@ -39,10 +37,10 @@ export default function HomeFeedList({
 
   return (
     <>
-      <ul className="space-y-4">
+      <ul className="space-y-3">
         {items.map((item) => (
           <li key={`${item.kind}-${item.id}`}>
-            <MixedFeedItemClient item={item} viewerId={viewerId} />
+            <HomeFeedCard item={item} />
           </li>
         ))}
       </ul>
