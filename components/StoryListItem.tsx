@@ -23,7 +23,8 @@ export default function StoryListItem({ story, viewerId }: Props) {
     viewerId,
     initialContent: story.content,
     initialTitle: story.title,
-    initialUpdatedAt: story.updated_at,
+    initialEditedAt: story.edited_at,
+    reactionCount: story.reaction_count,
   });
 
   const showAtRiskBanner = Boolean(story.at_risk && viewerId === story.author_id);
@@ -35,7 +36,7 @@ export default function StoryListItem({ story, viewerId }: Props) {
         <AvatarImage src={story.avatarSrc} nickname={story.nickname} size={32} />
         <span className="font-medium text-petrolio">@{story.nickname}</span>
         <span aria-hidden>·</span>
-        <ContentMetaTime createdAt={story.created_at} updatedAt={editable.updatedAt} />
+        <ContentMetaTime createdAt={story.created_at} editedAt={editable.editedAt} />
         <div className="ml-auto shrink-0 flex items-center gap-0.5">
           {editable.canEdit && !editable.editing && (
             <EditContentButton onClick={editable.startEdit} />

@@ -1,17 +1,55 @@
 -- ============================================================
--- CONTENT EDIT: updated_at, UPDATE policies, column protection
+-- CONTENT EDIT: edited_at, UPDATE policies, column protection
 -- Esegui in Supabase SQL Editor
 -- ============================================================
 
--- 1. Colonna updated_at (null alla creazione, valorizzata solo in modifica)
-alter table public.posts
-  add column if not exists updated_at timestamptz;
+-- 1. Colonna edited_at (null alla creazione; valorizzata solo se c'è già interazione)
+do $$
+begin
+  if exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public' and table_name = 'posts' and column_name = 'updated_at'
+  ) then
+    alter table public.posts rename column updated_at to edited_at;
+  else
+    alter table public.posts add column if not exists edited_at timestamptz;
+  end if;
 
-alter table public.questions
-  add column if not exists updated_at timestamptz;
+  if exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public' and table_name = 'questions' and column_name = 'updated_at'
+  ) then
+    alter table public.questions rename column updated_at to edited_at;
+  else
+    alter table public.questions add column if not exists edited_at timestamptz;
+  end if;
 
-alter table public.stories
-  add column if not exists updated_at timestamptz;
+  if exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public' and table_name = 'stories' and column_name = 'updated_at'
+  ) then
+    alter table public.stories rename column updated_at to edited_at;
+  else
+    alter table public.stories add column if not exists edited_at timestamptz;
+  end if;
+end $$;
+
+-- Pulizia: edited_at solo dove c'è almeno una interazione
+update public.posts p
+set edited_at = null
+where edited_at is not null
+  and not exists (select 1 from public.replies r where r.post_id = p.id)
+  and not exists (select 1 from public.me_too m where m.post_id = p.id);
+
+update public.questions q
+set edited_at = null
+where edited_at is not null
+  and not exists (select 1 from public.question_replies qr where qr.question_id = q.id);
+
+update public.stories s
+set edited_at = null
+where edited_at is not null
+  and not exists (select 1 from public.story_reactions sr where sr.story_id = s.id);
 
 -- 2. Policy UPDATE (solo autore)
 drop policy if exists "posts_update_self" on public.posts;
@@ -32,34 +70,14 @@ create policy "stories_update_self" on public.stories
   using (auth.uid() = author_id)
   with check (auth.uid() = author_id);
 
--- 3. Trigger BEFORE UPDATE: imposta updated_at a ogni modifica (non alla creazione).
-create or replace function public.set_content_updated_at()
-returns trigger
-language plpgsql
-as $$
-begin
-  new.updated_at = now();
-  return new;
-end;
-$$;
-
+-- 3. Rimuovi trigger che impostava edited_at/updated_at a ogni UPDATE (ora gestito dal client)
 drop trigger if exists posts_set_updated_at on public.posts;
-create trigger posts_set_updated_at
-  before update on public.posts
-  for each row execute function public.set_content_updated_at();
-
 drop trigger if exists questions_set_updated_at on public.questions;
-create trigger questions_set_updated_at
-  before update on public.questions
-  for each row execute function public.set_content_updated_at();
-
 drop trigger if exists stories_set_updated_at on public.stories;
-create trigger stories_set_updated_at
-  before update on public.stories
-  for each row execute function public.set_content_updated_at();
+drop function if exists public.set_content_updated_at();
 
 -- 4. Trigger BEFORE UPDATE: blocca modifiche a colonne non editabili.
---    Consentite dal client: content, title (stories), at_risk. updated_at è gestito dal trigger sopra.
+--    Consentite dal client: content, title (stories), at_risk, edited_at.
 create or replace function public.protect_content_columns_on_update()
 returns trigger
 language plpgsql

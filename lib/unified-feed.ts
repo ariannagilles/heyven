@@ -16,7 +16,7 @@ export type MixedFeedItem =
       nickname: string;
       content: string;
       created_at: string;
-      updated_at: string | null;
+      edited_at: string | null;
       reply_count: number;
       me_too_count: number;
       me_too: boolean;
@@ -30,7 +30,7 @@ export type MixedFeedItem =
       nickname: string;
       content: string;
       created_at: string;
-      updated_at: string | null;
+      edited_at: string | null;
       reply_count: number;
       avatarSrc: string;
     }
@@ -43,7 +43,7 @@ export type MixedFeedItem =
       title: string | null;
       content: string;
       created_at: string;
-      updated_at: string | null;
+      edited_at: string | null;
       reaction_count: number;
       has_reacted: boolean;
       avatarSrc: string;
@@ -80,7 +80,7 @@ type RawPost = {
   space_slug: string;
   content: string;
   created_at: string;
-  updated_at: string | null;
+  edited_at: string | null;
   profiles: { nickname: string } | null;
   replies: { count: number }[] | null;
   me_too: { count: number }[] | null;
@@ -92,7 +92,7 @@ type RawQuestion = {
   space_slug: string;
   content: string;
   created_at: string;
-  updated_at: string | null;
+  edited_at: string | null;
   profiles: { nickname: string } | null;
   question_replies: { count: number }[] | null;
 };
@@ -104,7 +104,7 @@ type RawStory = {
   title: string | null;
   content: string;
   created_at: string;
-  updated_at: string | null;
+  edited_at: string | null;
   profiles: { nickname: string } | null;
   story_reactions: { count: number }[] | null;
 };
@@ -167,7 +167,7 @@ export async function fetchUnifiedHomeFeed(
   let postsQuery = supabase
     .from("posts")
     .select(
-      "id, author_id, space_slug, content, created_at, updated_at, profiles!posts_author_id_fkey(nickname), replies(count), me_too(count)",
+      "id, author_id, space_slug, content, created_at, edited_at, profiles!posts_author_id_fkey(nickname), replies(count), me_too(count)",
     )
     .order("created_at", { ascending: false })
     .order("id", { ascending: false })
@@ -177,7 +177,7 @@ export async function fetchUnifiedHomeFeed(
   let questionsQuery = supabase
     .from("questions")
     .select(
-      "id, author_id, space_slug, content, created_at, updated_at, profiles!questions_author_id_fkey(nickname), question_replies(count)",
+      "id, author_id, space_slug, content, created_at, edited_at, profiles!questions_author_id_fkey(nickname), question_replies(count)",
     )
     .order("created_at", { ascending: false })
     .order("id", { ascending: false })
@@ -187,7 +187,7 @@ export async function fetchUnifiedHomeFeed(
   let storiesQuery = supabase
     .from("stories")
     .select(
-      "id, author_id, space_slug, title, content, created_at, updated_at, profiles!stories_author_id_fkey(nickname), story_reactions(count)",
+      "id, author_id, space_slug, title, content, created_at, edited_at, profiles!stories_author_id_fkey(nickname), story_reactions(count)",
     )
     .order("created_at", { ascending: false })
     .order("id", { ascending: false })
@@ -241,7 +241,7 @@ export async function fetchUnifiedHomeFeed(
       nickname,
       content: p.content,
       created_at: p.created_at,
-      updated_at: p.updated_at ?? null,
+      edited_at: p.edited_at ?? null,
       reply_count: p.replies?.[0]?.count ?? 0,
       me_too_count: p.me_too?.[0]?.count ?? 0,
       me_too: myMeTooSet.has(p.id),
@@ -259,7 +259,7 @@ export async function fetchUnifiedHomeFeed(
       nickname,
       content: q.content,
       created_at: q.created_at,
-      updated_at: q.updated_at ?? null,
+      edited_at: q.edited_at ?? null,
       reply_count: q.question_replies?.[0]?.count ?? 0,
       avatarSrc: avatarDataUri(nickname),
     };
@@ -276,7 +276,7 @@ export async function fetchUnifiedHomeFeed(
       title: s.title,
       content: s.content,
       created_at: s.created_at,
-      updated_at: s.updated_at ?? null,
+      edited_at: s.edited_at ?? null,
       reaction_count: s.story_reactions?.[0]?.count ?? 0,
       has_reacted: myStorySet.has(s.id),
       avatarSrc: avatarDataUri(nickname),

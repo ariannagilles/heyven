@@ -14,3 +14,11 @@ export function timeAgo(iso: string): string {
   if (months < 12) return `${months} mesi fa`;
   return `${Math.floor(days / 365)} anni fa`;
 }
+
+export function formatShortDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("it-IT", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}

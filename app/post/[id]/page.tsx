@@ -25,7 +25,7 @@ export default async function PostDetailPage({ params }: { params: { id: string 
   const { data: post, error: postError } = await supabase
     .from("posts")
     .select(
-      "id, author_id, content, created_at, updated_at, space_slug, at_risk, profiles!posts_author_id_fkey(nickname), me_too(count)",
+      "id, author_id, content, created_at, edited_at, space_slug, at_risk, profiles!posts_author_id_fkey(nickname), me_too(count), replies(count)",
     )
     .eq("id", params.id)
     .maybeSingle();
@@ -58,13 +58,15 @@ export default async function PostDetailPage({ params }: { params: { id: string 
     author_id: string;
     content: string;
     created_at: string;
-    updated_at: string | null;
+    edited_at: string | null;
     space_slug: string;
     at_risk: boolean;
     profiles: { nickname: string } | null;
     me_too: { count: number }[] | null;
+    replies: { count: number }[] | null;
   };
   const meTooCount = p.me_too?.[0]?.count ?? 0;
+  const replyCount = p.replies?.[0]?.count ?? replies?.length ?? 0;
   const nickname = p.profiles?.nickname ?? "anonimo";
 
   return (
@@ -79,7 +81,7 @@ export default async function PostDetailPage({ params }: { params: { id: string 
             author_id: p.author_id,
             content: p.content,
             created_at: p.created_at,
-            updated_at: p.updated_at ?? null,
+            edited_at: p.edited_at ?? null,
             space_slug: p.space_slug,
             at_risk: p.at_risk,
             nickname,
@@ -87,6 +89,7 @@ export default async function PostDetailPage({ params }: { params: { id: string 
           viewerId={user?.id ?? null}
           meTooCount={meTooCount}
           userMeToo={userMeToo}
+          replyCount={replyCount}
         />
 
         <section className="space-y-3">

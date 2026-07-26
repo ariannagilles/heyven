@@ -27,6 +27,15 @@ export default function MixedFeedItemClient({ item, viewerId }: Props) {
   const space = SPACE_BY_SLUG[item.space_slug];
   const meta = KIND_META[item.kind];
 
+  const replyCount =
+    item.kind === "sfogo" || item.kind === "domanda" ? item.reply_count : 0;
+  const reactionCount =
+    item.kind === "sfogo"
+      ? item.me_too_count
+      : item.kind === "storia"
+        ? item.reaction_count
+        : 0;
+
   const editable = useEditableContent({
     table: item.kind === "sfogo" ? "posts" : item.kind === "domanda" ? "questions" : "stories",
     id: item.id,
@@ -34,7 +43,9 @@ export default function MixedFeedItemClient({ item, viewerId }: Props) {
     viewerId,
     initialContent: item.content,
     initialTitle: item.kind === "storia" ? item.title : null,
-    initialUpdatedAt: item.updated_at,
+    initialEditedAt: item.edited_at,
+    replyCount,
+    reactionCount,
     contentMaxLength: item.kind === "storia" ? undefined : 500,
   });
 
@@ -56,7 +67,7 @@ export default function MixedFeedItemClient({ item, viewerId }: Props) {
           {space?.name ?? item.space_slug}
         </Link>
         <span aria-hidden>·</span>
-        <ContentMetaTime createdAt={item.created_at} updatedAt={editable.updatedAt} />
+        <ContentMetaTime createdAt={item.created_at} editedAt={editable.editedAt} />
         <div className="ml-auto shrink-0 flex items-center gap-0.5">
           {editable.canEdit && !editable.editing && (
             <EditContentButton onClick={editable.startEdit} />
@@ -80,6 +91,7 @@ export default function MixedFeedItemClient({ item, viewerId }: Props) {
           title={editable.draftTitle}
           onTitleChange={editable.setDraftTitle}
           showTitle={item.kind === "storia"}
+          showReplyWarning={editable.hasReplies}
           loading={editable.loading}
           error={editable.error}
           onSubmit={editable.saveEdit}

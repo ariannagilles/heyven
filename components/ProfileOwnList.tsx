@@ -107,7 +107,7 @@ export default function ProfileOwnList({
                   <span aria-hidden>·</span>
                   <ContentMetaTime
                     createdAt={item.created_at}
-                    updatedAt={item.updated_at}
+                    editedAt={item.edited_at}
                   />
                 </header>
                 <p className="text-petrolio leading-relaxed line-clamp-3">

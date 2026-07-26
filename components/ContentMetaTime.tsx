@@ -3,17 +3,17 @@ import { timeAgo } from "@/lib/time";
 
 type Props = {
   createdAt: string;
-  updatedAt: string | null;
+  editedAt: string | null;
 };
 
-export default function ContentMetaTime({ createdAt, updatedAt }: Props) {
+export default function ContentMetaTime({ createdAt, editedAt }: Props) {
   return (
     <>
       <time dateTime={createdAt}>{timeAgo(createdAt)}</time>
-      {updatedAt && (
+      {editedAt && (
         <>
           <span aria-hidden>·</span>
-          <ModifiedLabel />
+          <ModifiedLabel editedAt={editedAt} />
         </>
       )}
     </>

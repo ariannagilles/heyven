@@ -10,7 +10,7 @@ export type FeedPost = {
   author_id: string;
   content: string;
   created_at: string;
-  updated_at: string | null;
+  edited_at: string | null;
   space_slug: string;
   nickname: string;
   replyCount: number;
@@ -31,7 +31,7 @@ export default function PostCard({ post }: { post: FeedPost }) {
           {space?.name ?? post.space_slug}
         </Link>
         <span aria-hidden>·</span>
-        <ContentMetaTime createdAt={post.created_at} updatedAt={post.updated_at} />
+        <ContentMetaTime createdAt={post.created_at} editedAt={post.edited_at} />
         <ReportButton targetType="post" targetId={post.id} className="ml-auto shrink-0" />
       </header>
 

@@ -24,7 +24,9 @@ export default function PostCardClient({ post, viewerId }: Props) {
     authorId: post.author_id,
     viewerId,
     initialContent: post.content,
-    initialUpdatedAt: post.updated_at,
+    initialEditedAt: post.edited_at,
+    replyCount: post.replyCount,
+    reactionCount: post.meTooCount,
     contentMaxLength: 500,
   });
 
@@ -38,7 +40,7 @@ export default function PostCardClient({ post, viewerId }: Props) {
           {space?.name ?? post.space_slug}
         </Link>
         <span aria-hidden>·</span>
-        <ContentMetaTime createdAt={post.created_at} updatedAt={editable.updatedAt} />
+        <ContentMetaTime createdAt={post.created_at} editedAt={editable.editedAt} />
         <div className="ml-auto shrink-0 flex items-center gap-0.5">
           {editable.canEdit && !editable.editing && (
             <EditContentButton onClick={editable.startEdit} />
@@ -53,6 +55,7 @@ export default function PostCardClient({ post, viewerId }: Props) {
           content={editable.draftContent}
           onContentChange={editable.setDraftContent}
           contentMaxLength={500}
+          showReplyWarning={editable.hasReplies}
           loading={editable.loading}
           error={editable.error}
           onSubmit={editable.saveEdit}

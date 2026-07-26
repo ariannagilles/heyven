@@ -22,7 +22,8 @@ export default function QuestionListItem({ question, spaceSlug, viewerId }: Prop
     authorId: question.author_id,
     viewerId,
     initialContent: question.content,
-    initialUpdatedAt: question.updated_at,
+    initialEditedAt: question.edited_at,
+    replyCount: question.reply_count,
     contentMaxLength: 500,
   });
 
@@ -34,7 +35,7 @@ export default function QuestionListItem({ question, spaceSlug, viewerId }: Prop
         <span aria-hidden>·</span>
         <ContentMetaTime
           createdAt={question.created_at}
-          updatedAt={editable.updatedAt}
+          editedAt={editable.editedAt}
         />
         <div className="ml-auto shrink-0 flex items-center gap-0.5">
           {editable.canEdit && !editable.editing && (
@@ -50,6 +51,7 @@ export default function QuestionListItem({ question, spaceSlug, viewerId }: Prop
           content={editable.draftContent}
           onContentChange={editable.setDraftContent}
           contentMaxLength={500}
+          showReplyWarning={editable.hasReplies}
           loading={editable.loading}
           error={editable.error}
           onSubmit={editable.saveEdit}

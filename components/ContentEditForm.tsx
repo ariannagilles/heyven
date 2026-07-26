@@ -16,6 +16,7 @@ type Props = {
   onSubmit: () => void;
   onCancel: () => void;
   textareaClassName?: string;
+  showReplyWarning?: boolean;
 };
 
 export default function ContentEditForm({
@@ -32,6 +33,7 @@ export default function ContentEditForm({
   onSubmit,
   onCancel,
   textareaClassName = "min-h-[160px]",
+  showReplyWarning = false,
 }: Props) {
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -51,6 +53,14 @@ export default function ContentEditForm({
             maxLength={titleMaxLength}
           />
         </label>
+      )}
+
+      {showReplyWarning && (
+        <p className="text-sm text-petrolio/60 leading-relaxed">
+          Ci sono già delle risposte qui sotto. Le piccole modifiche vanno bene — se
+          invece vuoi dire una cosa completamente diversa, forse è meglio scrivere un
+          nuovo contenuto.
+        </p>
       )}
 
       <label className="block">

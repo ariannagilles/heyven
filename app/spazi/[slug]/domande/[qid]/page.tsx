@@ -44,12 +44,13 @@ export default async function QuestionDetailPage({
           author_id: question.author_id,
           content: question.content,
           created_at: question.created_at,
-          updated_at: question.updated_at,
+          edited_at: question.edited_at,
           at_risk: question.at_risk,
           nickname: question.nickname,
           avatarSrc: avatarDataUri(question.nickname),
         }}
         viewerId={user.id}
+        replyCount={replies.length}
       />
 
       <section className="space-y-3">

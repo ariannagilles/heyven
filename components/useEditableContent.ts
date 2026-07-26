@@ -19,7 +19,9 @@ type Options = {
   viewerId: string | null;
   initialContent: string;
   initialTitle?: string | null;
-  initialUpdatedAt: string | null;
+  initialEditedAt: string | null;
+  replyCount?: number;
+  reactionCount?: number;
   contentMaxLength?: number;
 };
 
@@ -30,11 +32,16 @@ export function useEditableContent(options: Options) {
   const [editing, setEditing] = useState(false);
   const [content, setContent] = useState(options.initialContent);
   const [title, setTitle] = useState(options.initialTitle ?? "");
-  const [updatedAt, setUpdatedAt] = useState(options.initialUpdatedAt);
+  const [editedAt, setEditedAt] = useState(options.initialEditedAt);
   const [draftContent, setDraftContent] = useState(options.initialContent);
   const [draftTitle, setDraftTitle] = useState(options.initialTitle ?? "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const replyCount = options.replyCount ?? 0;
+  const reactionCount = options.reactionCount ?? 0;
+  const hasInteractions = replyCount > 0 || reactionCount > 0;
+  const hasReplies = replyCount > 0;
 
   const startEdit = useCallback(() => {
     setDraftContent(content);
@@ -80,10 +87,12 @@ export function useEditableContent(options: Options) {
             content: trimmed,
             title: trimmedTitle || null,
             at_risk: detectAtRisk(trimmedTitle, trimmed),
+            markEdited: hasInteractions,
           })
         : await updateTextContent(supabase, options.table, options.id, {
             content: trimmed,
             at_risk: detectAtRisk(trimmed),
+            markEdited: hasInteractions,
           });
 
     setLoading(false);
@@ -95,23 +104,24 @@ export function useEditableContent(options: Options) {
 
     setContent(trimmed);
     setTitle(trimmedTitle);
-    setUpdatedAt(result.updatedAt);
+    setEditedAt(result.editedAt);
     setEditing(false);
     router.refresh();
-  }, [draftContent, draftTitle, options]);
+  }, [draftContent, draftTitle, hasInteractions, options]);
 
   return {
     canEdit,
     editing,
     content,
     title,
-    updatedAt,
+    editedAt,
     draftContent,
     draftTitle,
     setDraftContent,
     setDraftTitle,
     loading,
     error,
+    hasReplies,
     startEdit,
     cancelEdit,
     saveEdit,

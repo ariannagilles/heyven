@@ -5,17 +5,27 @@ export type TextContentTable = "posts" | "questions";
 export type TextContentUpdate = {
   content: string;
   at_risk: boolean;
+  markEdited: boolean;
 };
 
 export type StoryContentUpdate = {
   content: string;
   title: string | null;
   at_risk: boolean;
+  markEdited: boolean;
 };
 
 export type ContentUpdateResult =
-  | { updatedAt: string; error: null }
-  | { updatedAt: null; error: Error };
+  | { editedAt: string | null; error: null }
+  | { editedAt: null; error: Error };
+
+function withEditedAt<T extends Record<string, unknown>>(
+  payload: T,
+  markEdited: boolean,
+): T & { edited_at?: string } {
+  if (!markEdited) return payload;
+  return { ...payload, edited_at: new Date().toISOString() };
+}
 
 export async function updateTextContent(
   supabase: SupabaseClient,
@@ -25,16 +35,24 @@ export async function updateTextContent(
 ): Promise<ContentUpdateResult> {
   const { data, error } = await supabase
     .from(table)
-    .update({
-      content: payload.content,
-      at_risk: payload.at_risk,
-    })
+    .update(
+      withEditedAt(
+        {
+          content: payload.content,
+          at_risk: payload.at_risk,
+        },
+        payload.markEdited,
+      ),
+    )
     .eq("id", id)
-    .select("updated_at")
+    .select("edited_at")
     .single();
 
-  if (error) return { updatedAt: null, error: new Error(error.message) };
-  return { updatedAt: (data as { updated_at: string }).updated_at, error: null };
+  if (error) return { editedAt: null, error: new Error(error.message) };
+  return {
+    editedAt: (data as { edited_at: string | null }).edited_at,
+    error: null,
+  };
 }
 
 export async function updateStoryContent(
@@ -44,15 +62,23 @@ export async function updateStoryContent(
 ): Promise<ContentUpdateResult> {
   const { data, error } = await supabase
     .from("stories")
-    .update({
-      content: payload.content,
-      title: payload.title,
-      at_risk: payload.at_risk,
-    })
+    .update(
+      withEditedAt(
+        {
+          content: payload.content,
+          title: payload.title,
+          at_risk: payload.at_risk,
+        },
+        payload.markEdited,
+      ),
+    )
     .eq("id", id)
-    .select("updated_at")
+    .select("edited_at")
     .single();
 
-  if (error) return { updatedAt: null, error: new Error(error.message) };
-  return { updatedAt: (data as { updated_at: string }).updated_at, error: null };
+  if (error) return { editedAt: null, error: new Error(error.message) };
+  return {
+    editedAt: (data as { edited_at: string | null }).edited_at,
+    error: null,
+  };
 }

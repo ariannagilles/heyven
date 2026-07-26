@@ -16,7 +16,7 @@ type Props = {
     author_id: string;
     content: string;
     created_at: string;
-    updated_at: string | null;
+    edited_at: string | null;
     space_slug: string;
     at_risk: boolean;
     nickname: string;
@@ -24,6 +24,7 @@ type Props = {
   viewerId: string | null;
   meTooCount: number;
   userMeToo: boolean;
+  replyCount: number;
 };
 
 export default function PostDetailArticle({
@@ -31,6 +32,7 @@ export default function PostDetailArticle({
   viewerId,
   meTooCount,
   userMeToo,
+  replyCount,
 }: Props) {
   const space = SPACE_BY_SLUG[post.space_slug];
   const editable = useEditableContent({
@@ -39,7 +41,9 @@ export default function PostDetailArticle({
     authorId: post.author_id,
     viewerId,
     initialContent: post.content,
-    initialUpdatedAt: post.updated_at,
+    initialEditedAt: post.edited_at,
+    replyCount,
+    reactionCount: meTooCount,
     contentMaxLength: 500,
   });
 
@@ -57,7 +61,7 @@ export default function PostDetailArticle({
           {space?.name ?? post.space_slug}
         </Link>
         <span aria-hidden>·</span>
-        <ContentMetaTime createdAt={post.created_at} updatedAt={editable.updatedAt} />
+        <ContentMetaTime createdAt={post.created_at} editedAt={editable.editedAt} />
         <div className="ml-auto shrink-0 flex items-center gap-0.5">
           {editable.canEdit && !editable.editing && (
             <EditContentButton onClick={editable.startEdit} />
@@ -72,6 +76,7 @@ export default function PostDetailArticle({
           content={editable.draftContent}
           onContentChange={editable.setDraftContent}
           contentMaxLength={500}
+          showReplyWarning={editable.hasReplies}
           loading={editable.loading}
           error={editable.error}
           onSubmit={editable.saveEdit}

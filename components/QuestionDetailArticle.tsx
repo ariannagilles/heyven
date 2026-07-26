@@ -14,22 +14,28 @@ type Props = {
     author_id: string;
     content: string;
     created_at: string;
-    updated_at: string | null;
+    edited_at: string | null;
     at_risk: boolean;
     nickname: string;
     avatarSrc: string;
   };
   viewerId: string | null;
+  replyCount: number;
 };
 
-export default function QuestionDetailArticle({ question, viewerId }: Props) {
+export default function QuestionDetailArticle({
+  question,
+  viewerId,
+  replyCount,
+}: Props) {
   const editable = useEditableContent({
     table: "questions",
     id: question.id,
     authorId: question.author_id,
     viewerId,
     initialContent: question.content,
-    initialUpdatedAt: question.updated_at,
+    initialEditedAt: question.edited_at,
+    replyCount,
     contentMaxLength: 500,
   });
 
@@ -46,7 +52,7 @@ export default function QuestionDetailArticle({ question, viewerId }: Props) {
         <span aria-hidden>·</span>
         <ContentMetaTime
           createdAt={question.created_at}
-          updatedAt={editable.updatedAt}
+          editedAt={editable.editedAt}
         />
         <div className="ml-auto shrink-0 flex items-center gap-0.5">
           {editable.canEdit && !editable.editing && (
@@ -62,6 +68,7 @@ export default function QuestionDetailArticle({ question, viewerId }: Props) {
           content={editable.draftContent}
           onContentChange={editable.setDraftContent}
           contentMaxLength={500}
+          showReplyWarning={editable.hasReplies}
           loading={editable.loading}
           error={editable.error}
           onSubmit={editable.saveEdit}
