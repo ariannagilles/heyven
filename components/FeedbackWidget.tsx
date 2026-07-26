@@ -23,12 +23,6 @@ export default function FeedbackWidget() {
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
 
-  // Hide on auth pages
-  const isAuthPage =
-    pathname.startsWith("/login") ||
-    pathname.startsWith("/register") ||
-    pathname.startsWith("/auth");
-
   useEffect(() => {
     if (!open) return;
     function onKey(e: KeyboardEvent) {
@@ -83,7 +77,10 @@ export default function FeedbackWidget() {
     setTimeout(close, 1500);
   }
 
-  if (isAuthPage) return null;
+  const hiddenPrefixes = ["/chat/c", "/login", "/register", "/reset-password", "/auth"];
+  if (hiddenPrefixes.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
+    return null;
+  }
 
   return (
     <>
