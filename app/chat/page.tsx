@@ -86,7 +86,8 @@ export default async function ChatPage() {
             <Avatar nickname="placeholder-mentor" size={64} />
             <div className="flex-1 min-w-0">
               <p className="text-[15px] text-petrolio/80 italic leading-relaxed">
-                Stiamo trovando il Mentore più adatto a te.
+                Cercheremo tra i nostri Mentori la persona più adatta a quello che stai
+                vivendo.
               </p>
             </div>
           </div>
