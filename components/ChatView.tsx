@@ -325,7 +325,7 @@ export default function ChatView({
               {fullScreen && (
                 <button
                   type="button"
-                  onClick={() => router.back()}
+                  onClick={() => router.push("/chat")}
                   aria-label="Torna indietro"
                   className="glass-card flex h-[34px] w-[34px] shrink-0 items-center justify-center text-lg leading-none text-cream/80 transition-transform active:scale-[0.98]"
                 >
@@ -392,16 +392,6 @@ export default function ChatView({
                     >
                       Preferisco un altro Mentore
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setUserMenuOpen(false);
-                        setShowConfirm(true);
-                      }}
-                      className="block w-full px-4 py-2.5 text-left text-sm text-cream hover:bg-cream/5"
-                    >
-                      Chiudi conversazione
-                    </button>
                   </div>
                 )}
               </div>
@@ -443,6 +433,12 @@ export default function ChatView({
           </div>
         </header>
 
+        {closed && fullScreen && iAmUser && (
+          <p className="mx-auto max-w-2xl px-4 pb-3 text-center text-[11.5px] text-cream/50">
+            Conversazione chiusa · sola lettura
+          </p>
+        )}
+
         {!realtimeConnected && (
           <div className="px-4 pb-2">
             <p
@@ -454,7 +450,7 @@ export default function ChatView({
           </div>
         )}
 
-        {useMentorChrome && (
+        {useMentorChrome && !closed && (
           <p className="mx-auto max-w-2xl px-4 pb-3 text-center text-[11.5px] leading-snug text-cream/50">
             {otherNickname} non è sempre online, e va bene così. Ti risponde entro
             domani sera.

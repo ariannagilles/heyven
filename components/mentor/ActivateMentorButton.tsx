@@ -28,7 +28,7 @@ export default function ActivateMentorButton() {
       return;
     }
 
-    router.refresh();
+    router.push("/chat");
   }
 
   return (
