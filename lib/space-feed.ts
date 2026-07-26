@@ -115,17 +115,21 @@ export function writeHrefForFilter(
   spaceSlug: string,
   filter: SpaceFeedFilter,
 ): string {
-  const q = `?space=${encodeURIComponent(spaceSlug)}`;
+  const params = new URLSearchParams({ space: spaceSlug });
   switch (filter) {
     case "sfogo":
-      return `/new/sfogo${q}`;
+      params.set("tipo", "sfogo");
+      break;
     case "domanda":
-      return `/new/domanda${q}`;
+      params.set("tipo", "domanda");
+      break;
     case "storia":
-      return `/new/storia${q}`;
+      params.set("tipo", "storia");
+      break;
     default:
-      return `/new${q}`;
+      break;
   }
+  return `/new?${params.toString()}`;
 }
 
 export function parseSpaceFeedFilter(value: string | undefined): SpaceFeedFilter {
