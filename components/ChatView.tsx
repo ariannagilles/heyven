@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { Message } from "@/lib/chat";
+import { formatMessageTime } from "@/lib/time";
 import { AvatarImage } from "./AvatarImage";
 
 const MAX = 2000;
@@ -60,6 +60,10 @@ export default function ChatView({
   const menuRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const isAtBottomRef = useRef(true);
+  const isInitialScrollRef = useRef(true);
+  const wasDisconnectedRef = useRef(false);
+  const [realtimeConnected, setRealtimeConnected] = useState(true);
 
   const showIcebreakers =
     !closed && iAmUser && messages.length === 0 && content.trim() === "";
@@ -86,6 +90,15 @@ export default function ChatView({
 
   // Realtime: incoming messages on this conversation.
   useEffect(() => {
+    async function refetchMessages() {
+      const { data } = await supabase
+        .from("messages")
+        .select("id, conversation_id, sender_id, content, read, created_at")
+        .eq("conversation_id", conversationId)
+        .order("created_at", { ascending: true });
+      if (data) setMessages(data as Message[]);
+    }
+
     const channel = supabase
       .channel(`messages:${conversationId}`)
       .on(
@@ -103,11 +116,46 @@ export default function ChatView({
           );
         },
       )
-      .subscribe();
+      .subscribe((status) => {
+        if (status === "SUBSCRIBED") {
+          if (wasDisconnectedRef.current) {
+            void refetchMessages();
+            wasDisconnectedRef.current = false;
+          }
+          setRealtimeConnected(true);
+        } else if (status === "TIMED_OUT" || status === "CHANNEL_ERROR") {
+          wasDisconnectedRef.current = true;
+          setRealtimeConnected(false);
+        }
+      });
     return () => {
       void supabase.removeChannel(channel);
     };
   }, [supabase, conversationId]);
+
+  const handleScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const threshold = 80;
+    isAtBottomRef.current =
+      el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
+  }, []);
+
+  // Auto-scroll on new message when user is already at the bottom.
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    if (isInitialScrollRef.current) {
+      el.scrollTop = el.scrollHeight;
+      isInitialScrollRef.current = false;
+      return;
+    }
+
+    if (isAtBottomRef.current) {
+      el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+    }
+  }, [messages.length]);
 
   // Realtime: detect when the other side closes the conversation.
   useEffect(() => {
@@ -131,14 +179,6 @@ export default function ChatView({
       void supabase.removeChannel(channel);
     };
   }, [supabase, conversationId]);
-
-  // Auto-scroll on new message.
-  useEffect(() => {
-    scrollRef.current?.scrollTo({
-      top: scrollRef.current.scrollHeight,
-      behavior: "smooth",
-    });
-  }, [messages.length]);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -260,6 +300,11 @@ export default function ChatView({
     }
   }
 
+  const useMentorChrome = fullScreen && iAmUser;
+  const composerPlaceholder = iAmUser
+    ? `Scrivi a ${otherNickname}…`
+    : `Scrivi a @${otherNickname}…`;
+
   return (
     <div
       className={
@@ -268,116 +313,154 @@ export default function ChatView({
           : "flex h-[calc(100dvh-3.5rem-1px)] flex-col"
       }
     >
-      <header
-        className={`border-b border-cream/10 bg-cream/5 px-4 pb-3 backdrop-blur ${
-          fullScreen ? "pt-[calc(0.75rem+env(safe-area-inset-top))]" : "py-3"
-        }`}
+      <div
+        className={
+          "sticky top-0 z-30 shrink-0 bg-petrolio/85 backdrop-blur-xl " +
+          (fullScreen ? "pt-[env(safe-area-inset-top)]" : "")
+        }
       >
-        <div className="mx-auto flex max-w-2xl items-center justify-between gap-2">
-          <div className="flex min-w-0 items-center gap-2">
-            {fullScreen && (
-              <button
-                type="button"
-                onClick={() => router.back()}
-                aria-label="Torna indietro"
-                className="-ml-1 shrink-0 p-1 text-cream/70 hover:text-cream"
-              >
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden
+        <header className="px-4 py-3">
+          <div className="mx-auto flex max-w-2xl items-center justify-between gap-2">
+            <div className="flex min-w-0 items-center gap-3">
+              {fullScreen && (
+                <button
+                  type="button"
+                  onClick={() => router.back()}
+                  aria-label="Torna indietro"
+                  className="glass-card flex h-[34px] w-[34px] shrink-0 items-center justify-center text-lg leading-none text-cream/80 transition-transform active:scale-[0.98]"
                 >
-                  <path d="M15 18l-6-6 6-6" />
-                </svg>
-              </button>
+                  ‹
+                </button>
+              )}
+              {useMentorChrome ? (
+                <div
+                  className="shrink-0 overflow-hidden border border-cream/15 p-0.5"
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 14,
+                    background: "linear-gradient(145deg, #1D9E75 0%, #0B3F34 100%)",
+                  }}
+                >
+                  <AvatarImage
+                    src={otherAvatarSrc}
+                    nickname={otherNickname}
+                    size={36}
+                    className="!rounded-[10px]"
+                  />
+                </div>
+              ) : (
+                <AvatarImage src={otherAvatarSrc} nickname={otherNickname} size={40} />
+              )}
+              <div className="min-w-0">
+                <div className="truncate text-[15px] font-semibold leading-tight text-cream">
+                  @{otherNickname}
+                </div>
+                {useMentorChrome ? (
+                  <p className="text-[11.5px] leading-snug text-mint">
+                    ● Il tuo Mentore · supervisionato
+                  </p>
+                ) : (
+                  <div className="text-xs leading-tight text-cream/60">
+                    {otherRoleLabel}
+                  </div>
+                )}
+              </div>
+            </div>
+            {!closed && iAmUser && (
+              <div ref={userMenuRef} className="relative shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setUserMenuOpen((open) => !open)}
+                  aria-label="Altre azioni"
+                  aria-expanded={userMenuOpen}
+                  className="glass-card inline-flex h-8 w-8 items-center justify-center text-cream/80"
+                >
+                  <span aria-hidden className="text-lg leading-none">
+                    ⋯
+                  </span>
+                </button>
+                {userMenuOpen && (
+                  <div className="absolute right-0 top-full z-10 mt-1 min-w-[220px] rounded-2xl border border-cream/10 bg-petrolio-2/95 py-1 shadow-soft backdrop-blur-xl">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setUserMenuOpen(false);
+                        setShowChangeConfirm(true);
+                      }}
+                      className="block w-full px-4 py-2.5 text-left text-sm text-cream hover:bg-cream/5"
+                    >
+                      Preferisco un altro Mentore
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setUserMenuOpen(false);
+                        setShowConfirm(true);
+                      }}
+                      className="block w-full px-4 py-2.5 text-left text-sm text-cream hover:bg-cream/5"
+                    >
+                      Chiudi conversazione
+                    </button>
+                  </div>
+                )}
+              </div>
             )}
-            <AvatarImage src={otherAvatarSrc} nickname={otherNickname} size={40} />
-            <div className="min-w-0">
-              <div className="text-sm font-semibold leading-tight truncate">@{otherNickname}</div>
-              <div className="text-xs text-cream/60 leading-tight">{otherRoleLabel}</div>
-            </div>
+            {!closed && !iAmUser && (
+              <div ref={menuRef} className="relative shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setMenuOpen((open) => !open)}
+                  aria-label="Altre azioni"
+                  aria-expanded={menuOpen}
+                  className="glass-card inline-flex h-8 w-8 items-center justify-center text-cream/80"
+                >
+                  <span aria-hidden className="text-lg leading-none">
+                    ⋯
+                  </span>
+                </button>
+                {menuOpen && (
+                  <div className="absolute right-0 top-full z-10 mt-1 min-w-[220px] rounded-2xl border border-cream/10 bg-petrolio-2/95 py-1 shadow-soft backdrop-blur-xl">
+                    <button
+                      type="button"
+                      onClick={() => void escalateToSupervision()}
+                      disabled={escalating || escalationDone}
+                      className="block w-full px-4 py-2.5 text-left text-sm text-cream hover:bg-cream/5 disabled:opacity-50"
+                    >
+                      {escalating
+                        ? "Invio segnalazione…"
+                        : "Segnala alla supervisione"}
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+            {closed && (
+              <span className="shrink-0 rounded-full bg-cream/5 px-3 py-1.5 text-xs text-cream/60">
+                chiusa
+              </span>
+            )}
           </div>
-          {!closed && iAmUser && (
-            <div ref={userMenuRef} className="relative shrink-0">
-              <button
-                type="button"
-                onClick={() => setUserMenuOpen((open) => !open)}
-                aria-label="Altre azioni"
-                aria-expanded={userMenuOpen}
-                className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-cream/5 text-cream hover:bg-cream/10"
-              >
-                <span aria-hidden className="text-lg leading-none">
-                  ⋯
-                </span>
-              </button>
-              {userMenuOpen && (
-                <div className="absolute right-0 top-full z-10 mt-1 min-w-[220px] rounded-2xl border border-cream/10 bg-petrolio-2/95 backdrop-blur-xl py-1 shadow-soft">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setUserMenuOpen(false);
-                      setShowChangeConfirm(true);
-                    }}
-                    className="block w-full px-4 py-2.5 text-left text-sm text-cream hover:bg-cream/5"
-                  >
-                    Preferisco un altro Mentore
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setUserMenuOpen(false);
-                      setShowConfirm(true);
-                    }}
-                    className="block w-full px-4 py-2.5 text-left text-sm text-cream hover:bg-cream/5"
-                  >
-                    Chiudi conversazione
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
-          {!closed && !iAmUser && (
-            <div ref={menuRef} className="relative shrink-0">
-              <button
-                type="button"
-                onClick={() => setMenuOpen((open) => !open)}
-                aria-label="Altre azioni"
-                aria-expanded={menuOpen}
-                className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-cream/5 text-cream hover:bg-cream/10"
-              >
-                <span aria-hidden className="text-lg leading-none">
-                  ⋯
-                </span>
-              </button>
-              {menuOpen && (
-                <div className="absolute right-0 top-full z-10 mt-1 min-w-[220px] rounded-2xl border border-cream/10 bg-petrolio-2/95 backdrop-blur-xl py-1 shadow-soft">
-                  <button
-                    type="button"
-                    onClick={() => void escalateToSupervision()}
-                    disabled={escalating || escalationDone}
-                    className="block w-full px-4 py-2.5 text-left text-sm text-cream hover:bg-cream/5 disabled:opacity-50"
-                  >
-                    {escalating
-                      ? "Invio segnalazione…"
-                      : "Segnala alla supervisione"}
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
-          {closed && (
-            <span className="text-xs rounded-full px-3 py-1.5 bg-cream/5 text-cream/60 shrink-0">
-              chiusa
-            </span>
-          )}
-        </div>
-      </header>
+        </header>
+
+        {!realtimeConnected && (
+          <div className="px-4 pb-2">
+            <p
+              className="glass-card mx-auto max-w-2xl px-3 py-2 text-center text-[11.5px] text-[#EAC77A]"
+              role="status"
+            >
+              Riconnessione in corso…
+            </p>
+          </div>
+        )}
+
+        {useMentorChrome && (
+          <p className="mx-auto max-w-2xl px-4 pb-3 text-center text-[11.5px] leading-snug text-cream/50">
+            {otherNickname} non è sempre online, e va bene così. Ti risponde entro
+            domani sera.
+          </p>
+        )}
+      </div>
 
       {(escalationDone || escalationError) && !iAmUser && (
         <div className="border-b border-cream/10 bg-cream/5 px-4 py-2">
@@ -394,11 +477,19 @@ export default function ChatView({
         </div>
       )}
 
-      <div ref={scrollRef} className="flex-1 overflow-y-auto">
-        <div className="mx-auto max-w-2xl px-4 py-4 space-y-2">
+      <div
+        ref={scrollRef}
+        onScroll={handleScroll}
+        className="flex-1 overflow-y-auto"
+      >
+        <div
+          className={
+            "mx-auto max-w-2xl space-y-3 px-4 py-4 " + (fullScreen ? "pb-28" : "")
+          }
+        >
           {messages.length === 0 ? (
             !iAmUser ? (
-              <div className="card p-5 text-center text-sm text-cream/70">
+              <div className="glass-card p-5 text-center text-sm text-cream/70">
                 Nessun messaggio, ancora.
               </div>
             ) : null
@@ -408,31 +499,35 @@ export default function ChatView({
               return (
                 <div
                   key={m.id}
-                  className={"flex items-end gap-2 " + (mine ? "justify-end" : "justify-start")}
+                  className={"flex flex-col " + (mine ? "items-end" : "items-start")}
                 >
-                  {!mine && (
-                    <AvatarImage
-                      src={otherAvatarSrc}
-                      nickname={otherNickname}
-                      size={32}
-                    />
-                  )}
                   <div
                     className={
-                      "max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap " +
+                      "max-w-[80%] whitespace-pre-wrap px-4 py-2.5 text-[14px] leading-[1.5] text-cream " +
                       (mine
-                        ? "bg-petrolio text-crema rounded-br-md"
-                        : "bg-cream/10 text-cream border border-cream/10 rounded-bl-md")
+                        ? "rounded-[20px] rounded-br-[7px] border border-mint/25"
+                        : "rounded-[20px] rounded-bl-[7px] border border-cream/12")
+                    }
+                    style={
+                      mine
+                        ? { backgroundColor: "rgba(93, 202, 165, 0.18)" }
+                        : { backgroundColor: "rgba(245, 239, 227, 0.09)" }
                     }
                   >
                     {m.content}
                   </div>
+                  <time
+                    className="mt-1 px-1 text-[10.5px] text-cream/30 tabular-nums"
+                    dateTime={m.created_at}
+                  >
+                    {formatMessageTime(m.created_at)}
+                  </time>
                 </div>
               );
             })
           )}
           {closed && (
-            <div className="card p-4 text-center text-sm text-cream/70 mt-2">
+            <div className="glass-card mt-2 p-4 text-center text-sm text-cream/70">
               Conversazione chiusa. I messaggi restano qui, ma non puoi più scrivere.
             </div>
           )}
@@ -442,7 +537,11 @@ export default function ChatView({
       {!closed && (
         <form
           onSubmit={send}
-          className="border-t border-cream/10 bg-cream/5 backdrop-blur px-4 py-3"
+          className={
+            fullScreen
+              ? "fixed bottom-0 left-0 right-0 z-40 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))]"
+              : "border-t border-cream/10 bg-petrolio/85 px-4 py-3 backdrop-blur-xl"
+          }
         >
           {showIcebreakers && (
             <div className="mx-auto mb-3 max-w-2xl">
@@ -453,7 +552,7 @@ export default function ChatView({
                     key={prompt}
                     type="button"
                     onClick={() => applyIcebreakerPrompt(prompt)}
-                    className="rounded-2xl bg-cream/5 px-4 py-2.5 text-left text-sm text-cream/80 transition-colors hover:bg-cream/10"
+                    className="glass-card rounded-[18px] px-4 py-2.5 text-left text-sm text-cream/80 transition-transform active:scale-[0.98]"
                   >
                     {prompt}
                   </button>
@@ -461,7 +560,7 @@ export default function ChatView({
               </div>
             </div>
           )}
-          <div className="mx-auto max-w-2xl flex items-end gap-2">
+          <div className="glass-card mx-auto flex max-w-2xl items-end gap-2 rounded-[22px] p-2">
             <textarea
               ref={textareaRef}
               value={content}
@@ -474,21 +573,36 @@ export default function ChatView({
               }}
               rows={1}
               maxLength={MAX}
-              placeholder="Scrivi un messaggio…"
-              className="field flex-1 min-h-[44px] max-h-32 py-2.5"
+              placeholder={composerPlaceholder}
+              className="max-h-32 min-h-[40px] flex-1 resize-none border-0 bg-transparent px-2 py-2 text-[15px] text-cream outline-none placeholder:text-cream/30"
             />
             <button
               type="submit"
               disabled={sending || content.trim().length === 0}
-              className="btn-primary"
+              aria-label="Invia messaggio"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-transform active:scale-[0.95] disabled:opacity-40"
+              style={{
+                background: "linear-gradient(180deg, #2CC79A 0%, #0F6E56 100%)",
+              }}
             >
-              invia
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#04342C"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden
+              >
+                <path d="M12 19V5" />
+                <path d="m5 12 7-7 7 7" />
+              </svg>
             </button>
           </div>
           {error && (
-            <p className="mx-auto max-w-2xl mt-2 msg-error">
-              {error}
-            </p>
+            <p className="mx-auto mt-2 max-w-2xl msg-error">{error}</p>
           )}
         </form>
       )}

@@ -15,6 +15,13 @@ export function timeAgo(iso: string): string {
   return `${Math.floor(days / 365)} anni fa`;
 }
 
+export function formatMessageTime(iso: string): string {
+  return new Date(iso).toLocaleTimeString("it-IT", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 export function formatShortDate(iso: string): string {
   return new Date(iso).toLocaleDateString("it-IT", {
     day: "numeric",

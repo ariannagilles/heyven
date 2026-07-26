@@ -6,12 +6,16 @@ type Props = {
 };
 
 export default function MentorMeetingAvatar({ nickname, size = 76 }: Props) {
+  const outerRadius = Math.round(size * (26 / 76));
+  const innerRadius = Math.max(outerRadius - 4, 6);
+
   return (
     <div
-      className="shrink-0 overflow-hidden rounded-[26px] border border-cream/15 p-0.5"
+      className="shrink-0 overflow-hidden border border-cream/15 p-0.5"
       style={{
         width: size,
         height: size,
+        borderRadius: outerRadius,
         background: "linear-gradient(145deg, #1D9E75 0%, #0B3F34 100%)",
       }}
     >
@@ -21,7 +25,8 @@ export default function MentorMeetingAvatar({ nickname, size = 76 }: Props) {
         alt=""
         width={size - 4}
         height={size - 4}
-        className="h-full w-full rounded-[22px] object-cover"
+        className="h-full w-full object-cover"
+        style={{ borderRadius: innerRadius }}
         aria-hidden
       />
     </div>
