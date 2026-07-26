@@ -7,7 +7,11 @@ import {
   submitConversationRating,
   submitConversationRatingFeedback,
 } from "@/lib/mentor-rating-rpc";
-import { mentorRatingUserMessage } from "@/lib/mentor-rating-errors";
+import {
+  logMentorRatingError,
+  MENTOR_RATING_FEEDBACK_ERROR,
+  MENTOR_RATING_STARS_ERROR,
+} from "@/lib/mentor-rating-errors";
 
 type Props = {
   open: boolean;
@@ -24,6 +28,21 @@ type Props = {
   /** @deprecated use onFinished */
   onDone?: () => void;
 };
+
+type ErrorPhase = "stars" | "feedback" | null;
+
+function RatingNotice({ children }: { children: string }) {
+  return (
+    <p
+      role="status"
+      className="mt-3 text-center text-[14px] leading-[1.45] text-[#04342C]"
+    >
+      <span className="inline-block rounded-lg bg-[#D4EDE5] px-3 py-2">
+        {children}
+      </span>
+    </p>
+  );
+}
 
 export default function MentorConversationRatingSheet({
   open,
@@ -42,7 +61,7 @@ export default function MentorConversationRatingSheet({
   const [hover, setHover] = useState(0);
   const [feedback, setFeedback] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [errorPhase, setErrorPhase] = useState<ErrorPhase>(null);
 
   useEffect(() => {
     if (!open) {
@@ -51,7 +70,7 @@ export default function MentorConversationRatingSheet({
       setSavedStars(0);
       setHover(0);
       setFeedback("");
-      setError(null);
+      setErrorPhase(null);
       setLoading(false);
     }
   }, [open]);
@@ -72,21 +91,28 @@ export default function MentorConversationRatingSheet({
   async function submitStars() {
     if (stars < 1) return;
     setLoading(true);
-    setError(null);
-    const supabase = createClient();
-    const { error: submitError } = await submitConversationRating(
-      supabase,
-      conversationId,
-      stars,
-    );
-    setLoading(false);
-    if (submitError) {
-      setError(mentorRatingUserMessage(submitError.message));
-      return;
+    setErrorPhase(null);
+    try {
+      const supabase = createClient();
+      const { error: submitError } = await submitConversationRating(
+        supabase,
+        conversationId,
+        stars,
+      );
+      if (submitError) {
+        logMentorRatingError("stars", submitError);
+        setErrorPhase("stars");
+        return;
+      }
+      setSavedStars(stars);
+      setPhase("feedback");
+      onStarsSubmitted?.();
+    } catch (err) {
+      logMentorRatingError("stars", err);
+      setErrorPhase("stars");
+    } finally {
+      setLoading(false);
     }
-    setSavedStars(stars);
-    setPhase("feedback");
-    onStarsSubmitted?.();
   }
 
   async function submitFeedbackAndClose() {
@@ -96,22 +122,31 @@ export default function MentorConversationRatingSheet({
       return;
     }
     setLoading(true);
-    setError(null);
-    const supabase = createClient();
-    const { error: submitError } = await submitConversationRatingFeedback(
-      supabase,
-      conversationId,
-      trimmed,
-    );
-    setLoading(false);
-    if (submitError) {
-      setError(mentorRatingUserMessage(submitError.message));
-      return;
+    setErrorPhase(null);
+    try {
+      const supabase = createClient();
+      const { error: submitError } = await submitConversationRatingFeedback(
+        supabase,
+        conversationId,
+        trimmed,
+      );
+      if (submitError) {
+        logMentorRatingError("feedback", submitError);
+        setErrorPhase("feedback");
+        return;
+      }
+      finish();
+    } catch (err) {
+      logMentorRatingError("feedback", err);
+      setErrorPhase("feedback");
+    } finally {
+      setLoading(false);
     }
-    finish();
   }
 
   const activeStars = phase === "stars" ? hover || stars : savedStars;
+  const starsFailed = errorPhase === "stars";
+  const feedbackFailed = errorPhase === "feedback";
 
   return (
     <div
@@ -153,7 +188,10 @@ export default function MentorConversationRatingSheet({
                   disabled={loading}
                   onMouseEnter={() => setHover(n)}
                   onMouseLeave={() => setHover(0)}
-                  onClick={() => setStars(n)}
+                  onClick={() => {
+                    setStars(n);
+                    setErrorPhase(null);
+                  }}
                   className="p-1 text-[32px] leading-none transition-transform active:scale-95 disabled:opacity-50"
                 >
                   <span className={activeStars >= n ? "text-mint" : "text-cream/18"}>
@@ -162,10 +200,8 @@ export default function MentorConversationRatingSheet({
                 </button>
               ))}
             </div>
-            {error && (
-              <p className="mt-3 rounded-xl bg-[#D4EDE5] px-3 py-2 text-center text-sm text-[#04342C]">
-                {error}
-              </p>
+            {starsFailed && (
+              <RatingNotice>{MENTOR_RATING_STARS_ERROR}</RatingNotice>
             )}
             <div className="mt-6 space-y-3">
               {stars >= 1 && (
@@ -175,7 +211,11 @@ export default function MentorConversationRatingSheet({
                   disabled={loading}
                   className="w-full rounded-full bg-cream py-3.5 text-[15px] font-semibold text-petrolio transition-transform active:scale-[0.98] disabled:opacity-50"
                 >
-                  {loading ? "Invio…" : "Invia"}
+                  {loading
+                    ? "Invio…"
+                    : starsFailed
+                      ? "Riprova"
+                      : "Invia"}
                 </button>
               )}
               <button
@@ -218,7 +258,10 @@ export default function MentorConversationRatingSheet({
               </span>
               <textarea
                 value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
+                onChange={(e) => {
+                  setFeedback(e.target.value);
+                  setErrorPhase(null);
+                }}
                 placeholder="Solo se ti va. Lo legge la supervisione, non compare sul profilo."
                 maxLength={1000}
                 rows={4}
@@ -226,10 +269,8 @@ export default function MentorConversationRatingSheet({
                 className="field-input mt-2 min-h-[120px]"
               />
             </div>
-            {error && (
-              <p className="mt-3 rounded-xl bg-[#D4EDE5] px-3 py-2 text-center text-sm text-[#04342C]">
-                {error}
-              </p>
+            {feedbackFailed && (
+              <RatingNotice>{MENTOR_RATING_FEEDBACK_ERROR}</RatingNotice>
             )}
             <div className="mt-6 space-y-3">
               <button
@@ -238,7 +279,7 @@ export default function MentorConversationRatingSheet({
                 disabled={loading}
                 className="w-full rounded-full bg-cream py-3.5 text-[15px] font-semibold text-petrolio transition-transform active:scale-[0.98] disabled:opacity-50"
               >
-                {loading ? "Invio…" : "Fatto"}
+                {loading ? "Invio…" : feedbackFailed ? "Riprova" : "Fatto"}
               </button>
               <button
                 type="button"
