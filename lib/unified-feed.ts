@@ -58,6 +58,7 @@ export type UnifiedFeedCursor = {
 export type UnifiedFeedOpts = {
   limit?: number;
   unifiedCursor?: UnifiedFeedCursor | null;
+  spaceSlug?: string;
 };
 
 export type UnifiedPageResult<T> = {
@@ -172,6 +173,7 @@ export async function fetchUnifiedHomeFeed(
     .order("created_at", { ascending: false })
     .order("id", { ascending: false })
     .limit(perTypeFetch);
+  if (opts.spaceSlug) postsQuery = postsQuery.eq("space_slug", opts.spaceSlug);
   postsQuery = applyFeedCursor(postsQuery, cursors.sfogo);
 
   let questionsQuery = supabase
@@ -182,6 +184,7 @@ export async function fetchUnifiedHomeFeed(
     .order("created_at", { ascending: false })
     .order("id", { ascending: false })
     .limit(perTypeFetch);
+  if (opts.spaceSlug) questionsQuery = questionsQuery.eq("space_slug", opts.spaceSlug);
   questionsQuery = applyFeedCursor(questionsQuery, cursors.domanda);
 
   let storiesQuery = supabase
@@ -192,6 +195,7 @@ export async function fetchUnifiedHomeFeed(
     .order("created_at", { ascending: false })
     .order("id", { ascending: false })
     .limit(perTypeFetch);
+  if (opts.spaceSlug) storiesQuery = storiesQuery.eq("space_slug", opts.spaceSlug);
   storiesQuery = applyFeedCursor(storiesQuery, cursors.storia);
 
   const [postsRes, questionsRes, storiesRes] = await Promise.all([
@@ -301,4 +305,13 @@ export async function fetchUnifiedHomeFeed(
     : null;
 
   return { items, nextCursor, hasMore };
+}
+
+export function fetchUnifiedSpaceFeed(
+  supabase: SupabaseClient,
+  userId: string,
+  spaceSlug: string,
+  opts: Omit<UnifiedFeedOpts, "spaceSlug"> = {},
+): Promise<UnifiedPageResult<MixedFeedItem>> {
+  return fetchUnifiedHomeFeed(supabase, userId, { ...opts, spaceSlug });
 }

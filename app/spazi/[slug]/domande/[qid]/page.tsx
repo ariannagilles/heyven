@@ -32,7 +32,7 @@ export default async function QuestionDetailPage({
   return (
     <div className="space-y-4">
       <Link
-        href={`/spazi/${params.slug}/domande`}
+        href={`/spazi/${params.slug}?tipo=domanda`}
         className="text-sm text-cream/60 hover:text-cream"
       >
         ← tutte le domande

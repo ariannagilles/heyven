@@ -1,32 +1,44 @@
 import { redirect } from "next/navigation";
-import SpacePostsList from "@/components/SpacePostsList";
+import SpaceFeedHeader from "@/components/space/SpaceFeedHeader";
+import SpaceFeedView from "@/components/space/SpaceFeedView";
 import { createClient } from "@/lib/supabase/server";
-import { fetchFeed } from "@/lib/feed";
+import { fetchSpaceFeedInitial } from "@/lib/feed-actions";
+import { getSpacePeopleToday, parseSpaceFeedFilter } from "@/lib/space-feed";
+import { SPACE_BY_SLUG } from "@/lib/spaces";
 
 export const dynamic = "force-dynamic";
 
-export default async function PostTab({
+export default async function SpaceFeedPage({
   params,
+  searchParams,
 }: {
   params: { slug: string };
+  searchParams: { tipo?: string };
 }) {
+  const space = SPACE_BY_SLUG[params.slug];
+  if (!space) redirect("/spazi");
+
   const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect(`/login?next=/spazi/${params.slug}`);
 
-  const { items, nextCursor, hasMore } = await fetchFeed(supabase, user.id, {
-    spaceSlug: params.slug,
-  });
+  const filter = parseSpaceFeedFilter(searchParams.tipo);
+
+  const [initialPage, peopleToday] = await Promise.all([
+    fetchSpaceFeedInitial(params.slug, filter),
+    getSpacePeopleToday(supabase, params.slug),
+  ]);
 
   return (
-    <SpacePostsList
-      spaceSlug={params.slug}
-      viewerId={user.id}
-      initialItems={items}
-      initialNextCursor={nextCursor}
-      initialHasMore={hasMore}
-    />
+    <>
+      <SpaceFeedHeader spaceName={space.name} peopleToday={peopleToday} />
+      <SpaceFeedView
+        spaceSlug={params.slug}
+        initialFilter={filter}
+        initialPage={initialPage}
+      />
+    </>
   );
 }
