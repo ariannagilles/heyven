@@ -65,10 +65,6 @@ export default async function MentorIncontroPage() {
   const ratingSummary = await fetchMentorRatingSummary(
     supabase,
     conversation.mentor_id,
-    {
-      avg: assignedProfile?.avg_rating ?? 0,
-      count: assignedProfile?.ratings_count ?? 0,
-    },
   );
 
   return (

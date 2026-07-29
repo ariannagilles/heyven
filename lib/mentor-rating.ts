@@ -24,7 +24,6 @@ type SummaryRow = { avg_stars: number; rating_count: number };
 export async function fetchMentorRatingSummary(
   supabase: SupabaseClient,
   mentorId: string,
-  fallback?: MentorRatingSummary,
 ): Promise<MentorRatingSummary> {
   const { data, error } = await supabase.rpc("get_mentor_rating_summary", {
     p_mentor_id: mentorId,
@@ -42,5 +41,5 @@ export async function fetchMentorRatingSummary(
     }
   }
 
-  return fallback ?? { avg: 0, count: 0 };
+  return { avg: 0, count: 0 };
 }
