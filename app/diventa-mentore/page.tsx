@@ -25,7 +25,7 @@ const BENEFIT_BLOCKS = [
   {
     num: "01",
     title: "Una formazione seria.",
-    body: "Sei moduli sull'ascolto scritto, sul riconoscere i segnali di rischio e sui limiti del ruolo. Quattro-sei ore online. Alla fine ricevi un attestato con le ore fatte, firmato da Heyven.",
+    body: "Sei moduli sull'ascolto scritto, sul riconoscere i segnali di rischio e sui limiti del ruolo. Alla fine ricevi un attestato con le ore fatte, firmato da Heyven.",
   },
   {
     num: "02",
@@ -62,6 +62,17 @@ const PRIMARY_CTA =
 
 const GHOST_CTA =
   "inline-flex items-center justify-center rounded-[14px] border border-cream/40 bg-transparent px-8 py-4 text-[16px] font-semibold text-cream transition-colors duration-300 ease-out hover:bg-cream/[0.06] active:scale-[0.98] motion-reduce:transition-none md:text-[17px]";
+
+const INTERMEDIATE_CTA =
+  "inline-flex items-center justify-center rounded-[14px] bg-cream px-9 py-4 text-[15px] font-semibold text-petrolio transition-transform duration-300 ease-out active:scale-[0.98] motion-reduce:transition-none";
+
+const MENTOR_LIMITS = [
+  "Non fa terapia",
+  "Non fa diagnosi",
+  "Non dà indicazioni sui farmaci",
+  "Non dice a nessuno cosa fare della propria vita",
+  "Non si sposta su altri canali",
+] as const;
 
 export default function DiventaMentorePage() {
   return (
@@ -222,11 +233,11 @@ export default function DiventaMentorePage() {
 
         <div className="mx-auto max-w-5xl px-4">
           {/* BLOCCO 4 */}
-          <section id="come-funziona" className="scroll-mt-24 space-y-6">
+          <section id="come-funziona" className="scroll-mt-24">
             <h2 className="font-display text-[2rem] leading-tight text-cream">
               Come funziona
             </h2>
-            <div className={`glass-card space-y-5 p-8 md:p-12 ${BODY}`}>
+            <div className={`glass-card mt-12 space-y-5 p-8 md:p-12 ${BODY}`}>
               <p>
                 Ti vengono affidate le persone con cui condividi un&apos;esperienza
                 simile. Vi scrivete in chat, e la continuità è la parte che conta:
@@ -241,12 +252,24 @@ export default function DiventaMentorePage() {
             </div>
           </section>
 
+          <section className="py-14 text-center">
+            <p className="text-[16px] leading-[1.6] text-cream/[0.72]">
+              Se ti riconosci in questo, il passo dopo è breve.
+            </p>
+            <Link
+              href="/diventa-mentore/candidatura"
+              className={`${INTERMEDIATE_CTA} mt-5`}
+            >
+              Raccontaci di te
+            </Link>
+          </section>
+
           {/* BLOCCO 5 · NUMERATO */}
-          <section className="mt-24 space-y-0">
+          <section className="mt-24">
             <h2 className="font-display text-[2rem] leading-tight text-cream">
               Cosa ti porti a casa
             </h2>
-            <div className="mt-10">
+            <div className="pt-12">
               {BENEFIT_BLOCKS.map((block, index) => (
                 <article key={block.num}>
                   {index > 0 && (
@@ -271,17 +294,22 @@ export default function DiventaMentorePage() {
           </section>
 
           {/* BLOCCO 6 */}
-          <section className="mt-24 space-y-6">
+          <section className="mt-24">
             <h2 className="font-display text-[2rem] leading-tight text-cream">
               Cosa un Mentore non fa
             </h2>
-            <div className={`glass-card space-y-5 p-8 md:p-10 ${BODY}`}>
-              <p>
-                Non fa terapia e non fa diagnosi. Non dà indicazioni sui farmaci.
-                Non dice a nessuno cosa fare della propria vita. Non si sposta su
-                altri canali.
-              </p>
-              <p>
+            <div className={`glass-card mt-12 p-8 md:p-10 ${BODY}`}>
+              <ul className="space-y-3" role="list">
+                {MENTOR_LIMITS.map((item) => (
+                  <li key={item} className="flex gap-3 text-[16px] leading-[1.6] md:text-[17px]">
+                    <span className="shrink-0 text-cream/60" aria-hidden>
+                      ×
+                    </span>
+                    <span className="text-cream">{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-6 text-[16px] leading-[1.6] text-cream md:text-[17px]">
                 Questi limiti tengono il ruolo sostenibile. A un Mentore non si
                 chiede di risolvere la vita di qualcuno, si chiede di esserci
                 mentre la attraversa.
@@ -294,7 +322,7 @@ export default function DiventaMentorePage() {
             <h2 className="font-display text-[2rem] leading-tight text-cream">
               Come garantiamo la qualità
             </h2>
-            <p className={`mt-4 max-w-2xl ${BODY}`}>
+            <p className={`mt-12 max-w-2xl ${BODY}`}>
               Ogni Mentore Heyven è tra i pochissimi in Italia ad aver completato
               selezione, formazione e supervisione. Ecco cosa significa.
             </p>
@@ -328,7 +356,7 @@ export default function DiventaMentorePage() {
             <h2 className="font-display text-[2rem] leading-tight text-cream">
               Chi cerchiamo
             </h2>
-            <div className="mt-8 max-w-[640px] space-y-5">
+            <div className="mt-12 max-w-[640px] space-y-5">
               <p className="text-[17px] leading-[1.65] text-cream">
                 Persone che hanno vissuto ansia, depressione, un disturbo
                 alimentare, un lutto, un burnout, una relazione che faceva male,
@@ -357,7 +385,7 @@ export default function DiventaMentorePage() {
             <h2 className="font-display text-[2rem] leading-tight text-cream">
               Come si diventa Mentore
             </h2>
-            <ol className="relative mt-10 space-y-[72px]">
+            <ol className="relative mt-12 space-y-[72px]">
               {TIMELINE.map((text, index) => (
                 <li key={text} className="relative flex gap-5 pl-0">
                   {index < TIMELINE.length - 1 && (
@@ -384,11 +412,10 @@ export default function DiventaMentorePage() {
           {/* BLOCCO 10 · CTA FINALE */}
           <section className="py-24 text-center">
             <h2 className="font-display text-[clamp(2rem,4vw,2.6rem)] leading-tight text-cream">
-              Facci sapere che ci sei.
+              Diventa Mentore. Fai parte del cambiamento.
             </h2>
             <p className="mx-auto mt-4 max-w-md text-[17px] leading-[1.6] text-cream/[0.72]">
-              Bastano dieci minuti. Ti rispondiamo entro due settimane, in ogni
-              caso.
+              Bastano dieci minuti per raccontarci di te.
             </p>
             <Link
               href="/diventa-mentore/candidatura"
