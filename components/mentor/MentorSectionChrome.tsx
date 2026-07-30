@@ -1,5 +1,6 @@
 "use client";
 
+import { useLayoutEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 function navigateBack(router: ReturnType<typeof useRouter>) {
@@ -10,11 +11,10 @@ function navigateBack(router: ReturnType<typeof useRouter>) {
   }
 }
 
-/** py-3 (12+12) + 44px back-button row — keep in sync with header grid below */
-const MENTOR_HEADER_BODY_PX = 68;
 const MENTOR_HEADER_CONTENT_GAP_PX = 32;
 
-const mentorHeaderSpacerHeight = `calc(env(safe-area-inset-top) + ${MENTOR_HEADER_BODY_PX}px + ${MENTOR_HEADER_CONTENT_GAP_PX}px)`;
+/** Fallback until the fixed header is measured in the DOM (SSR / first paint). */
+const MENTOR_HEADER_SPACER_FALLBACK = `calc(env(safe-area-inset-top) + 68px + ${MENTOR_HEADER_CONTENT_GAP_PX}px)`;
 
 export default function MentorSectionChrome({
   children,
@@ -22,10 +22,40 @@ export default function MentorSectionChrome({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const headerRef = useRef<HTMLDivElement>(null);
+  const [headerHeightPx, setHeaderHeightPx] = useState<number | null>(null);
+
+  useLayoutEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+
+    const measure = () => {
+      setHeaderHeightPx(el.getBoundingClientRect().height);
+    };
+
+    measure();
+
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    window.addEventListener("resize", measure);
+
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
+
+  const spacerHeight =
+    headerHeightPx != null
+      ? headerHeightPx + MENTOR_HEADER_CONTENT_GAP_PX
+      : MENTOR_HEADER_SPACER_FALLBACK;
 
   return (
     <>
-      <div className="pointer-events-none fixed left-0 right-0 top-0 z-40 bg-[rgba(4,52,44,0.28)] pt-[env(safe-area-inset-top)] backdrop-blur-md">
+      <div
+        ref={headerRef}
+        className="pointer-events-none fixed left-0 right-0 top-0 z-40 bg-[rgba(4,52,44,0.28)] pt-[env(safe-area-inset-top)] backdrop-blur-md"
+      >
         <div className="pointer-events-auto mx-auto grid max-w-5xl grid-cols-[44px_1fr_44px] items-center px-2 py-3">
           <button
             type="button"
@@ -41,7 +71,7 @@ export default function MentorSectionChrome({
               alt="heyven"
               width={112}
               height={42}
-              className="h-auto w-24 max-h-[15vh] object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,0.45)] md:w-28 md:max-h-none"
+              className="h-auto w-24 object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,0.45)] md:w-28"
             />
           </div>
         </div>
@@ -50,7 +80,10 @@ export default function MentorSectionChrome({
       <div
         aria-hidden
         className="shrink-0"
-        style={{ height: mentorHeaderSpacerHeight }}
+        style={{
+          height:
+            typeof spacerHeight === "number" ? `${spacerHeight}px` : spacerHeight,
+        }}
       />
 
       {children}
