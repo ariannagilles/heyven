@@ -11,13 +11,9 @@ function navigateBack(router: ReturnType<typeof useRouter>) {
   }
 }
 
-const MENTOR_HEADER_CONTENT_GAP_PX = 12;
-
-/** Extra fade below the gap so the hero meets the chrome without a hard line. */
-const MENTOR_HEADER_FADE_BELOW_GAP_PX = 14;
-
 /** Fallback until the fixed header is measured in the DOM (SSR / first paint). */
-const MENTOR_HEADER_SPACER_FALLBACK = `calc(env(safe-area-inset-top) + 56px + ${MENTOR_HEADER_CONTENT_GAP_PX}px)`;
+const MENTOR_HEADER_SPACER_FALLBACK =
+  "calc(env(safe-area-inset-top) + 56px)";
 
 const headerSoftEdgeMask: CSSProperties = {
   WebkitMaskImage:
@@ -55,13 +51,13 @@ export default function MentorSectionChrome({
     };
   }, []);
 
-  const spacerHeight =
-    headerHeightPx != null
-      ? headerHeightPx + MENTOR_HEADER_CONTENT_GAP_PX
-      : MENTOR_HEADER_SPACER_FALLBACK;
+  const mentorHeaderSpacerHeight =
+    headerHeightPx != null ? headerHeightPx : MENTOR_HEADER_SPACER_FALLBACK;
 
-  const fadeStripHeight =
-    MENTOR_HEADER_CONTENT_GAP_PX + MENTOR_HEADER_FADE_BELOW_GAP_PX;
+  const chromeLayoutVars: CSSProperties | undefined =
+    headerHeightPx != null
+      ? ({ "--mentor-header-h": `${headerHeightPx}px` } as CSSProperties)
+      : undefined;
 
   return (
     <>
@@ -91,31 +87,20 @@ export default function MentorSectionChrome({
         </div>
       </div>
 
-      {headerHeightPx != null ? (
+      <div style={chromeLayoutVars}>
         <div
           aria-hidden
-          className="pointer-events-none fixed left-0 right-0 z-[39] border-0 bg-gradient-to-b from-[rgba(4,52,44,0.26)] via-[rgba(4,52,44,0.12)] to-transparent backdrop-blur-[2px]"
+          className="shrink-0 bg-transparent"
           style={{
-            top: headerHeightPx,
-            height: fadeStripHeight,
-            WebkitMaskImage:
-              "linear-gradient(to bottom, black 0%, black 35%, transparent 100%)",
-            maskImage:
-              "linear-gradient(to bottom, black 0%, black 35%, transparent 100%)",
+            height:
+              typeof mentorHeaderSpacerHeight === "number"
+                ? `${mentorHeaderSpacerHeight}px`
+                : mentorHeaderSpacerHeight,
           }}
         />
-      ) : null}
 
-      <div
-        aria-hidden
-        className="shrink-0 bg-transparent"
-        style={{
-          height:
-            typeof spacerHeight === "number" ? `${spacerHeight}px` : spacerHeight,
-        }}
-      />
-
-      {children}
+        {children}
+      </div>
 
       <div className="pt-6 pb-4 text-center">
         <button

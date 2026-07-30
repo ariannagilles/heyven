@@ -79,7 +79,7 @@ export default function DiventaMentorePage() {
     <>
       <main>
         {/* HERO */}
-        <section className="relative flex min-h-[90vh] min-h-[90dvh] items-center md:min-h-[85vh] md:min-h-[85dvh]">
+        <section className="relative -mt-[var(--mentor-header-h,calc(env(safe-area-inset-top)+56px))] flex min-h-[90vh] min-h-[90dvh] items-center md:min-h-[85vh] md:min-h-[85dvh]">
           <div className="pointer-events-none absolute inset-0 -z-[1]">
             <Image
               src="/mentore/mani.jpg"
