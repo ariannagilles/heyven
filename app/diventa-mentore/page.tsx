@@ -77,7 +77,7 @@ const MENTOR_LIMITS = [
 export default function DiventaMentorePage() {
   return (
     <>
-      <main className="pb-24">
+      <main>
         {/* HERO */}
         <section className="relative flex min-h-[90vh] min-h-[90dvh] items-center md:min-h-[85vh] md:min-h-[85dvh]">
           <div className="pointer-events-none absolute inset-0 -z-[1]">
@@ -421,12 +421,14 @@ export default function DiventaMentorePage() {
           </section>
 
           {/* FAQ */}
-          <section className="mt-24">
-            <h2 className="font-display text-[clamp(2rem,4vw,2.6rem)] leading-tight text-cream">
-              Le domande più comuni
-            </h2>
-            <div className="mt-12">
-              <MentorFaqAccordion />
+          <section className="my-16 md:my-24">
+            <div className="rounded-[24px] bg-cream/[0.03] px-6 py-16 md:px-12 md:py-20">
+              <h2 className="font-display text-[clamp(2rem,4vw,2.6rem)] leading-tight text-cream">
+                Le domande più comuni
+              </h2>
+              <div className="mt-12">
+                <MentorFaqAccordion />
+              </div>
             </div>
           </section>
 
