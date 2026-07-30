@@ -10,10 +10,11 @@ export default function CandidaturaInviataPage() {
     <>
       <main className="mx-auto flex max-w-2xl flex-col items-center justify-center px-4 py-16 pt-28 text-center">
         <h1 className="font-display text-[28px] leading-tight text-cream">
-          L&apos;abbiamo ricevuta.
+          Grazie.
         </h1>
         <p className="mt-4 max-w-md text-[16px] leading-[1.6] text-cream">
-          La leggiamo tutta. Ti scriviamo entro due settimane, in ogni caso.
+          Non capita a molti di mettere la propria esperienza al servizio di
+          qualcun altro. La leggiamo con cura, e ti facciamo sapere.
         </p>
         <Link
           href="/"
