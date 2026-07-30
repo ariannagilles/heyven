@@ -11,10 +11,10 @@ function navigateBack(router: ReturnType<typeof useRouter>) {
   }
 }
 
-const MENTOR_HEADER_CONTENT_GAP_PX = 16;
+const MENTOR_HEADER_CONTENT_GAP_PX = 12;
 
 /** Fallback until the fixed header is measured in the DOM (SSR / first paint). */
-const MENTOR_HEADER_SPACER_FALLBACK = `calc(env(safe-area-inset-top) + 60px + ${MENTOR_HEADER_CONTENT_GAP_PX}px)`;
+const MENTOR_HEADER_SPACER_FALLBACK = `calc(env(safe-area-inset-top) + 56px + ${MENTOR_HEADER_CONTENT_GAP_PX}px)`;
 
 export default function MentorSectionChrome({
   children,
@@ -56,7 +56,7 @@ export default function MentorSectionChrome({
         ref={headerRef}
         className="pointer-events-none fixed left-0 right-0 top-0 z-40 bg-[rgba(4,52,44,0.28)] pt-[env(safe-area-inset-top)] backdrop-blur-md"
       >
-        <div className="pointer-events-auto mx-auto grid max-w-5xl grid-cols-[44px_1fr_44px] items-center px-2 py-2">
+        <div className="pointer-events-auto mx-auto grid max-w-5xl grid-cols-[44px_1fr_44px] items-center px-2 py-1.5">
           <button
             type="button"
             onClick={() => navigateBack(router)}
@@ -71,7 +71,7 @@ export default function MentorSectionChrome({
               alt="heyven"
               width={112}
               height={42}
-              className="h-auto w-20 object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,0.45)] md:w-24"
+              className="h-auto w-16 object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,0.45)] md:w-20"
             />
           </div>
         </div>
