@@ -20,12 +20,12 @@ export default function MentorSectionChrome({
   return (
     <>
       <div className="pointer-events-none fixed left-0 right-0 top-0 z-40 bg-[rgba(4,52,44,0.28)] pt-[env(safe-area-inset-top)] backdrop-blur-md">
-        <div className="pointer-events-auto mx-auto grid min-h-11 max-w-5xl grid-cols-[44px_1fr_44px] items-center px-2 py-1.5">
+        <div className="pointer-events-auto mx-auto grid min-h-20 max-w-5xl grid-cols-[44px_1fr_44px] items-center px-2 py-2 md:min-h-24 md:py-3">
           <button
             type="button"
             onClick={() => navigateBack(router)}
             aria-label="Torna indietro"
-            className="inline-flex h-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-xl leading-none text-cream transition-colors duration-300 ease-out hover:bg-cream/[0.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-mint focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a2b25] motion-reduce:transition-none"
+            className="inline-flex h-11 min-h-[44px] min-w-[44px] items-center justify-center self-center rounded-xl text-xl leading-none text-cream transition-colors duration-300 ease-out hover:bg-cream/[0.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-mint focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a2b25] motion-reduce:transition-none"
           >
             ←
           </button>
@@ -33,9 +33,9 @@ export default function MentorSectionChrome({
             <img
               src="/logo-white.png"
               alt="heyven"
-              width={128}
-              height={48}
-              className="h-auto w-28 max-h-10 object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,0.45)] md:w-32 md:max-h-11"
+              width={192}
+              height={72}
+              className="h-auto w-36 object-contain drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)] md:w-48"
             />
           </div>
         </div>
