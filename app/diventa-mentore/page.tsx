@@ -107,7 +107,7 @@ export default function DiventaMentorePage() {
             </p>
             <div className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center md:mt-[32px] md:justify-start">
               <Link href="/diventa-mentore/candidatura" className={PRIMARY_CTA}>
-                Raccontaci di te
+                Diventa Mentore
               </Link>
               <a href="#come-funziona" className={GHOST_CTA}>
                 Come funziona
