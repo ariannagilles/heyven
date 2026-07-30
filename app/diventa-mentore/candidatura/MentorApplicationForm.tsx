@@ -291,6 +291,7 @@ export default function MentorApplicationForm() {
       p_birth_year: "birthYear",
       p_city: "city",
       p_experience_areas: "experienceSlugs",
+      p_custom_area_tags: "customAreaNote",
       p_custom_area_note: "customAreaNote",
       p_weekly_availability: "weeklyAvailability",
       p_q_why: "qWhy",
@@ -332,9 +333,7 @@ export default function MentorApplicationForm() {
       p_birth_year: Number(draft.birthYear),
       p_city: draft.city.trim(),
       p_experience_areas: draft.experienceSlugs,
-      p_custom_area_note: draft.experienceSlugs.includes("altro")
-        ? draft.customAreaTags.join(", ") || null
-        : null,
+      p_custom_area_tags: draft.customAreaTags,
       p_listening_background: draft.listeningBackground.trim(),
       p_weekly_availability: draft.weeklyAvailability,
       p_q_why: draft.qWhy.trim(),

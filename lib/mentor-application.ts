@@ -13,7 +13,7 @@ export type SubmitMentorApplicationParams = {
   p_birth_year: number;
   p_city: string;
   p_experience_areas: string[];
-  p_custom_area_note: string | null;
+  p_custom_area_tags: string[];
   p_listening_background: string;
   p_weekly_availability: string;
   p_q_why: string;
