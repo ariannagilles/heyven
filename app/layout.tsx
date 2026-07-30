@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces } from "next/font/google";
 import "./globals.css";
+import AppContentShell from "@/components/AppContentShell";
 import FeedbackWidget from "@/components/FeedbackWidget";
 import BottomNav from "@/components/BottomNav";
-import SiteFooterGate from "@/components/SiteFooterGate";
 import SplashScreen from "@/components/SplashScreen";
 
 const fraunces = Fraunces({
@@ -46,10 +46,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
         <SplashScreen />
-        <div className="pb-28">
-          {children}
-          <SiteFooterGate />
-        </div>
+        <AppContentShell>{children}</AppContentShell>
         <BottomNav />
         <FeedbackWidget />
       </body>

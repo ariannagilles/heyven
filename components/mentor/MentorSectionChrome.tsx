@@ -37,7 +37,7 @@ export default function MentorSectionChrome({
 
       {children}
 
-      <div className="pt-6 pb-6 text-center">
+      <div className="pt-6 pb-4 text-center">
         <button
           type="button"
           onClick={() => navigateBack(router)}

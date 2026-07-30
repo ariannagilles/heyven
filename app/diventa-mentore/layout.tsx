@@ -5,9 +5,5 @@ export default function DiventaMentoreLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <div className="-mb-28">
-      <MentorSectionChrome>{children}</MentorSectionChrome>
-    </div>
-  );
+  return <MentorSectionChrome>{children}</MentorSectionChrome>;
 }
