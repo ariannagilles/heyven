@@ -114,6 +114,16 @@ export default function MentorMeetingView({
         {mode === "profile" && ratingSummary && (
           <MentorRatingBlock summary={ratingSummary} />
         )}
+
+        <p className="text-center text-[14px] leading-relaxed text-cream/60">
+          Anche @{mentor.nickname} è arrivato qui come utente.{" "}
+          <Link
+            href="/diventa-mentore"
+            className="font-medium text-cream/75 underline underline-offset-2 transition-colors hover:text-cream"
+          >
+            Diventa Mentore
+          </Link>
+        </p>
       </div>
 
       <div className="fixed bottom-[calc(5.75rem+env(safe-area-inset-bottom))] left-0 right-0 z-40 px-4">

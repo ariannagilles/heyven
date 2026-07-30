@@ -1,4 +1,5 @@
 import Link from "next/link";
+import MentorApplicationProfileRow from "./MentorApplicationProfileRow";
 
 type RowProps = {
   href: string;
@@ -55,6 +56,7 @@ export default function ProfileMenuList() {
           icon={<IconContents />}
           showDivider={false}
         />
+        <MentorApplicationProfileRow />
         <ProfileMenuRow
           href="/profilo/impostazioni"
           label="Impostazioni e privacy"

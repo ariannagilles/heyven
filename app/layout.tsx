@@ -3,6 +3,7 @@ import { Fraunces } from "next/font/google";
 import "./globals.css";
 import FeedbackWidget from "@/components/FeedbackWidget";
 import BottomNav from "@/components/BottomNav";
+import SiteFooter from "@/components/SiteFooter";
 import SplashScreen from "@/components/SplashScreen";
 
 const fraunces = Fraunces({
@@ -45,7 +46,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
         <SplashScreen />
-        <div className="pb-28">{children}</div>
+        <div className="pb-28">
+          {children}
+          <SiteFooter />
+        </div>
         <BottomNav />
         <FeedbackWidget />
       </body>
