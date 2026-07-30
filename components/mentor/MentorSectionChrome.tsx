@@ -20,7 +20,7 @@ export default function MentorSectionChrome({
   return (
     <>
       <div className="pointer-events-none fixed left-0 right-0 top-0 z-40 bg-[rgba(4,52,44,0.28)] pt-[env(safe-area-inset-top)] backdrop-blur-md">
-        <div className="pointer-events-auto mx-auto grid min-h-20 max-w-5xl grid-cols-[44px_1fr_44px] items-center px-2 py-2 md:min-h-24 md:py-3">
+        <div className="pointer-events-auto mx-auto grid max-w-5xl grid-cols-[44px_1fr_44px] items-center px-2 py-4">
           <button
             type="button"
             onClick={() => navigateBack(router)}
@@ -33,9 +33,9 @@ export default function MentorSectionChrome({
             <img
               src="/logo-white.png"
               alt="heyven"
-              width={192}
-              height={72}
-              className="h-auto w-36 object-contain drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)] md:w-48"
+              width={112}
+              height={42}
+              className="h-auto w-24 max-h-[15vh] object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,0.45)] md:w-28 md:max-h-none"
             />
           </div>
         </div>

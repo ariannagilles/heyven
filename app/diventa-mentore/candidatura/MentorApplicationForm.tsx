@@ -732,7 +732,7 @@ export default function MentorApplicationForm() {
   const canSubmitStep4 = draft.consentData && draft.consentTruth && !submitting;
 
   return (
-    <main className="flex flex-col px-6 pb-6 pt-[calc(6.5rem+env(safe-area-inset-top))]">
+    <main className="flex flex-col px-6 pb-6 pt-[calc(env(safe-area-inset-top)+5rem)]">
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col">
         <div className="shrink-0">
           {step > 1 ? (
