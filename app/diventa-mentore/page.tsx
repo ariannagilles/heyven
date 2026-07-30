@@ -410,6 +410,18 @@ export default function DiventaMentorePage() {
             </ol>
           </section>
 
+          <section className="py-14 text-center">
+            <p className="text-[16px] leading-[1.6] text-cream/[0.72]">
+              Il primo passo lo fai adesso.
+            </p>
+            <Link
+              href="/diventa-mentore/candidatura"
+              className={`${INTERMEDIATE_CTA} mt-5`}
+            >
+              Diventa Mentore
+            </Link>
+          </section>
+
           {/* FAQ */}
           <section className="mt-24">
             <h2 className="font-display text-[clamp(2rem,4vw,2.6rem)] leading-tight text-cream">

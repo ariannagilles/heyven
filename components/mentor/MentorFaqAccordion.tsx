@@ -11,7 +11,7 @@ const FAQ_ITEMS = [
   {
     question: "Quanto tempo richiede il ruolo?",
     answer:
-      "Non c'è un numero fisso di ore. Dal tuo profilo indichi quando sei disponibile e in che fasce orarie, e puoi metterti in pausa in qualsiasi momento — anche solo per una settimana — senza doverlo giustificare a nessuno.",
+      "Non c'è un numero fisso di ore. Dal tuo profilo indichi quando sei disponibile e in che fasce orarie, e puoi metterti in pausa in qualsiasi momento, anche solo per una settimana, senza doverlo giustificare a nessuno.",
   },
   {
     question: "Devo avere una formazione in psicologia?",
@@ -42,7 +42,7 @@ const FAQ_ITEMS = [
   {
     question: "Come faccio a iniziare?",
     answer:
-      "Ci scrivi con il modulo qui sotto. Ti rispondiamo con calma, e da lì parte la formazione.",
+      "Ci scrivi con il modulo qui sotto, e ti facciamo sapere se possiamo procedere insieme.",
   },
 ] as const;
 
