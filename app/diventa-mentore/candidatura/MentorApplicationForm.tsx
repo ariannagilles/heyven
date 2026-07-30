@@ -11,6 +11,7 @@ import {
   useState,
 } from "react";
 import ApplicationStepper from "@/components/mentor/ApplicationStepper";
+import CustomAreaTagsInput from "@/components/mentor/CustomAreaTagsInput";
 import { createClient } from "@/lib/supabase/client";
 import { submitMentorApplication } from "@/lib/mentor-application";
 
@@ -52,6 +53,7 @@ type Draft = {
   birthYear: string;
   city: string;
   experienceSlugs: string[];
+  customAreaTags: string[];
   customAreaNote: string;
   listeningBackground: string;
   weeklyAvailability: string;
@@ -70,6 +72,7 @@ const EMPTY_DRAFT: Draft = {
   birthYear: "",
   city: "",
   experienceSlugs: [],
+  customAreaTags: [],
   customAreaNote: "",
   listeningBackground: "",
   weeklyAvailability: "",
@@ -97,8 +100,19 @@ function loadDraft(): Draft {
   try {
     const raw = localStorage.getItem(DRAFT_KEY);
     if (!raw) return EMPTY_DRAFT;
-    const parsed = JSON.parse(raw) as Partial<Draft>;
-    return { ...EMPTY_DRAFT, ...parsed };
+    const parsed = JSON.parse(raw) as Partial<Draft> & {
+      customAreaNote?: string;
+      customAreaTags?: string[];
+    };
+    const customAreaTags =
+      parsed.customAreaTags ??
+      (parsed.customAreaNote
+        ? parsed.customAreaNote
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean)
+        : []);
+    return { ...EMPTY_DRAFT, ...parsed, customAreaTags };
   } catch {
     return EMPTY_DRAFT;
   }
@@ -187,7 +201,8 @@ export default function MentorApplicationForm() {
       const next = {
         ...prev,
         experienceSlugs: slugs,
-        customAreaNote: slug === "altro" || slugs.includes("altro") ? prev.customAreaNote : "",
+        customAreaTags: slugs.includes("altro") ? prev.customAreaTags : [],
+        customAreaNote: slugs.includes("altro") ? prev.customAreaNote : "",
       };
       try {
         localStorage.setItem(DRAFT_KEY, JSON.stringify(next));
@@ -214,7 +229,7 @@ export default function MentorApplicationForm() {
   function validateStep2(): boolean {
     const errors = new Set<FieldKey>();
     if (draft.experienceSlugs.length === 0) errors.add("experienceSlugs");
-    if (draft.experienceSlugs.includes("altro") && !draft.customAreaNote.trim()) {
+    if (draft.experienceSlugs.includes("altro") && draft.customAreaTags.length === 0) {
       errors.add("customAreaNote");
     }
     if (!draft.weeklyAvailability) errors.add("weeklyAvailability");
@@ -241,7 +256,7 @@ export default function MentorApplicationForm() {
     }
     if (!draft.city.trim()) errors.add("city");
     if (draft.experienceSlugs.length === 0) errors.add("experienceSlugs");
-    if (draft.experienceSlugs.includes("altro") && !draft.customAreaNote.trim()) {
+    if (draft.experienceSlugs.includes("altro") && draft.customAreaTags.length === 0) {
       errors.add("customAreaNote");
     }
     if (!draft.weeklyAvailability) errors.add("weeklyAvailability");
@@ -302,7 +317,7 @@ export default function MentorApplicationForm() {
       p_city: draft.city.trim(),
       p_experience_areas: draft.experienceSlugs,
       p_custom_area_note: draft.experienceSlugs.includes("altro")
-        ? draft.customAreaNote.trim() || null
+        ? draft.customAreaTags.join(", ") || null
         : null,
       p_listening_background: draft.listeningBackground.trim(),
       p_weekly_availability: draft.weeklyAvailability,
@@ -461,11 +476,12 @@ export default function MentorApplicationForm() {
             <div>
               <h2 className={TITLE}>Dove ti senti a casa</h2>
               <p className={`mt-3 ${INTRO}`}>
-                Non serve raccontarlo adesso. Ci serve solo per capire con chi
-                metterti in contatto: chi ti scriverà avrà vissuto qualcosa di
-                simile.
+                Ci serve solo per capire con chi metterti in contatto: chi ti
+                scriverà avrà vissuto qualcosa di simile.
               </p>
-              <p className="mt-2 text-sm text-cream/60">Puoi sceglierne fino a tre.</p>
+              <p className="mt-2 text-sm text-cream/60">
+                Puoi sceglierne fino a tre. Se non trovi la tua, aggiungila.
+              </p>
             </div>
             <div className="flex flex-wrap gap-2">
               {EXPERIENCE_AREAS.map(({ label, slug }) => {
@@ -486,24 +502,21 @@ export default function MentorApplicationForm() {
               <p className={MESSAGE_CLASS}>Scegli almeno un&apos;area.</p>
             )}
             {draft.experienceSlugs.includes("altro") && (
-              <div>
-                <label className="field-label" htmlFor="customArea">
-                  Aiutaci a capire meglio
-                </label>
-                <input
-                  id="customArea"
-                  className={`field-input mt-2 ${fieldErrorClass(fieldErrors.has("customAreaNote"))}`}
-                  value={draft.customAreaNote}
-                  onChange={(ev) => {
-                    setFieldErrors((e) => {
-                      const n = new Set(e);
-                      n.delete("customAreaNote");
-                      return n;
-                    });
-                    updateDraft({ customAreaNote: ev.target.value });
-                  }}
-                />
-              </div>
+              <CustomAreaTagsInput
+                tags={draft.customAreaTags}
+                hasError={fieldErrors.has("customAreaNote")}
+                onChange={(customAreaTags) => {
+                  setFieldErrors((e) => {
+                    const n = new Set(e);
+                    n.delete("customAreaNote");
+                    return n;
+                  });
+                  updateDraft({
+                    customAreaTags,
+                    customAreaNote: customAreaTags.join(", "),
+                  });
+                }}
+              />
             )}
             <div>
               <label className="field-label" htmlFor="listening">
