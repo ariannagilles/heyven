@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import { useRouter } from "next/navigation";
 
 function navigateBack(router: ReturnType<typeof useRouter>) {
@@ -13,8 +13,18 @@ function navigateBack(router: ReturnType<typeof useRouter>) {
 
 const MENTOR_HEADER_CONTENT_GAP_PX = 12;
 
+/** Extra fade below the gap so the hero meets the chrome without a hard line. */
+const MENTOR_HEADER_FADE_BELOW_GAP_PX = 14;
+
 /** Fallback until the fixed header is measured in the DOM (SSR / first paint). */
 const MENTOR_HEADER_SPACER_FALLBACK = `calc(env(safe-area-inset-top) + 56px + ${MENTOR_HEADER_CONTENT_GAP_PX}px)`;
+
+const headerSoftEdgeMask: CSSProperties = {
+  WebkitMaskImage:
+    "linear-gradient(to bottom, black 0%, black calc(100% - 10px), transparent 100%)",
+  maskImage:
+    "linear-gradient(to bottom, black 0%, black calc(100% - 10px), transparent 100%)",
+};
 
 export default function MentorSectionChrome({
   children,
@@ -50,11 +60,15 @@ export default function MentorSectionChrome({
       ? headerHeightPx + MENTOR_HEADER_CONTENT_GAP_PX
       : MENTOR_HEADER_SPACER_FALLBACK;
 
+  const fadeStripHeight =
+    MENTOR_HEADER_CONTENT_GAP_PX + MENTOR_HEADER_FADE_BELOW_GAP_PX;
+
   return (
     <>
       <div
         ref={headerRef}
-        className="pointer-events-none fixed left-0 right-0 top-0 z-40 bg-[rgba(4,52,44,0.28)] pt-[env(safe-area-inset-top)] backdrop-blur-md"
+        style={headerSoftEdgeMask}
+        className="pointer-events-none fixed left-0 right-0 top-0 z-40 border-0 bg-[rgba(4,52,44,0.28)] pt-[env(safe-area-inset-top)] backdrop-blur-md"
       >
         <div className="pointer-events-auto mx-auto grid max-w-5xl grid-cols-[44px_1fr_44px] items-center px-2 py-1.5">
           <button
@@ -77,9 +91,24 @@ export default function MentorSectionChrome({
         </div>
       </div>
 
+      {headerHeightPx != null ? (
+        <div
+          aria-hidden
+          className="pointer-events-none fixed left-0 right-0 z-[39] border-0 bg-gradient-to-b from-[rgba(4,52,44,0.26)] via-[rgba(4,52,44,0.12)] to-transparent backdrop-blur-[2px]"
+          style={{
+            top: headerHeightPx,
+            height: fadeStripHeight,
+            WebkitMaskImage:
+              "linear-gradient(to bottom, black 0%, black 35%, transparent 100%)",
+            maskImage:
+              "linear-gradient(to bottom, black 0%, black 35%, transparent 100%)",
+          }}
+        />
+      ) : null}
+
       <div
         aria-hidden
-        className="shrink-0"
+        className="shrink-0 bg-transparent"
         style={{
           height:
             typeof spacerHeight === "number" ? `${spacerHeight}px` : spacerHeight,
