@@ -43,7 +43,7 @@ export default function BottomNav() {
     "/reset-password",
     "/admin",
     "/chat/c",
-    "/diventa-mentore/candidatura",
+    "/diventa-mentore",
   ];
   if (
     !isLoggedIn ||

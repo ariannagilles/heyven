@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
 
 export const metadata: Metadata = {
   title: "Candidatura inviata — Heyven",
@@ -9,8 +8,7 @@ export const metadata: Metadata = {
 export default function CandidaturaInviataPage() {
   return (
     <>
-      <Navbar />
-      <main className="mx-auto flex min-h-[calc(100dvh-4rem)] max-w-2xl flex-col items-center justify-center px-4 pb-24 pt-8 text-center">
+      <main className="mx-auto flex min-h-[calc(100dvh-4rem)] max-w-2xl flex-col items-center justify-center px-4 pb-24 pt-20 text-center">
         <h1 className="font-display text-[28px] leading-tight text-cream">
           L&apos;abbiamo ricevuta.
         </h1>

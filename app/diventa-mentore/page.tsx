@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
 import MentorFaqAccordion from "@/components/mentor/MentorFaqAccordion";
 
 export const metadata: Metadata = {
@@ -78,7 +77,6 @@ const MENTOR_LIMITS = [
 export default function DiventaMentorePage() {
   return (
     <>
-      <Navbar />
       <main className="pb-24">
         {/* HERO */}
         <section className="relative flex min-h-[90vh] min-h-[90dvh] items-center md:min-h-[85vh] md:min-h-[85dvh]">
@@ -97,7 +95,7 @@ export default function DiventaMentorePage() {
             />
           </div>
 
-          <div className="mx-auto w-full max-w-5xl px-4 py-16 text-center md:py-20 md:text-left">
+          <div className="mx-auto w-full max-w-5xl px-4 pb-16 pt-24 text-center md:py-20 md:pt-24 md:text-left">
             <p className="text-xs font-semibold uppercase tracking-[1.2px] text-cream/60">
               Diventa Mentore
             </p>
