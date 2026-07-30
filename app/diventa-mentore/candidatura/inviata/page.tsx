@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 export default function CandidaturaInviataPage() {
   return (
     <>
-      <main className="mx-auto flex max-w-2xl flex-col items-center justify-center px-4 py-16 pt-[calc(env(safe-area-inset-top)+4.75rem)] text-center">
+      <main className="mx-auto flex max-w-2xl flex-col items-center px-4 pb-16 pt-0 text-center">
         <h1 className="font-display text-[28px] leading-tight text-cream">
           Grazie.
         </h1>

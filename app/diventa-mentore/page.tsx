@@ -95,7 +95,7 @@ export default function DiventaMentorePage() {
             />
           </div>
 
-          <div className="mx-auto w-full max-w-5xl px-4 pb-16 pt-[calc(env(safe-area-inset-top)+4.75rem)] text-center md:py-20 md:pt-[calc(env(safe-area-inset-top)+5.25rem)] md:text-left">
+          <div className="mx-auto w-full max-w-5xl px-4 pb-16 pt-0 text-center md:pb-20 md:text-left">
             <p className="text-xs font-semibold uppercase tracking-[1.2px] text-cream/60">
               Diventa Mentore
             </p>
