@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
+import MentorFaqAccordion from "@/components/mentor/MentorFaqAccordion";
 
 export const metadata: Metadata = {
   title: "Diventa Mentore — Heyven",
@@ -407,6 +408,16 @@ export default function DiventaMentorePage() {
                 </li>
               ))}
             </ol>
+          </section>
+
+          {/* FAQ */}
+          <section className="mt-24">
+            <h2 className="font-display text-[clamp(2rem,4vw,2.6rem)] leading-tight text-cream">
+              Le domande più comuni
+            </h2>
+            <div className="mt-12">
+              <MentorFaqAccordion />
+            </div>
           </section>
 
           {/* BLOCCO 10 · CTA FINALE */}
