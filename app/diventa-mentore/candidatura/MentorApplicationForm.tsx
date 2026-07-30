@@ -43,6 +43,12 @@ const WEEKLY_OPTIONS = [
   "Più di 4 ore",
 ] as const;
 
+const MAX_EXPERIENCE_SELECTIONS = 5;
+
+function experienceSelectionCount(slugs: string[], tags: string[]) {
+  return slugs.filter((s) => s !== "altro").length + tags.length;
+}
+
 type Step = 1 | 2 | 3 | 4;
 
 type Draft = {
@@ -191,13 +197,17 @@ export default function MentorApplicationForm() {
     });
     setDraft((prev) => {
       let slugs = [...prev.experienceSlugs];
+      const count = experienceSelectionCount(slugs, prev.customAreaTags);
+
       if (slugs.includes(slug)) {
         slugs = slugs.filter((s) => s !== slug);
-      } else if (slugs.length >= 3) {
-        slugs = [...slugs.slice(1), slug];
       } else {
+        if (slug !== "altro" && count >= MAX_EXPERIENCE_SELECTIONS) {
+          return prev;
+        }
         slugs.push(slug);
       }
+
       const next = {
         ...prev,
         experienceSlugs: slugs,
@@ -228,7 +238,11 @@ export default function MentorApplicationForm() {
 
   function validateStep2(): boolean {
     const errors = new Set<FieldKey>();
-    if (draft.experienceSlugs.length === 0) errors.add("experienceSlugs");
+    const total = experienceSelectionCount(
+      draft.experienceSlugs,
+      draft.customAreaTags,
+    );
+    if (total === 0) errors.add("experienceSlugs");
     if (draft.experienceSlugs.includes("altro") && draft.customAreaTags.length === 0) {
       errors.add("customAreaNote");
     }
@@ -255,7 +269,9 @@ export default function MentorApplicationForm() {
       errors.add("birthYear");
     }
     if (!draft.city.trim()) errors.add("city");
-    if (draft.experienceSlugs.length === 0) errors.add("experienceSlugs");
+    if (experienceSelectionCount(draft.experienceSlugs, draft.customAreaTags) === 0) {
+      errors.add("experienceSlugs");
+    }
     if (draft.experienceSlugs.includes("altro") && draft.customAreaTags.length === 0) {
       errors.add("customAreaNote");
     }
@@ -470,7 +486,13 @@ export default function MentorApplicationForm() {
             </div>
           </div>
         );
-      case 2:
+      case 2: {
+        const totalSelected = experienceSelectionCount(
+          draft.experienceSlugs,
+          draft.customAreaTags,
+        );
+        const selectionAtMax = totalSelected >= MAX_EXPERIENCE_SELECTIONS;
+
         return (
           <div className="space-y-6">
             <div>
@@ -480,18 +502,24 @@ export default function MentorApplicationForm() {
                 scriverà avrà vissuto qualcosa di simile.
               </p>
               <p className="mt-2 text-sm text-cream/60">
-                Puoi sceglierne fino a tre. Se non trovi la tua, aggiungila.
+                Puoi indicarne fino a cinque, anche scrivendone di tue.
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
               {EXPERIENCE_AREAS.map(({ label, slug }) => {
                 const active = draft.experienceSlugs.includes(slug);
+                const chipDisabled = !active && selectionAtMax;
                 return (
                   <button
                     key={slug}
                     type="button"
+                    disabled={chipDisabled}
                     onClick={() => toggleArea(slug)}
-                    className={`rounded-full border px-3.5 py-2 text-[14px] leading-snug transition-colors duration-200 ease-out motion-reduce:transition-none ${chipClass(active)}`}
+                    className={`rounded-full border px-3.5 py-2 text-[14px] leading-snug transition-colors duration-200 ease-out motion-reduce:transition-none ${chipClass(active)} ${
+                      chipDisabled
+                        ? "cursor-not-allowed opacity-40"
+                        : "active:scale-[0.98]"
+                    }`}
                   >
                     {label}
                   </button>
@@ -505,7 +533,22 @@ export default function MentorApplicationForm() {
               <CustomAreaTagsInput
                 tags={draft.customAreaTags}
                 hasError={fieldErrors.has("customAreaNote")}
+                inputDisabled={selectionAtMax}
                 onChange={(customAreaTags) => {
+                  const prevCount = experienceSelectionCount(
+                    draft.experienceSlugs,
+                    draft.customAreaTags,
+                  );
+                  const nextCount = experienceSelectionCount(
+                    draft.experienceSlugs,
+                    customAreaTags,
+                  );
+                  if (
+                    nextCount > prevCount &&
+                    nextCount > MAX_EXPERIENCE_SELECTIONS
+                  ) {
+                    return;
+                  }
                   setFieldErrors((e) => {
                     const n = new Set(e);
                     n.delete("customAreaNote");
@@ -562,6 +605,7 @@ export default function MentorApplicationForm() {
             </div>
           </div>
         );
+      }
       case 3:
         return (
           <div className="space-y-5">

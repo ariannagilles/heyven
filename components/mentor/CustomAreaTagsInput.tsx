@@ -6,6 +6,7 @@ type Props = {
   tags: string[];
   onChange: (tags: string[]) => void;
   hasError?: boolean;
+  inputDisabled?: boolean;
 };
 
 const TAG_CLASS =
@@ -17,10 +18,16 @@ function fieldErrorClass(hasError: boolean) {
     : "";
 }
 
-export default function CustomAreaTagsInput({ tags, onChange, hasError = false }: Props) {
+export default function CustomAreaTagsInput({
+  tags,
+  onChange,
+  hasError = false,
+  inputDisabled = false,
+}: Props) {
   const [input, setInput] = useState("");
 
   function addFromInput(raw: string) {
+    if (inputDisabled) return;
     const trimmed = raw.trim().replace(/,+$/, "").trim();
     if (!trimmed) {
       setInput("");
@@ -33,6 +40,7 @@ export default function CustomAreaTagsInput({ tags, onChange, hasError = false }
   }
 
   function onKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+    if (inputDisabled) return;
     if (e.key === "Enter" || e.key === ",") {
       e.preventDefault();
       addFromInput(input);
@@ -49,7 +57,9 @@ export default function CustomAreaTagsInput({ tags, onChange, hasError = false }
         Aiutaci a capire meglio
       </label>
       <div
-        className={`field-input mt-2 flex min-h-[52px] flex-wrap items-center gap-2 py-2 ${fieldErrorClass(hasError)}`}
+        className={`field-input mt-2 flex min-h-[52px] flex-wrap items-center gap-2 py-2 ${fieldErrorClass(hasError)} ${
+          inputDisabled ? "opacity-60" : ""
+        }`}
       >
         {tags.map((tag) => (
           <span key={tag} className={TAG_CLASS}>
@@ -68,17 +78,24 @@ export default function CustomAreaTagsInput({ tags, onChange, hasError = false }
           id="customAreaTags"
           type="text"
           value={input}
+          disabled={inputDisabled}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={onKeyDown}
           onBlur={() => {
             if (input.trim()) addFromInput(input);
           }}
-          className="min-w-[6rem] flex-1 border-0 bg-transparent p-0 text-[16px] text-cream outline-none"
+          className="min-w-[6rem] flex-1 border-0 bg-transparent p-0 text-[16px] text-cream outline-none disabled:cursor-not-allowed"
         />
       </div>
-      <p className="mt-2 text-[13px] leading-relaxed text-cream/60">
-        Scrivi e premi invio o virgola per aggiungere.
-      </p>
+      {inputDisabled ? (
+        <p className="mt-2 text-[13px] leading-relaxed text-cream/60">
+          Hai raggiunto il massimo di 5.
+        </p>
+      ) : (
+        <p className="mt-2 text-[13px] leading-relaxed text-cream/60">
+          Scrivi e premi invio o virgola per aggiungere.
+        </p>
+      )}
     </div>
   );
 }
