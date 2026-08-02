@@ -7,6 +7,7 @@ import IntroEditor from "./IntroEditor";
 import ExperienceAreasEditor from "./ExperienceAreasEditor";
 import MentorSettingsEditor from "./MentorSettingsEditor";
 import MentorRatingBlock from "@/components/mentor/MentorRatingBlock";
+import MentorBadges, { type MentorBadgesPayload } from "@/components/mentor/MentorBadges";
 import { createClient } from "@/lib/supabase/server";
 import { getProfile, getMentorChats, getMentorRatingsSummary } from "@/lib/chat";
 import { timeAgo } from "@/lib/time";
@@ -21,7 +22,7 @@ export default async function MentorDashboard() {
   const profile = await getProfile(supabase, user.id);
   if (profile?.role !== "mentor") redirect("/");
 
-  const [{ data: mentorRow }, chats, ratings] = await Promise.all([
+  const [{ data: mentorRow }, chats, ratings, { data: badges }] = await Promise.all([
     supabase
       .from("mentors")
       .select(
@@ -31,6 +32,7 @@ export default async function MentorDashboard() {
       .maybeSingle(),
     getMentorChats(supabase),
     getMentorRatingsSummary(supabase, user.id),
+    supabase.rpc("get_mentor_badges", { p_mentor_id: user.id }),
   ]);
 
   return (
@@ -88,6 +90,8 @@ export default async function MentorDashboard() {
         </section>
 
         <RatingsSection summary={ratings} />
+
+        <MentorBadges badges={(badges as MentorBadgesPayload) ?? null} />
 
         <section className="space-y-3">
           <h2 className="text-sm font-medium text-cream/70 px-1">
