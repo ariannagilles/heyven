@@ -50,7 +50,7 @@ const EXTRA_FEELING_OPTIONS = [
   },
 ] as const;
 
-const GROUP_B = ["vuole-aiutare", "non-lo-so", "altro"];
+const EXCLUSIVE = ["non-lo-so", "vuole-aiutare"];
 
 const DURATION_OPTIONS = [
   "Da poco",
@@ -701,19 +701,23 @@ export default function RegisterForm() {
   function toggleSpace(slug: string) {
     setMaxAreasMsg(false);
     setSelectedSpaces((prev) => {
-      const isB = GROUP_B.includes(slug);
-      if (isB) {
+      if (EXCLUSIVE.includes(slug)) {
         return prev.includes(slug) ? [] : [slug];
+      }
+      if (slug === "altro") {
+        if (prev.includes("altro")) return prev.filter((s) => s !== "altro");
+        return [...prev.filter((s) => !EXCLUSIVE.includes(s)), "altro"];
       }
       if (prev.includes(slug)) {
         return prev.filter((s) => s !== slug);
       }
-      const withoutB = prev.filter((s) => !GROUP_B.includes(s));
-      if (withoutB.length >= 4) {
+      const cleaned = prev.filter((s) => !EXCLUSIVE.includes(s));
+      const areasCount = cleaned.filter((s) => s !== "altro").length;
+      if (areasCount >= 4) {
         setMaxAreasMsg(true);
         return prev;
       }
-      return [...withoutB, slug];
+      return [...cleaned, slug];
     });
   }
 
@@ -735,7 +739,8 @@ export default function RegisterForm() {
     }
 
     const firstArea =
-      selectedSpaces.find((s) => !GROUP_B.includes(s)) ?? null;
+      selectedSpaces.find((s) => s !== "altro" && !EXCLUSIVE.includes(s)) ??
+      null;
 
     const { error: updateError } = await supabase
       .from("profiles")
@@ -769,7 +774,8 @@ export default function RegisterForm() {
   async function onEnterHeyven() {
     let destination = next;
     const firstArea =
-      selectedSpaces.find((s) => !GROUP_B.includes(s)) ?? null;
+      selectedSpaces.find((s) => s !== "altro" && !EXCLUSIVE.includes(s)) ??
+      null;
     if (firstArea) {
       destination = `/spazi/${firstArea}`;
     }
@@ -945,7 +951,7 @@ export default function RegisterForm() {
       selectedSpaces.length > 0 && Boolean(selectedDuration) && !step2Loading;
 
     const spaceChipClass = (active: boolean) =>
-      "relative p-3 text-left text-sm leading-snug rounded-2xl border transition-all active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-mint " +
+      "p-3 text-left text-sm leading-snug rounded-2xl border transition-all active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-mint " +
       (active
         ? "bg-mint/25 border-mint text-cream"
         : "glass-card border-transparent text-cream/75 hover:bg-cream/[0.06]");
@@ -967,25 +973,13 @@ export default function RegisterForm() {
             <div className="mt-3 grid grid-cols-2 gap-2">
               {mainGridOptions.map((space) => {
                 const active = selectedSpaces.includes(space.slug);
-                const showPriority =
-                  active && !GROUP_B.includes(space.slug);
-                const priority = showPriority
-                  ? selectedSpaces.indexOf(space.slug) + 1
-                  : null;
                 return (
                   <button
                     key={space.slug}
                     type="button"
                     onClick={() => toggleSpace(space.slug)}
-                    className={
-                      spaceChipClass(active) + (showPriority ? " pr-8" : "")
-                    }
+                    className={spaceChipClass(active)}
                   >
-                    {priority !== null && (
-                      <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-mint text-xs text-petrolio">
-                        {priority}
-                      </span>
-                    )}
                     {space.emoji} {space.label}
                   </button>
                 );
@@ -996,17 +990,6 @@ export default function RegisterForm() {
                 Puoi scegliere fino a 4
               </p>
             )}
-            <p className="my-3 text-center text-xs text-cream/40">oppure</p>
-            <button
-              type="button"
-              onClick={() => toggleSpace(helpOption.slug)}
-              className={
-                spaceChipClass(selectedSpaces.includes(helpOption.slug)) +
-                " w-full"
-              }
-            >
-              {helpOption.emoji} {helpOption.label}
-            </button>
             {selectedSpaces.includes("altro") && (
               <div className="mt-4">
                 <p className="text-sm text-cream/75">
@@ -1022,6 +1005,17 @@ export default function RegisterForm() {
                 />
               </div>
             )}
+            <p className="my-3 text-center text-xs text-cream/40">oppure</p>
+            <button
+              type="button"
+              onClick={() => toggleSpace(helpOption.slug)}
+              className={
+                spaceChipClass(selectedSpaces.includes(helpOption.slug)) +
+                " w-full"
+              }
+            >
+              {helpOption.emoji} {helpOption.label}
+            </button>
           </section>
 
           <section>
