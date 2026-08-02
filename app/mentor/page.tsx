@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Avatar from "@/components/Avatar";
 import IntroEditor from "./IntroEditor";
 import ExperienceAreasEditor from "./ExperienceAreasEditor";
+import MentorSettingsEditor from "./MentorSettingsEditor";
 import MentorRatingBlock from "@/components/mentor/MentorRatingBlock";
 import { createClient } from "@/lib/supabase/server";
 import { getProfile, getMentorChats, getMentorRatingsSummary } from "@/lib/chat";
@@ -22,7 +23,9 @@ export default async function MentorDashboard() {
   const [{ data: mentorRow }, chats, ratings] = await Promise.all([
     supabase
       .from("mentors")
-      .select("is_available, active_users_count, intro_text, experience_areas")
+      .select(
+        "is_available, active_users_count, intro_text, experience_areas, max_active_conversations"
+      )
       .eq("user_id", user.id)
       .maybeSingle(),
     getMentorChats(supabase),
@@ -80,6 +83,14 @@ export default async function MentorDashboard() {
             incontrare le persone che vivono qualcosa di simile.
           </p>
           <ExperienceAreasEditor initial={mentorRow?.experience_areas ?? []} />
+        </section>
+
+        <section className="card p-5 space-y-3">
+          <h2 className="text-sm font-medium text-cream/70">Le tue impostazioni</h2>
+          <MentorSettingsEditor
+            initialMaxActiveConversations={mentorRow?.max_active_conversations ?? 3}
+            initialIsAvailable={mentorRow?.is_available ?? true}
+          />
         </section>
 
         <RatingsSection summary={ratings} />
