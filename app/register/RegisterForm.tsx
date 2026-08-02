@@ -43,6 +43,11 @@ const EXTRA_FEELING_OPTIONS = [
     label: "Non saprei descriverlo",
     emoji: "❓",
   },
+  {
+    slug: "altro",
+    label: "Altro…",
+    emoji: "✏️",
+  },
 ] as const;
 
 const DURATION_OPTIONS = [
@@ -552,6 +557,7 @@ export default function RegisterForm() {
   const [step1bError, setStep1bError] = useState<string | null>(null);
 
   const [selectedSpace, setSelectedSpace] = useState<string | null>(null);
+  const [otherText, setOtherText] = useState("");
   const [selectedDuration, setSelectedDuration] = useState<string | null>(null);
   const [step2Loading, setStep2Loading] = useState(false);
   const [step2Error, setStep2Error] = useState<string | null>(null);
@@ -706,18 +712,32 @@ export default function RegisterForm() {
       return;
     }
 
+    const preferredSpace =
+      selectedSpace === "altro" ? null : selectedSpace;
+
     const { error: updateError } = await supabase
       .from("profiles")
-      .update({ preferred_space: selectedSpace })
+      .update({ preferred_space: preferredSpace })
       .eq("id", user.id);
 
-    setStep2Loading(false);
-
     if (updateError) {
+      setStep2Loading(false);
       setStep2Error(updateError.message);
       return;
     }
 
+    if (selectedSpace === "altro" && otherText.trim()) {
+      const { error: suggestError } = await supabase.rpc("suggest_area", {
+        p_text: otherText.trim(),
+      });
+      if (suggestError) {
+        setStep2Loading(false);
+        setStep2Error(suggestError.message);
+        return;
+      }
+    }
+
+    setStep2Loading(false);
     setPhase("step3");
   }
 
@@ -726,7 +746,8 @@ export default function RegisterForm() {
     if (
       selectedSpace &&
       selectedSpace !== "non-lo-so" &&
-      selectedSpace !== "vuole-aiutare"
+      selectedSpace !== "vuole-aiutare" &&
+      selectedSpace !== "altro"
     ) {
       destination = `/spazi/${selectedSpace}`;
     }
@@ -921,8 +942,8 @@ export default function RegisterForm() {
                     className={
                       "glass-card p-3 text-left text-sm leading-snug transition-all active:scale-[0.98] " +
                       (active
-                        ? "border-mint shadow-[0_0_0_1px_rgba(93,202,165,0.35),0_0_20px_-4px_rgba(93,202,165,0.25)] text-cream"
-                        : "text-cream/75 hover:bg-cream/[0.04]")
+                        ? "bg-mint text-petrolio border-mint font-medium shadow-[0_0_20px_-4px_rgba(93,202,165,0.5)]"
+                        : "text-cream/75 hover:bg-cream/[0.06]")
                     }
                   >
                     {space.emoji} {space.label}
@@ -930,6 +951,21 @@ export default function RegisterForm() {
                 );
               })}
             </div>
+            {selectedSpace === "altro" && (
+              <div className="mt-4">
+                <p className="text-sm text-cream/75">
+                  Raccontaci con parole tue cosa senti
+                </p>
+                <textarea
+                  value={otherText}
+                  onChange={(e) => setOtherText(e.target.value)}
+                  maxLength={300}
+                  rows={3}
+                  placeholder="Quello che stai vivendo, come lo descriveresti tu…"
+                  className="field-input mt-2"
+                />
+              </div>
+            )}
           </section>
 
           <section>
@@ -947,8 +983,8 @@ export default function RegisterForm() {
                     className={
                       "rounded-full px-4 py-2 text-sm transition-all active:scale-[0.98] " +
                       (active
-                        ? "border border-mint bg-mint/10 font-medium text-cream shadow-[0_0_16px_-4px_rgba(93,202,165,0.3)]"
-                        : "glass-card text-cream/75 hover:bg-cream/[0.04]")
+                        ? "border border-mint bg-mint font-medium text-petrolio shadow-[0_0_16px_-4px_rgba(93,202,165,0.3)]"
+                        : "glass-card text-cream/75 hover:bg-cream/[0.06]")
                     }
                   >
                     {option}
