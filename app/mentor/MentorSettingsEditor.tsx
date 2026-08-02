@@ -18,9 +18,24 @@ export default function MentorSettingsEditor({
     initialMaxActiveConversations
   );
   const [isAvailable, setIsAvailable] = useState(initialIsAvailable);
+  const [savedMaxActiveConversations, setSavedMaxActiveConversations] = useState(
+    initialMaxActiveConversations
+  );
+  const [savedIsAvailable, setSavedIsAvailable] = useState(initialIsAvailable);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setMaxActiveConversations(initialMaxActiveConversations);
+    setIsAvailable(initialIsAvailable);
+    setSavedMaxActiveConversations(initialMaxActiveConversations);
+    setSavedIsAvailable(initialIsAvailable);
+  }, [initialMaxActiveConversations, initialIsAvailable]);
+
+  const dirty =
+    maxActiveConversations !== savedMaxActiveConversations ||
+    isAvailable !== savedIsAvailable;
 
   useEffect(() => {
     if (!saved) return;
@@ -45,6 +60,8 @@ export default function MentorSettingsEditor({
     }
 
     if (data?.ok === true) {
+      setSavedMaxActiveConversations(maxActiveConversations);
+      setSavedIsAvailable(isAvailable);
       setSaved(true);
       router.refresh();
     } else {
@@ -125,7 +142,12 @@ export default function MentorSettingsEditor({
       </div>
 
       <div className="flex flex-wrap items-center gap-3 pt-1">
-        <button type="button" onClick={save} disabled={saving} className="btn-primary">
+        <button
+          type="button"
+          onClick={save}
+          disabled={saving || !dirty}
+          className="btn-primary"
+        >
           {saving ? "Salvataggio..." : "Salva"}
         </button>
         {saved && <span className="text-sm text-mint">Salvato</span>}

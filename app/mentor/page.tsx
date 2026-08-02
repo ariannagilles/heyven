@@ -63,28 +63,20 @@ export default async function MentorDashboard() {
         </header>
 
         <section className="card p-5 space-y-3">
-          <div>
-            <h2 className="text-sm font-medium text-cream/70">
-              La tua presentazione
-            </h2>
-            <p className="text-xs text-cream/60 mt-1">
-              Questa frase appare nel tuo profilo prima che l'utente apra la
-              chat.
-            </p>
-          </div>
           <IntroEditor
             mentorId={user.id}
             initial={mentorRow?.intro_text ?? ""}
+            title="La tua presentazione"
+            description="Questa frase appare nel tuo profilo prima che l'utente apra la chat."
           />
         </section>
 
         <section className="card p-5 space-y-3">
-          <h2 className="text-sm font-medium text-cream/70">Di cosa ti occupi</h2>
-          <p className="text-sm text-cream/70">
-            Scegli fino a 4 aree che hai attraversato in prima persona. Ci aiutano a farti
-            incontrare le persone che vivono qualcosa di simile.
-          </p>
-          <ExperienceAreasEditor initial={mentorRow?.experience_areas ?? []} />
+          <ExperienceAreasEditor
+            initial={mentorRow?.experience_areas ?? []}
+            title="Di cosa ti occupi"
+            description="Scegli fino a 4 aree che hai attraversato in prima persona. Ci aiutano a farti incontrare le persone che vivono qualcosa di simile."
+          />
         </section>
 
         <section className="card p-5 space-y-3">
