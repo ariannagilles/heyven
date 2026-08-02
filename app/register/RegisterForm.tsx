@@ -50,6 +50,8 @@ const EXTRA_FEELING_OPTIONS = [
   },
 ] as const;
 
+const GROUP_B = ["vuole-aiutare", "non-lo-so", "altro"];
+
 const DURATION_OPTIONS = [
   "Da poco",
   "Da alcuni mesi",
@@ -556,7 +558,8 @@ export default function RegisterForm() {
   const [step1bLoading, setStep1bLoading] = useState(false);
   const [step1bError, setStep1bError] = useState<string | null>(null);
 
-  const [selectedSpace, setSelectedSpace] = useState<string | null>(null);
+  const [selectedSpaces, setSelectedSpaces] = useState<string[]>([]);
+  const [maxAreasMsg, setMaxAreasMsg] = useState(false);
   const [otherText, setOtherText] = useState("");
   const [selectedDuration, setSelectedDuration] = useState<string | null>(null);
   const [step2Loading, setStep2Loading] = useState(false);
@@ -695,8 +698,27 @@ export default function RegisterForm() {
     setPhase("step2");
   }
 
+  function toggleSpace(slug: string) {
+    setMaxAreasMsg(false);
+    setSelectedSpaces((prev) => {
+      const isB = GROUP_B.includes(slug);
+      if (isB) {
+        return prev.includes(slug) ? [] : [slug];
+      }
+      if (prev.includes(slug)) {
+        return prev.filter((s) => s !== slug);
+      }
+      const withoutB = prev.filter((s) => !GROUP_B.includes(s));
+      if (withoutB.length >= 4) {
+        setMaxAreasMsg(true);
+        return prev;
+      }
+      return [...withoutB, slug];
+    });
+  }
+
   async function onContinueStep2() {
-    if (!selectedSpace || !selectedDuration) return;
+    if (selectedSpaces.length === 0 || !selectedDuration) return;
 
     setStep2Loading(true);
     setStep2Error(null);
@@ -712,12 +734,15 @@ export default function RegisterForm() {
       return;
     }
 
-    const preferredSpace =
-      selectedSpace === "altro" ? null : selectedSpace;
+    const firstArea =
+      selectedSpaces.find((s) => !GROUP_B.includes(s)) ?? null;
 
     const { error: updateError } = await supabase
       .from("profiles")
-      .update({ preferred_space: preferredSpace })
+      .update({
+        preferred_space: firstArea,
+        preferred_spaces: selectedSpaces,
+      })
       .eq("id", user.id);
 
     if (updateError) {
@@ -726,7 +751,7 @@ export default function RegisterForm() {
       return;
     }
 
-    if (selectedSpace === "altro" && otherText.trim()) {
+    if (selectedSpaces.includes("altro") && otherText.trim()) {
       const { error: suggestError } = await supabase.rpc("suggest_area", {
         p_text: otherText.trim(),
       });
@@ -743,13 +768,10 @@ export default function RegisterForm() {
 
   async function onEnterHeyven() {
     let destination = next;
-    if (
-      selectedSpace &&
-      selectedSpace !== "non-lo-so" &&
-      selectedSpace !== "vuole-aiutare" &&
-      selectedSpace !== "altro"
-    ) {
-      destination = `/spazi/${selectedSpace}`;
+    const firstArea =
+      selectedSpaces.find((s) => !GROUP_B.includes(s)) ?? null;
+    if (firstArea) {
+      destination = `/spazi/${firstArea}`;
     }
     document.cookie = "heyven_registered=true; path=/; max-age=31536000; SameSite=Lax";
     router.replace(destination);
@@ -907,15 +929,20 @@ export default function RegisterForm() {
   }
 
   if (phase === "step2") {
-    const spaceOptions = [
-      ...SPACES.map((space) => ({
-        slug: space.slug,
-        emoji: space.emoji,
-        label: FEELING_LABELS[space.slug],
-      })),
-      ...EXTRA_FEELING_OPTIONS,
-    ];
-    const canContinue = Boolean(selectedSpace && selectedDuration) && !step2Loading;
+    const groupAOptions = SPACES.map((space) => ({
+      slug: space.slug,
+      emoji: space.emoji,
+      label: FEELING_LABELS[space.slug],
+    }));
+    const groupBOptions = [...EXTRA_FEELING_OPTIONS];
+    const canContinue =
+      selectedSpaces.length > 0 && Boolean(selectedDuration) && !step2Loading;
+
+    const spaceChipClass = (active: boolean) =>
+      "glass-card p-3 text-left text-sm leading-snug transition-all active:scale-[0.98] " +
+      (active
+        ? "bg-mint/20 border-mint text-cream shadow-[0_0_0_1px_rgba(93,202,165,0.6)]"
+        : "text-cream/75 hover:bg-cream/[0.06]");
 
     return (
       <StepShell progress={3}>
@@ -932,26 +959,52 @@ export default function RegisterForm() {
               Cosa ti pesa di più in questo periodo?
             </h2>
             <div className="mt-3 grid grid-cols-2 gap-2">
-              {spaceOptions.map((space) => {
-                const active = selectedSpace === space.slug;
+              {groupAOptions.map((space) => {
+                const active = selectedSpaces.includes(space.slug);
+                const priority = active
+                  ? selectedSpaces.indexOf(space.slug) + 1
+                  : null;
                 return (
                   <button
                     key={space.slug}
                     type="button"
-                    onClick={() => setSelectedSpace(space.slug)}
+                    onClick={() => toggleSpace(space.slug)}
                     className={
-                      "glass-card p-3 text-left text-sm leading-snug transition-all active:scale-[0.98] " +
-                      (active
-                        ? "bg-mint text-petrolio border-mint font-medium shadow-[0_0_20px_-4px_rgba(93,202,165,0.5)]"
-                        : "text-cream/75 hover:bg-cream/[0.06]")
+                      spaceChipClass(active) + (active ? " relative pr-8" : "")
                     }
+                  >
+                    {priority !== null && (
+                      <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-mint text-xs text-petrolio">
+                        {priority}
+                      </span>
+                    )}
+                    {space.emoji} {space.label}
+                  </button>
+                );
+              })}
+            </div>
+            {maxAreasMsg && (
+              <p className="mt-2 text-xs text-cream/55">
+                Puoi scegliere fino a 4
+              </p>
+            )}
+            <p className="my-3 text-center text-xs text-cream/40">oppure</p>
+            <div className="grid grid-cols-2 gap-2">
+              {groupBOptions.map((space) => {
+                const active = selectedSpaces.includes(space.slug);
+                return (
+                  <button
+                    key={space.slug}
+                    type="button"
+                    onClick={() => toggleSpace(space.slug)}
+                    className={spaceChipClass(active)}
                   >
                     {space.emoji} {space.label}
                   </button>
                 );
               })}
             </div>
-            {selectedSpace === "altro" && (
+            {selectedSpaces.includes("altro") && (
               <div className="mt-4">
                 <p className="text-sm text-cream/75">
                   Raccontaci con parole tue cosa senti
@@ -1064,7 +1117,7 @@ export default function RegisterForm() {
           </p>
         </article>
 
-        {selectedSpace === "vuole-aiutare" && (
+        {selectedSpaces.includes("vuole-aiutare") && (
           <div className="glass-card p-4">
             <p className="text-sm font-medium text-cream">Grazie di cuore 💚</p>
             <p className="mt-1 text-sm leading-relaxed text-cream/70">
