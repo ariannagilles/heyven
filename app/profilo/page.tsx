@@ -35,7 +35,7 @@ export default async function ProfilePage({
       <main className="mx-auto max-w-2xl space-y-6 px-4 pb-24 pt-6">
         <ProfileHubHeader nickname={profile.nickname} joinedAt={joinedAt} />
         <ProfilePathBlock />
-        <ProfileMenuList />
+        <ProfileMenuList isMentor={profile.role === "mentor"} />
       </main>
     </>
   );
