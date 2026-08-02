@@ -7,9 +7,16 @@ type Props = {
   onChange: (tags: string[]) => void;
   hasError?: boolean;
   inputDisabled?: boolean;
+  inputId?: string;
+  showLabel?: boolean;
+  label?: string;
+  tagPillClassName?: string;
+  inputHint?: string;
+  disabledHint?: string;
+  footerHint?: string;
 };
 
-const TAG_CLASS =
+const DEFAULT_TAG_CLASS =
   "inline-flex max-w-full items-center gap-1 rounded-full border border-[rgba(245,239,227,0.28)] bg-[rgba(245,239,227,0.06)] px-2.5 py-1 text-[13px] leading-snug text-cream/[0.85]";
 
 function fieldErrorClass(hasError: boolean) {
@@ -23,8 +30,16 @@ export default function CustomAreaTagsInput({
   onChange,
   hasError = false,
   inputDisabled = false,
+  inputId = "customAreaTags",
+  showLabel = true,
+  label = "Aiutaci a capire meglio",
+  tagPillClassName,
+  inputHint = "Scrivi e premi invio o virgola per aggiungere.",
+  disabledHint = "Hai raggiunto il massimo di 5.",
+  footerHint,
 }: Props) {
   const [input, setInput] = useState("");
+  const tagClass = tagPillClassName ?? DEFAULT_TAG_CLASS;
 
   function addFromInput(raw: string) {
     if (inputDisabled) return;
@@ -53,16 +68,18 @@ export default function CustomAreaTagsInput({
 
   return (
     <div>
-      <label className="field-label" htmlFor="customAreaTags">
-        Aiutaci a capire meglio
-      </label>
+      {showLabel && (
+        <label className="field-label" htmlFor={inputId}>
+          {label}
+        </label>
+      )}
       <div
-        className={`field-input mt-2 flex min-h-[52px] flex-wrap items-center gap-2 py-2 ${fieldErrorClass(hasError)} ${
+        className={`field-input ${showLabel ? "mt-2" : ""} flex min-h-[52px] flex-wrap items-center gap-2 py-2 ${fieldErrorClass(hasError)} ${
           inputDisabled ? "opacity-60" : ""
         }`}
       >
         {tags.map((tag) => (
-          <span key={tag} className={TAG_CLASS}>
+          <span key={tag} className={tagClass}>
             <span className="truncate">{tag}</span>
             <button
               type="button"
@@ -75,7 +92,7 @@ export default function CustomAreaTagsInput({
           </span>
         ))}
         <input
-          id="customAreaTags"
+          id={inputId}
           type="text"
           value={input}
           disabled={inputDisabled}
@@ -88,13 +105,12 @@ export default function CustomAreaTagsInput({
         />
       </div>
       {inputDisabled ? (
-        <p className="mt-2 text-[13px] leading-relaxed text-cream/60">
-          Hai raggiunto il massimo di 5.
-        </p>
+        <p className="mt-2 text-[13px] leading-relaxed text-cream/60">{disabledHint}</p>
       ) : (
-        <p className="mt-2 text-[13px] leading-relaxed text-cream/60">
-          Scrivi e premi invio o virgola per aggiungere.
-        </p>
+        <p className="mt-2 text-[13px] leading-relaxed text-cream/60">{inputHint}</p>
+      )}
+      {footerHint && (
+        <p className="mt-2 text-[13px] leading-relaxed text-cream/60">{footerHint}</p>
       )}
     </div>
   );
