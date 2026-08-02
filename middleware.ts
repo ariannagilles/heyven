@@ -38,6 +38,23 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
 
   const path = request.nextUrl.pathname;
+
+  let onboardingDone = true;
+  if (user) {
+    const { data: prof } = await supabase
+      .from("profiles")
+      .select("onboarding_completed")
+      .eq("id", user.id)
+      .maybeSingle();
+    onboardingDone = prof?.onboarding_completed ?? false;
+  }
+
+  const isOnboardingExempt =
+    path === "/register" ||
+    path === "/login" ||
+    path === "/reset-password" ||
+    path.startsWith("/auth");
+
   const isPublic = PUBLIC_PATHS.some((p) => path === p || path.startsWith(p + "/"));
 
   if (!user && !isPublic) {
@@ -58,7 +75,21 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (user && (path === "/login" || path === "/register")) {
+  if (user && !onboardingDone && !isOnboardingExempt) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/register";
+    url.search = "";
+    return NextResponse.redirect(url);
+  }
+
+  if (user && path === "/login") {
+    const url = request.nextUrl.clone();
+    url.pathname = onboardingDone ? "/" : "/register";
+    url.search = "";
+    return NextResponse.redirect(url);
+  }
+
+  if (user && path === "/register" && onboardingDone) {
     const url = request.nextUrl.clone();
     url.pathname = "/";
     url.search = "";
