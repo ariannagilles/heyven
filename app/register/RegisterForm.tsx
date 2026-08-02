@@ -934,15 +934,21 @@ export default function RegisterForm() {
       emoji: space.emoji,
       label: FEELING_LABELS[space.slug],
     }));
-    const groupBOptions = [...EXTRA_FEELING_OPTIONS];
+    const mainGridOptions = [
+      ...groupAOptions,
+      ...EXTRA_FEELING_OPTIONS.filter((option) => option.slug !== "vuole-aiutare"),
+    ];
+    const helpOption = EXTRA_FEELING_OPTIONS.find(
+      (option) => option.slug === "vuole-aiutare",
+    )!;
     const canContinue =
       selectedSpaces.length > 0 && Boolean(selectedDuration) && !step2Loading;
 
     const spaceChipClass = (active: boolean) =>
-      "glass-card p-3 text-left text-sm leading-snug transition-all active:scale-[0.98] " +
+      "relative p-3 text-left text-sm leading-snug rounded-2xl border transition-all active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-mint " +
       (active
-        ? "bg-mint/20 border-mint text-cream shadow-[0_0_0_1px_rgba(93,202,165,0.6)]"
-        : "text-cream/75 hover:bg-cream/[0.06]");
+        ? "bg-mint/25 border-mint text-cream"
+        : "glass-card border-transparent text-cream/75 hover:bg-cream/[0.06]");
 
     return (
       <StepShell progress={3}>
@@ -959,9 +965,11 @@ export default function RegisterForm() {
               Cosa ti pesa di più in questo periodo?
             </h2>
             <div className="mt-3 grid grid-cols-2 gap-2">
-              {groupAOptions.map((space) => {
+              {mainGridOptions.map((space) => {
                 const active = selectedSpaces.includes(space.slug);
-                const priority = active
+                const showPriority =
+                  active && !GROUP_B.includes(space.slug);
+                const priority = showPriority
                   ? selectedSpaces.indexOf(space.slug) + 1
                   : null;
                 return (
@@ -970,7 +978,7 @@ export default function RegisterForm() {
                     type="button"
                     onClick={() => toggleSpace(space.slug)}
                     className={
-                      spaceChipClass(active) + (active ? " relative pr-8" : "")
+                      spaceChipClass(active) + (showPriority ? " pr-8" : "")
                     }
                   >
                     {priority !== null && (
@@ -989,21 +997,16 @@ export default function RegisterForm() {
               </p>
             )}
             <p className="my-3 text-center text-xs text-cream/40">oppure</p>
-            <div className="grid grid-cols-2 gap-2">
-              {groupBOptions.map((space) => {
-                const active = selectedSpaces.includes(space.slug);
-                return (
-                  <button
-                    key={space.slug}
-                    type="button"
-                    onClick={() => toggleSpace(space.slug)}
-                    className={spaceChipClass(active)}
-                  >
-                    {space.emoji} {space.label}
-                  </button>
-                );
-              })}
-            </div>
+            <button
+              type="button"
+              onClick={() => toggleSpace(helpOption.slug)}
+              className={
+                spaceChipClass(selectedSpaces.includes(helpOption.slug)) +
+                " w-full"
+              }
+            >
+              {helpOption.emoji} {helpOption.label}
+            </button>
             {selectedSpaces.includes("altro") && (
               <div className="mt-4">
                 <p className="text-sm text-cream/75">
