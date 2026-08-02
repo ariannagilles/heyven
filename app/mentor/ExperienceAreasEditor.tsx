@@ -127,6 +127,7 @@ export default function ExperienceAreasEditor({ initial }: { initial: string[] }
     const supabase = createClient();
     const { error: rpcError } = await supabase.rpc("set_mentor_experience_areas", {
       areas: areasToSave,
+      custom_tags: customTags,
     });
     setSaving(false);
 
