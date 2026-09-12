@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import Navbar from "@/components/Navbar";
 import Avatar from "@/components/Avatar";
 import ProfileSubpageHeader from "@/components/profile/ProfileSubpageHeader";
 import IntroEditor from "./IntroEditor";
@@ -37,7 +36,6 @@ export default async function MentorDashboard() {
 
   return (
     <>
-      <Navbar />
       <main className="mx-auto max-w-2xl px-4 py-6 space-y-4">
         <ProfileSubpageHeader title="Dashboard Mentore" />
         <header className="card p-5">

@@ -1,4 +1,3 @@
-import Navbar from "@/components/Navbar";
 import CityMap from "./CityMap";
 
 export const dynamic = "force-dynamic";
@@ -6,7 +5,6 @@ export const dynamic = "force-dynamic";
 export default function VaiOltrePage() {
   return (
     <>
-      <Navbar />
       <main className="mx-auto max-w-2xl px-4 py-6 space-y-8">
         <header>
           <h1 className="text-2xl font-semibold">Vai oltre</h1>

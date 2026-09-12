@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Fraunces } from "next/font/google";
 import "./globals.css";
 import AppContentShell from "@/components/AppContentShell";
+import AppNavbar from "@/components/AppNavbar";
 import FeedbackWidget from "@/components/FeedbackWidget";
 import BottomNav from "@/components/BottomNav";
 import SplashScreen from "@/components/SplashScreen";
@@ -46,6 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
         <SplashScreen />
+        <AppNavbar />
         <AppContentShell>{children}</AppContentShell>
         <BottomNav />
         <FeedbackWidget />

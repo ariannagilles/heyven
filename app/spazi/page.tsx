@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
 import { createClient } from "@/lib/supabase/server";
 import { SPACES } from "@/lib/spaces";
 
@@ -16,7 +15,6 @@ export default async function SpacesListPage() {
 
   return (
     <>
-      <Navbar />
       <main className="mx-auto max-w-2xl px-4 pb-24 pt-6">
         <header className="mb-5">
           <h1 className="font-display text-2xl leading-tight text-cream">Gli spazi</h1>

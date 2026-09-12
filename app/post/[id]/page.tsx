@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import Navbar from "@/components/Navbar";
 import ContentDetailBody from "@/components/content/ContentDetailBody";
 import ContentDetailChrome from "@/components/content/ContentDetailChrome";
 import ContentDetailHeader, {
@@ -73,7 +72,6 @@ export default async function PostDetailPage({ params }: { params: { id: string 
 
   return (
     <>
-      <Navbar />
       <main className="mx-auto max-w-2xl px-4 pt-6">
         <ContentDetailChrome
           replyForm={<ReplyForm postId={post.id} />}

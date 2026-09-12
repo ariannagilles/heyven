@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import Navbar from "@/components/Navbar";
 import ProfileOwnList from "@/components/ProfileOwnList";
 import ProfileSubpageHeader from "@/components/profile/ProfileSubpageHeader";
 import {
@@ -61,7 +60,6 @@ export default async function ProfileContentsPage({
 
   return (
     <>
-      <Navbar />
       <main className="mx-auto max-w-2xl space-y-4 px-4 pb-24 pt-6">
         <ProfileSubpageHeader title="I tuoi contenuti" />
 

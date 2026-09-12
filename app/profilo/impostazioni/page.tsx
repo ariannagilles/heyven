@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import Navbar from "@/components/Navbar";
 import ProfileSubpageHeader from "@/components/profile/ProfileSubpageHeader";
 import ProfileSettings from "../ProfileSettings";
 import { createClient, getCachedUser } from "@/lib/supabase/server";
@@ -17,7 +16,6 @@ export default async function ProfileSettingsPage() {
 
   return (
     <>
-      <Navbar />
       <main className="mx-auto max-w-2xl space-y-4 px-4 pb-24 pt-6">
         <ProfileSubpageHeader title="Impostazioni e privacy" />
         <ProfileSettings userId={user.id} currentNickname={profile.nickname} />

@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import Navbar from "@/components/Navbar";
 import ProfileHubHeader from "@/components/profile/ProfileHubHeader";
 import ProfileMenuList from "@/components/profile/ProfileMenuList";
 import ProfilePathBlock from "@/components/profile/ProfilePathBlock";
@@ -28,13 +27,10 @@ export default async function ProfilePage({
   const joinedAt = await getJoinedAt(supabase, user.id);
 
   return (
-    <>
-      <Navbar />
-      <main className="mx-auto max-w-2xl space-y-6 px-4 pb-24 pt-6">
+    <main className="mx-auto max-w-2xl space-y-6 px-4 pb-24 pt-6">
         <ProfileHubHeader nickname={profile.nickname} joinedAt={joinedAt} />
         <ProfilePathBlock />
         <ProfileMenuList isMentor={profile.role === "mentor"} />
       </main>
-    </>
   );
 }

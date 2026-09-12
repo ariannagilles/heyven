@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import Navbar from "@/components/Navbar";
 import { createClient, getCachedUser } from "@/lib/supabase/server";
 import {
   getNotifications,
@@ -38,7 +37,6 @@ export default async function NotifichePage({
 
   return (
     <>
-      <Navbar />
       <main className="mx-auto max-w-2xl px-4 py-6 space-y-4">
         <header>
           <h1 className="text-xl font-semibold">Notifiche</h1>

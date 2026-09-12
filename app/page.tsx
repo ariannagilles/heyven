@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
 import HomeFeedList from "@/components/HomeFeedList";
 import SectionLabel from "@/components/SectionLabel";
 import HomeCheckIn from "@/components/home/HomeCheckIn";
@@ -36,9 +35,7 @@ export default async function HomePage() {
   const nickname = profile?.nickname ?? "luna42";
 
   return (
-    <>
-      <Navbar />
-      <main className="mx-auto max-w-2xl space-y-6 px-4 pb-24 pt-6">
+    <main className="mx-auto max-w-2xl space-y-6 px-4 pb-24 pt-6">
         <header>
           <h1 className="font-display text-[25px] leading-tight text-cream">
             Ciao, {nickname}
@@ -79,6 +76,5 @@ export default async function HomePage() {
           )}
         </section>
       </main>
-    </>
   );
 }

@@ -5,6 +5,19 @@ import { getProfile } from "@/lib/chat";
 import { getUnreadNotificationsCount } from "@/lib/notifications";
 import NavbarProfileMenu from "./NavbarProfileMenu";
 
+export function NavbarSkeleton() {
+  return (
+    <header className="sticky top-0 z-20 border-b border-cream/10 bg-cream/5 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
+      <div className="mx-auto max-w-2xl px-4 h-14 flex items-center justify-between gap-2">
+        <span className="font-semibold tracking-tight text-cream text-lg shrink-0">
+          heyven
+        </span>
+        <div className="h-8 w-32 rounded-full bg-cream/10" aria-hidden />
+      </div>
+    </header>
+  );
+}
+
 export default async function Navbar() {
   const supabase = createClient();
   const user = await getCachedUser();

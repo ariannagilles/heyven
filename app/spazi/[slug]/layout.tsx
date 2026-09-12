@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import Navbar from "@/components/Navbar";
 import { SPACE_BY_SLUG } from "@/lib/spaces";
 
 export default function SpaceLayout({
@@ -13,9 +12,6 @@ export default function SpaceLayout({
   if (!space) notFound();
 
   return (
-    <>
-      <Navbar />
-      <main className="mx-auto max-w-2xl px-4 pb-24 pt-6">{children}</main>
-    </>
+    <main className="mx-auto max-w-2xl px-4 pb-24 pt-6">{children}</main>
   );
 }

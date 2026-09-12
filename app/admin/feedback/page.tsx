@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import Navbar from "@/components/Navbar";
 import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { getProfile } from "@/lib/chat";
 import { timeAgo } from "@/lib/time";
@@ -65,7 +64,6 @@ export default async function AdminFeedbackPage({
 
   return (
     <>
-      <Navbar />
       <main className="mx-auto max-w-3xl px-4 py-6 space-y-4">
         <header className="card p-5">
           <h1 className="text-lg font-semibold">Feedback beta</h1>

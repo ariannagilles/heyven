@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import Navbar from "@/components/Navbar";
 import MarkReportReviewedButton from "../MarkReportReviewedButton";
 import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { getProfile } from "@/lib/chat";
@@ -46,7 +45,6 @@ export default async function AdminReportsPage() {
 
   return (
     <>
-      <Navbar />
       <main className="mx-auto max-w-3xl px-4 py-6 space-y-4">
         <header className="card p-5">
           <div className="flex items-center justify-between gap-3">

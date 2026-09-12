@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Navbar from "@/components/Navbar";
 
 export const metadata: Metadata = {
   title: "Se questo è un momento difficile — Heyven",
@@ -31,7 +30,6 @@ const HELPLINES = [
 export default function AiutoPage() {
   return (
     <>
-      <Navbar />
       <main className="mx-auto max-w-2xl px-4 py-8 pb-20 space-y-10">
         <header className="space-y-4">
           <h1 className="text-2xl font-semibold leading-snug">

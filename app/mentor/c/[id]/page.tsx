@@ -1,5 +1,4 @@
 import { notFound, redirect } from "next/navigation";
-import Navbar from "@/components/Navbar";
 import ChatView from "@/components/ChatView";
 import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { avatarDataUri } from "@/lib/avatar";
@@ -32,18 +31,15 @@ export default async function MentorChatPage({
   ]);
 
   return (
-    <>
-      <Navbar />
-      <ChatView
-        conversationId={conversation.id}
-        meId={user.id}
-        otherNickname={userProfile?.nickname ?? "anonimo"}
-        otherAvatarSrc={avatarDataUri(userProfile?.nickname ?? "anonimo")}
-        otherRoleLabel="utente"
-        initialMessages={messages}
-        initialClosed={conversation.status === "closed"}
-        iAmUser={false}
-      />
-    </>
+    <ChatView
+      conversationId={conversation.id}
+      meId={user.id}
+      otherNickname={userProfile?.nickname ?? "anonimo"}
+      otherAvatarSrc={avatarDataUri(userProfile?.nickname ?? "anonimo")}
+      otherRoleLabel="utente"
+      initialMessages={messages}
+      initialClosed={conversation.status === "closed"}
+      iAmUser={false}
+    />
   );
 }
