@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import SectionLabel from "@/components/SectionLabel";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -19,6 +19,10 @@ import {
 } from "@/lib/check-in-rpc";
 
 type Step = "pick" | "tags";
+type ConfirmPhase = "hidden" | "out" | "in";
+
+const CONFIRM_HOLD_MS = 4000;
+const CONFIRM_FADE_MS = 500;
 
 export default function HomeCheckIn() {
   const supabase = useMemo(() => createClient(), []);
@@ -33,6 +37,8 @@ export default function HomeCheckIn() {
   const [tagOrder, setTagOrder] = useState<MoodTagKey[]>(() =>
     MOOD_TAGS.map((t) => t.key),
   );
+  const [confirm, setConfirm] = useState<ConfirmPhase>("hidden");
+  const confirmTimers = useRef<number[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -61,20 +67,47 @@ export default function HomeCheckIn() {
     [tagOrder],
   );
 
+  function clearConfirmTimers() {
+    for (const id of confirmTimers.current) window.clearTimeout(id);
+    confirmTimers.current = [];
+  }
+
+  function hideConfirm() {
+    clearConfirmTimers();
+    setConfirm("hidden");
+  }
+
+  function showConfirm() {
+    clearConfirmTimers();
+    setConfirm("out");
+    const fadeIn = window.setTimeout(() => setConfirm("in"), 20);
+    const fadeOut = window.setTimeout(() => setConfirm("out"), CONFIRM_HOLD_MS);
+    const hide = window.setTimeout(
+      () => setConfirm("hidden"),
+      CONFIRM_HOLD_MS + CONFIRM_FADE_MS,
+    );
+    confirmTimers.current = [fadeIn, fadeOut, hide];
+  }
+
+  useEffect(() => () => clearConfirmTimers(), []);
+
   function onPickWeather(next: MoodKey) {
     setHasError(false);
+    hideConfirm();
     setWeather(next);
     if (step === "pick") setStep("tags");
   }
 
   function toggleTag(key: MoodTagKey) {
     setHasError(false);
+    hideConfirm();
     setTags((prev) =>
       prev.includes(key) ? prev.filter((t) => t !== key) : [...prev, key],
     );
   }
 
   function skipTags() {
+    hideConfirm();
     setTags([]);
     setStep("pick");
   }
@@ -83,6 +116,7 @@ export default function HomeCheckIn() {
     if (!weather || saving) return;
     setSaving(true);
     setHasError(false);
+    hideConfirm();
     const { data, error } = await submitCheckin(supabase, {
       localDate: localDateISO(),
       weather,
@@ -95,6 +129,7 @@ export default function HomeCheckIn() {
     }
     setSavedRow(data);
     setTags(data.tags);
+    showConfirm();
   }
 
   const title = savedRow ? "OGGI HAI SEGNATO:" : "COM'È IL TEMPO DENTRO OGGI?";
@@ -208,7 +243,7 @@ export default function HomeCheckIn() {
           </div>
         ) : null}
 
-        <div className="mt-5 flex justify-end">
+        <div className="mt-5 flex flex-col items-end gap-3">
           <button
             type="button"
             onClick={onSave}
@@ -218,6 +253,17 @@ export default function HomeCheckIn() {
           >
             {saving ? "Salvando…" : "Salva"}
           </button>
+          {confirm !== "hidden" ? (
+            <p
+              role="status"
+              className={
+                "text-sm text-mint transition-opacity duration-500 ease-out motion-reduce:transition-none " +
+                (confirm === "in" ? "opacity-100" : "opacity-0")
+              }
+            >
+              Segnato. Grazie di esserti fermato un momento.
+            </p>
+          ) : null}
         </div>
       </div>
     </section>
