@@ -563,6 +563,8 @@ export default function RegisterForm() {
   const [selectedDuration, setSelectedDuration] = useState<string | null>(null);
   const [step2Loading, setStep2Loading] = useState(false);
   const [step2Error, setStep2Error] = useState<string | null>(null);
+  const [step3Loading, setStep3Loading] = useState(false);
+  const [step3Error, setStep3Error] = useState<string | null>(null);
   const hasPrefilledNickname = useRef(false);
 
   useEffect(() => {
@@ -771,6 +773,24 @@ export default function RegisterForm() {
   }
 
   async function onEnterHeyven() {
+    setStep3Error(null);
+    setStep3Loading(true);
+
+    const supabase = createClient();
+    const { error } = await supabase.rpc("complete_onboarding");
+    if (error) {
+      setStep3Loading(false);
+      setStep3Error(error.message);
+      return;
+    }
+
+    const { error: refreshError } = await supabase.auth.refreshSession();
+    if (refreshError) {
+      setStep3Loading(false);
+      setStep3Error(refreshError.message);
+      return;
+    }
+
     let destination = next;
     const firstArea =
       selectedSpaces.find((s) => s !== "altro" && !EXCLUSIVE.includes(s)) ??
@@ -1125,8 +1145,15 @@ export default function RegisterForm() {
         )}
       </div>
 
-      <button type="button" onClick={onEnterHeyven} className={`mt-4 ${ONBOARDING_PRIMARY_BTN}`}>
-        Entra in Heyven ✦
+      {step3Error && <p className={`mt-4 ${ONBOARDING_ERROR}`}>{step3Error}</p>}
+
+      <button
+        type="button"
+        onClick={onEnterHeyven}
+        disabled={step3Loading}
+        className={`mt-4 ${ONBOARDING_PRIMARY_BTN}`}
+      >
+        {step3Loading ? "Salvataggio…" : "Entra in Heyven ✦"}
       </button>
     </StepShell>
   );

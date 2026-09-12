@@ -39,15 +39,9 @@ export async function middleware(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
 
-  let onboardingDone = true;
-  if (user) {
-    const { data: prof } = await supabase
-      .from("profiles")
-      .select("onboarding_completed")
-      .eq("id", user.id)
-      .maybeSingle();
-    onboardingDone = prof?.onboarding_completed ?? false;
-  }
+  const onboardingDone = user
+    ? user.app_metadata?.onboarding_completed === true
+    : true;
 
   const isOnboardingExempt =
     path === "/register" ||
