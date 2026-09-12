@@ -165,7 +165,7 @@ export default function HomeCheckIn() {
               </button>
             </div>
             <div className="flex flex-wrap justify-start gap-2">
-              {orderedTags.map((t) => {})
+              {orderedTags.map((t) => {
                 const active = tags.includes(t.key);
                 return (
                   <button
