@@ -6,7 +6,11 @@ import HomeCheckIn from "@/components/home/HomeCheckIn";
 import HomeMentorCard from "@/components/home/HomeMentorCard";
 import { createClient } from "@/lib/supabase/server";
 import { fetchUnifiedHomeFeed } from "@/lib/unified-feed";
-import { getProfile } from "@/lib/chat";
+import {
+  getHomeMentorCardState,
+  getProfile,
+  type HomeMentorCardState,
+} from "@/lib/chat";
 
 export const dynamic = "force-dynamic";
 
@@ -16,14 +20,17 @@ export default async function HomePage() {
 
   let feed: Awaited<ReturnType<typeof fetchUnifiedHomeFeed>> | null = null;
   let profile: Awaited<ReturnType<typeof getProfile>> = null;
+  let mentorCard: HomeMentorCardState = { status: "loading" };
 
   if (user) {
-    const [feedResult, profileResult] = await Promise.all([
+    const [feedResult, profileResult, mentorResult] = await Promise.all([
       fetchUnifiedHomeFeed(supabase, user.id),
       getProfile(supabase, user.id),
+      getHomeMentorCardState(supabase, user.id),
     ]);
     feed = feedResult;
     profile = profileResult;
+    mentorCard = mentorResult;
   }
 
   const nickname = profile?.nickname ?? "luna42";
@@ -48,7 +55,7 @@ export default async function HomePage() {
 
         <section>
           <SectionLabel>Il tuo spazio di ascolto</SectionLabel>
-          <HomeMentorCard />
+          <HomeMentorCard state={mentorCard} />
         </section>
 
         <section>

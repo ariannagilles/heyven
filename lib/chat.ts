@@ -1,5 +1,6 @@
 import { cache } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { mentorPresenceLabel } from "@/lib/mentor-list-types";
 import { fetchMentorRatingSummary } from "@/lib/mentor-rating";
 
 export type Message = {
@@ -201,5 +202,61 @@ export async function getUserChatPreview(
     lastMessage: last?.content ?? null,
     lastActivityAt: last?.created_at ?? conv.created_at,
     unread: unread ?? 0,
+  };
+}
+
+export type HomeMentorCardState =
+  | { status: "loading" }
+  | { status: "idle" }
+  | {
+      status: "active";
+      conversationId: string;
+      mentorNickname: string;
+      lastMessage: string | null;
+      presenceLabel: string;
+    };
+
+export async function getHomeMentorCardState(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<HomeMentorCardState> {
+  const conversation = await getUserConversation(supabase, userId);
+  if (!conversation) return { status: "idle" };
+
+  const [assigned, lastMsgResult, lastMentorResult] = await Promise.all([
+    getAssignedMentorProfile(supabase),
+    supabase
+      .from("messages")
+      .select("content")
+      .eq("conversation_id", conversation.id)
+      .order("created_at", { ascending: false })
+      .limit(1),
+    supabase
+      .from("messages")
+      .select("created_at")
+      .eq("conversation_id", conversation.id)
+      .eq("sender_id", conversation.mentor_id)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+  ]);
+
+  let mentorNickname = assigned?.nickname?.trim() || null;
+  if (!mentorNickname) {
+    const mentorProfile = await getProfile(supabase, conversation.mentor_id);
+    mentorNickname = mentorProfile?.nickname ?? "mentore";
+  }
+
+  const last = (lastMsgResult.data as { content: string }[] | null)?.[0];
+  const lastText = last?.content?.trim() || null;
+  const lastMentorAt =
+    (lastMentorResult.data as { created_at: string } | null)?.created_at ?? null;
+
+  return {
+    status: "active",
+    conversationId: conversation.id,
+    mentorNickname,
+    lastMessage: lastText,
+    presenceLabel: mentorPresenceLabel(lastMentorAt),
   };
 }
