@@ -1,15 +1,13 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import HomeFeedList from "@/components/HomeFeedList";
 import SectionLabel from "@/components/SectionLabel";
 import HomeCheckIn from "@/components/home/HomeCheckIn";
-import HomeMentorCard from "@/components/home/HomeMentorCard";
+import HomeMentorCardSlot from "@/components/home/HomeMentorCardSlot";
+import { HomeMentorCardSkeleton } from "@/components/home/HomeMentorCard";
 import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { fetchUnifiedHomeFeed } from "@/lib/unified-feed";
-import {
-  getHomeMentorCardState,
-  getProfile,
-  type HomeMentorCardState,
-} from "@/lib/chat";
+import { getProfile } from "@/lib/chat";
 
 export const dynamic = "force-dynamic";
 
@@ -19,17 +17,14 @@ export default async function HomePage() {
 
   let feed: Awaited<ReturnType<typeof fetchUnifiedHomeFeed>> | null = null;
   let profile: Awaited<ReturnType<typeof getProfile>> = null;
-  let mentorCard: HomeMentorCardState = { status: "loading" };
 
   if (user) {
-    const [feedResult, profileResult, mentorResult] = await Promise.all([
+    const [feedResult, profileResult] = await Promise.all([
       fetchUnifiedHomeFeed(supabase, user.id),
       getProfile(supabase, user.id),
-      getHomeMentorCardState(supabase, user.id),
     ]);
     feed = feedResult;
     profile = profileResult;
-    mentorCard = mentorResult;
   }
 
   const nickname = profile?.nickname ?? "luna42";
@@ -52,7 +47,9 @@ export default async function HomePage() {
 
         <section>
           <SectionLabel>Il tuo spazio di ascolto</SectionLabel>
-          <HomeMentorCard state={mentorCard} />
+          <Suspense fallback={<HomeMentorCardSkeleton />}>
+            <HomeMentorCardSlot />
+          </Suspense>
         </section>
 
         <section>

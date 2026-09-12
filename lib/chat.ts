@@ -223,8 +223,8 @@ export async function getHomeMentorCardState(
   const conversation = await getUserConversation(supabase, userId);
   if (!conversation) return { status: "idle" };
 
-  const [assigned, lastMsgResult, lastMentorResult] = await Promise.all([
-    getAssignedMentorProfile(supabase),
+  const [mentorProfile, lastMsgResult, lastMentorResult] = await Promise.all([
+    getProfile(supabase, conversation.mentor_id),
     supabase
       .from("messages")
       .select("content")
@@ -241,11 +241,7 @@ export async function getHomeMentorCardState(
       .maybeSingle(),
   ]);
 
-  let mentorNickname = assigned?.nickname?.trim() || null;
-  if (!mentorNickname) {
-    const mentorProfile = await getProfile(supabase, conversation.mentor_id);
-    mentorNickname = mentorProfile?.nickname ?? "mentore";
-  }
+  const mentorNickname = mentorProfile?.nickname?.trim() || "mentore";
 
   const last = (lastMsgResult.data as { content: string }[] | null)?.[0];
   const lastText = last?.content?.trim() || null;

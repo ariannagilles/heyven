@@ -15,6 +15,22 @@ function PlaceholderAvatar() {
   );
 }
 
+export function HomeMentorCardSkeleton() {
+  return (
+    <div
+      className="glass-card flex items-center gap-3 p-4"
+      aria-busy="true"
+      aria-live="polite"
+    >
+      <div className="h-[42px] w-[42px] shrink-0 animate-pulse rounded-xl bg-cream/10" />
+      <div className="min-w-0 flex-1 space-y-2">
+        <div className="h-2.5 w-20 animate-pulse rounded bg-cream/10" />
+        <div className="h-3.5 w-40 animate-pulse rounded bg-cream/10" />
+      </div>
+    </div>
+  );
+}
+
 function CardLabel() {
   return (
     <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-cream/60">
@@ -46,19 +62,7 @@ export default function HomeMentorCard({
   state: HomeMentorCardState;
 }) {
   if (state.status === "loading") {
-    return (
-      <div
-        className="glass-card flex items-center gap-3 p-4"
-        aria-busy="true"
-        aria-live="polite"
-      >
-        <div className="h-[42px] w-[42px] shrink-0 animate-pulse rounded-xl bg-cream/10" />
-        <div className="min-w-0 flex-1 space-y-2">
-          <div className="h-2.5 w-20 animate-pulse rounded bg-cream/10" />
-          <div className="h-3.5 w-40 animate-pulse rounded bg-cream/10" />
-        </div>
-      </div>
-    );
+    return <HomeMentorCardSkeleton />;
   }
 
   if (state.status === "idle") {
