@@ -1,22 +1,209 @@
 "use client";
 
-const MOODS = ["un peso", "così così", "un respiro"] as const;
+import { useEffect, useMemo, useState } from "react";
+import SectionLabel from "@/components/SectionLabel";
+import { createClient } from "@/lib/supabase/client";
+import {
+  MOODS,
+  MOOD_TAGS,
+  localDateISO,
+  type MoodKey,
+  type MoodTagKey,
+} from "@/lib/moods";
+import {
+  getCheckinForDate,
+  submitCheckin,
+  type DailyCheckin,
+} from "@/lib/check-in-rpc";
+
+type Step = "pick" | "tags";
 
 export default function HomeCheckIn() {
+  const supabase = useMemo(() => createClient(), []);
+
+  const [weather, setWeather] = useState<MoodKey | null>(null);
+  const [tags, setTags] = useState<MoodTagKey[]>([]);
+  const [step, setStep] = useState<Step>("pick");
+  const [savedRow, setSavedRow] = useState<DailyCheckin | null>(null);
+  const [loaded, setLoaded] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { data } = await getCheckinForDate(supabase, localDateISO());
+      if (cancelled) return;
+      if (data) {
+        setSavedRow(data);
+        setWeather(data.weather);
+        setTags(data.tags);
+        setStep("tags");
+      }
+      setLoaded(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [supabase]);
+
+  function onPickWeather(next: MoodKey) {
+    setHasError(false);
+    setWeather(next);
+    if (step === "pick") setStep("tags");
+  }
+
+  function toggleTag(key: MoodTagKey) {
+    setHasError(false);
+    setTags((prev) =>
+      prev.includes(key) ? prev.filter((t) => t !== key) : [...prev, key],
+    );
+  }
+
+  function skipTags() {
+    setTags([]);
+    setStep("pick");
+  }
+
+  async function onSave() {
+    if (!weather || saving) return;
+    setSaving(true);
+    setHasError(false);
+    const { data, error } = await submitCheckin(supabase, {
+      localDate: localDateISO(),
+      weather,
+      tags,
+    });
+    setSaving(false);
+    if (error || !data) {
+      setHasError(true);
+      return;
+    }
+    setSavedRow(data);
+    setTags(data.tags);
+  }
+
+  const title = savedRow ? "OGGI HAI SEGNATO:" : "COM'È IL TEMPO DENTRO OGGI?";
+  const showTagsStep = step === "tags" && weather !== null;
+
   return (
-    <div className="glass-card p-4">
-      <p className="mb-3 text-sm text-cream/75">Un gesto, senza numeri.</p>
-      <div className="flex flex-wrap gap-2">
-        {MOODS.map((mood) => (
-          <button
-            key={mood}
-            type="button"
-            className="rounded-full border border-cream/15 bg-cream/5 px-4 py-2 text-sm text-cream/85 transition-colors hover:bg-cream/10"
+    <section>
+      <SectionLabel>{title}</SectionLabel>
+      <div className="glass-card p-4">
+        {savedRow && loaded ? (
+          <p className="mb-3 text-sm text-cream/70">
+            Puoi cambiarlo se il tempo è girato.
+          </p>
+        ) : null}
+
+        <div className="flex flex-wrap gap-2">
+          {MOODS.map((m) => {
+            const active = weather === m.key;
+            return (
+              <button
+                key={m.key}
+                type="button"
+                onClick={() => onPickWeather(m.key)}
+                aria-pressed={active}
+                className={
+                  "rounded-full px-4 py-2 text-sm transition-colors " +
+                  (active
+                    ? "border text-cream"
+                    : "border border-cream/20 bg-cream/[0.06] text-cream/85 hover:bg-cream/10")
+                }
+                style={
+                  active
+                    ? {
+                        borderColor: "#5DCAA5",
+                        boxShadow:
+                          "0 0 0 1px #5DCAA5, 0 0 0 4px rgba(93,202,165,0.12)",
+                        background: "rgba(245,239,227,0.06)",
+                      }
+                    : undefined
+                }
+              >
+                {m.label}
+              </button>
+            );
+          })}
+        </div>
+
+        <div
+          className={
+            "grid transition-all duration-300 ease-out motion-reduce:transition-none " +
+            (showTagsStep
+              ? "mt-4 grid-rows-[1fr] opacity-100 translate-y-0"
+              : "mt-0 grid-rows-[0fr] opacity-0 -translate-y-1 pointer-events-none")
+          }
+          aria-hidden={!showTagsStep}
+        >
+          <div className="min-h-0 overflow-hidden">
+            <div className="mb-2 flex items-baseline justify-between gap-3">
+              <SectionLabel>COSA PESA DI PIÙ OGGI? (SE TI VA)</SectionLabel>
+              <button
+                type="button"
+                onClick={skipTags}
+                className="text-xs font-medium text-mint hover:underline"
+              >
+                salta
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {MOOD_TAGS.map((t) => {
+                const active = tags.includes(t.key);
+                return (
+                  <button
+                    key={t.key}
+                    type="button"
+                    onClick={() => toggleTag(t.key)}
+                    aria-pressed={active}
+                    className={
+                      "rounded-full px-3.5 py-1.5 text-sm transition-colors " +
+                      (active
+                        ? "border text-cream"
+                        : "border border-cream/20 bg-cream/[0.06] text-cream/85 hover:bg-cream/10")
+                    }
+                    style={
+                      active
+                        ? {
+                            borderColor: "#5DCAA5",
+                            boxShadow:
+                              "0 0 0 1px #5DCAA5, 0 0 0 4px rgba(93,202,165,0.12)",
+                            background: "rgba(245,239,227,0.06)",
+                          }
+                        : undefined
+                    }
+                  >
+                    {t.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {hasError ? (
+          <div
+            className="mt-4 rounded-xl px-3 py-2 text-sm"
+            style={{ background: "#D4EDE5", color: "#04342C" }}
+            role="status"
           >
-            {mood}
+            Non è partito il salvataggio. I tuoi contenuti sono al sicuro, riprova.
+          </div>
+        ) : null}
+
+        <div className="mt-4 flex justify-end">
+          <button
+            type="button"
+            onClick={onSave}
+            disabled={!weather || saving}
+            className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium text-petrolio transition active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none"
+            style={{ background: "#F5EFE3" }}
+          >
+            {saving ? "Salvando…" : "Salva"}
           </button>
-        ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
