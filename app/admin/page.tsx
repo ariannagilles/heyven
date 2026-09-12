@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import ClearFlagButton from "./ClearFlagButton";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { getProfile } from "@/lib/chat";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +20,7 @@ type MentorRow = {
 
 export default async function AdminPage() {
   const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getCachedUser();
   if (!user) redirect("/login?next=/admin");
 
   const profile = await getProfile(supabase, user.id);

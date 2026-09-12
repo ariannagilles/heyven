@@ -7,7 +7,7 @@ import ContentDetailHeader, {
 import ContentReplyList from "@/components/content/ContentReplyList";
 import ReactionBar from "@/components/content/ReactionBar";
 import ReplyForm from "./ReplyForm";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { SPACE_BY_SLUG } from "@/lib/spaces";
 import { getQuestion, getQuestionReplies } from "@/lib/space-content";
 
@@ -22,9 +22,7 @@ export default async function QuestionDetailPage({
   if (!space) notFound();
 
   const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCachedUser();
   if (!user) redirect(`/login?next=/spazi/${params.slug}/domande/${params.qid}`);
 
   const question = await getQuestion(supabase, params.qid);

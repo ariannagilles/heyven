@@ -8,7 +8,7 @@ import ContentDetailHeader, {
 import ContentReplyList from "@/components/content/ContentReplyList";
 import ReactionBar from "@/components/content/ReactionBar";
 import ReplyForm from "./ReplyForm";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
@@ -21,9 +21,7 @@ type Reply = {
 
 export default async function PostDetailPage({ params }: { params: { id: string } }) {
   const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCachedUser();
 
   const { data: post, error: postError } = await supabase
     .from("posts")

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import SpaceFeedHeader from "@/components/space/SpaceFeedHeader";
 import SpaceFeedView from "@/components/space/SpaceFeedView";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { fetchSpaceFeedInitial } from "@/lib/feed-actions";
 import { getSpacePeopleToday, parseSpaceFeedFilter } from "@/lib/space-feed";
 import { SPACE_BY_SLUG } from "@/lib/spaces";
@@ -19,9 +19,7 @@ export default async function SpaceFeedPage({
   if (!space) redirect("/spazi");
 
   const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCachedUser();
   if (!user) redirect(`/login?next=/spazi/${params.slug}`);
 
   const filter = parseSpaceFeedFilter(searchParams.tipo);

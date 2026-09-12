@@ -1,5 +1,5 @@
 import MentorMeetingView from "@/components/mentor/MentorMeetingView";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 import {
   getAssignedMentorProfile,
   getProfile,
@@ -15,9 +15,7 @@ export const dynamic = "force-dynamic";
 
 export default async function MentorIncontroPage() {
   const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCachedUser();
   if (!user) redirect("/login?next=/chat/incontro");
 
   const profile = await getProfile(supabase, user.id);

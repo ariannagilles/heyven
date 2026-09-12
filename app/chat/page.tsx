@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import MentorListScreen from "@/components/mentor/MentorListScreen";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { getProfile } from "@/lib/chat";
 import {
   getUserActiveConversationListItem,
@@ -11,9 +11,7 @@ export const dynamic = "force-dynamic";
 
 export default async function ChatListPage() {
   const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCachedUser();
   if (!user) redirect("/login?next=/chat");
 
   const profile = await getProfile(supabase, user.id);

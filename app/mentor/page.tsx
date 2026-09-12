@@ -8,7 +8,7 @@ import ExperienceAreasEditor from "./ExperienceAreasEditor";
 import MentorSettingsEditor from "./MentorSettingsEditor";
 import MentorRatingBlock from "@/components/mentor/MentorRatingBlock";
 import MentorBadges, { type MentorBadgesPayload } from "@/components/mentor/MentorBadges";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { getProfile, getMentorChats, getMentorRatingsSummary } from "@/lib/chat";
 import { timeAgo } from "@/lib/time";
 
@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
 
 export default async function MentorDashboard() {
   const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getCachedUser();
   if (!user) redirect("/login?next=/mentor");
 
   const profile = await getProfile(supabase, user.id);

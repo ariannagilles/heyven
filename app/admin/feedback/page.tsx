@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import Navbar from "@/components/Navbar";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { getProfile } from "@/lib/chat";
 import { timeAgo } from "@/lib/time";
 
@@ -35,7 +35,7 @@ export default async function AdminFeedbackPage({
   searchParams: { type?: string };
 }) {
   const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getCachedUser();
   if (!user) redirect("/login?next=/admin/feedback");
 
   const profile = await getProfile(supabase, user.id);

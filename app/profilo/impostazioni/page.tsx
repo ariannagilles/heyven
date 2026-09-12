@@ -2,16 +2,14 @@ import { redirect } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import ProfileSubpageHeader from "@/components/profile/ProfileSubpageHeader";
 import ProfileSettings from "../ProfileSettings";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { getProfile } from "@/lib/chat";
 
 export const dynamic = "force-dynamic";
 
 export default async function ProfileSettingsPage() {
   const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCachedUser();
   if (!user) redirect("/login?next=/profilo/impostazioni");
 
   const profile = await getProfile(supabase, user.id);

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import MarkReportReviewedButton from "../MarkReportReviewedButton";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { getProfile } from "@/lib/chat";
 import {
   enrichPendingReports,
@@ -20,9 +20,7 @@ function isReportTargetType(v: string): v is ReportTargetType {
 
 export default async function AdminReportsPage() {
   const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCachedUser();
   if (!user) redirect("/login?next=/admin/reports");
 
   const profile = await getProfile(supabase, user.id);

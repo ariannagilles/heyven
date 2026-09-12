@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { avatarDataUri } from "@/lib/avatar";
 import { getProfile } from "@/lib/chat";
 import { getUnreadNotificationsCount } from "@/lib/notifications";
@@ -7,15 +7,18 @@ import NavbarProfileMenu from "./NavbarProfileMenu";
 
 export default async function Navbar() {
   const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getCachedUser();
 
   let nickname: string | null = null;
   let unreadNotifications = 0;
 
   if (user) {
-    const profile = await getProfile(supabase, user.id);
+    const [profile, unread] = await Promise.all([
+      getProfile(supabase, user.id),
+      getUnreadNotificationsCount(supabase),
+    ]);
     nickname = profile?.nickname ?? null;
-    unreadNotifications = await getUnreadNotificationsCount(supabase);
+    unreadNotifications = unread;
   }
 
   return (

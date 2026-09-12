@@ -9,7 +9,7 @@ import {
   mapOwnStory,
   type ProfileTab,
 } from "@/lib/profile-list";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { getProfile } from "@/lib/chat";
 import {
   getOwnPosts,
@@ -31,9 +31,7 @@ export default async function ProfileContentsPage({
   searchParams: { tab?: string };
 }) {
   const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCachedUser();
   if (!user) redirect("/login?next=/profilo/contenuti");
 
   const profile = await getProfile(supabase, user.id);

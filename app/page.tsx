@@ -4,7 +4,7 @@ import HomeFeedList from "@/components/HomeFeedList";
 import SectionLabel from "@/components/SectionLabel";
 import HomeCheckIn from "@/components/home/HomeCheckIn";
 import HomeMentorCard from "@/components/home/HomeMentorCard";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { fetchUnifiedHomeFeed } from "@/lib/unified-feed";
 import {
   getHomeMentorCardState,
@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getCachedUser();
 
   let feed: Awaited<ReturnType<typeof fetchUnifiedHomeFeed>> | null = null;
   let profile: Awaited<ReturnType<typeof getProfile>> = null;

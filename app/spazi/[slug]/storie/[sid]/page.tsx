@@ -5,7 +5,7 @@ import ContentDetailHeader, {
   contentDetailTitle,
 } from "@/components/content/ContentDetailHeader";
 import ReactionBar from "@/components/content/ReactionBar";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { SPACE_BY_SLUG } from "@/lib/spaces";
 import { getStory } from "@/lib/space-content";
 
@@ -20,9 +20,7 @@ export default async function StoryDetailPage({
   if (!space) notFound();
 
   const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCachedUser();
   if (!user) redirect(`/login?next=/spazi/${params.slug}/storie/${params.sid}`);
 
   const story = await getStory(supabase, params.sid, user.id);

@@ -3,7 +3,7 @@ import Navbar from "@/components/Navbar";
 import ProfileHubHeader from "@/components/profile/ProfileHubHeader";
 import ProfileMenuList from "@/components/profile/ProfileMenuList";
 import ProfilePathBlock from "@/components/profile/ProfilePathBlock";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { getProfile } from "@/lib/chat";
 import { getJoinedAt } from "@/lib/profile";
 
@@ -19,9 +19,7 @@ export default async function ProfilePage({
   }
 
   const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCachedUser();
   if (!user) redirect("/login?next=/profilo");
 
   const profile = await getProfile(supabase, user.id);

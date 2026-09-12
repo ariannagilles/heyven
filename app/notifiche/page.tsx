@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import Navbar from "@/components/Navbar";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 import {
   getNotifications,
   markAllNotificationsRead,
@@ -20,7 +20,7 @@ export default async function NotifichePage({
   searchParams: { page?: string };
 }) {
   const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getCachedUser();
   if (!user) redirect("/login?next=/notifiche");
 
   const page = Math.max(1, Number(searchParams.page ?? "1") || 1);

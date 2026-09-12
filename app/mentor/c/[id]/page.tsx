@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import ChatView from "@/components/ChatView";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { avatarDataUri } from "@/lib/avatar";
 import {
   getProfile,
@@ -17,7 +17,7 @@ export default async function MentorChatPage({
   params: { id: string };
 }) {
   const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getCachedUser();
   if (!user) redirect(`/login?next=/mentor/c/${params.id}`);
 
   const profile = await getProfile(supabase, user.id);
