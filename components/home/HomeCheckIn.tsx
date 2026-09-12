@@ -96,7 +96,7 @@ export default function HomeCheckIn() {
           </p>
         ) : null}
 
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap justify-start gap-2">
           {MOODS.map((m) => {
             const active = weather === m.key;
             return (
@@ -138,17 +138,19 @@ export default function HomeCheckIn() {
           aria-hidden={!showTagsStep}
         >
           <div className="min-h-0 overflow-hidden">
-            <div className="mb-2 flex items-baseline justify-between gap-3">
-              <SectionLabel>COSA PESA DI PIÙ OGGI? (SE TI VA)</SectionLabel>
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.9px] text-cream/[0.72]">
+                COSA PESA DI PIÙ OGGI? (SE TI VA)
+              </p>
               <button
                 type="button"
                 onClick={skipTags}
-                className="text-xs font-medium text-mint hover:underline"
+                className="shrink-0 text-xs font-medium text-mint hover:underline"
               >
                 salta
               </button>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap justify-start gap-2">
               {MOOD_TAGS.map((t) => {
                 const active = tags.includes(t.key);
                 return (
@@ -192,7 +194,7 @@ export default function HomeCheckIn() {
           </div>
         ) : null}
 
-        <div className="mt-4 flex justify-end">
+        <div className="mt-5 flex justify-end">
           <button
             type="button"
             onClick={onSave}

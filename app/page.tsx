@@ -40,10 +40,7 @@ export default async function HomePage() {
           </p>
         </header>
 
-        <section>
-          <SectionLabel>Come ti senti oggi?</SectionLabel>
-          <HomeCheckIn />
-        </section>
+        <HomeCheckIn />
 
         <section>
           <SectionLabel>Il tuo spazio di ascolto</SectionLabel>
