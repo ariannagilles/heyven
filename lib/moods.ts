@@ -1,3 +1,13 @@
+import type { ComponentType } from "react";
+import {
+  ClearIcon,
+  CloudIcon,
+  StormIcon,
+  SunIcon,
+  VariableIcon,
+  type WeatherIconProps,
+} from "@/components/icons/WeatherIcons";
+
 export const MOODS = [
   {
     key: "storm",
@@ -66,6 +76,23 @@ export function moodByKey(key: MoodKey) {
 
 export function tagByKey(key: MoodTagKey) {
   return TAG_BY_KEY[key];
+}
+
+export const MOOD_ICON_BY_KEY: Record<
+  MoodKey,
+  ComponentType<WeatherIconProps>
+> = {
+  storm: StormIcon,
+  cloudy: CloudIcon,
+  variable: VariableIcon,
+  clear: ClearIcon,
+  sunny: SunIcon,
+};
+
+/** Su fondo scuro, temporale e nuvolo usano teal-mid altrimenti spariscono. */
+export function moodIconColor(key: MoodKey): string {
+  if (key === "storm" || key === "cloudy") return "#1D9E75";
+  return MOOD_BY_KEY[key].color;
 }
 
 export function isMoodKey(v: unknown): v is MoodKey {

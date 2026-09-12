@@ -6,8 +6,10 @@ import { createClient } from "@/lib/supabase/client";
 import {
   MOODS,
   MOOD_TAGS,
+  MOOD_ICON_BY_KEY,
   localDateISO,
   moodByKey,
+  moodIconColor,
   tagByKey,
   type MoodKey,
   type MoodTagKey,
@@ -115,6 +117,7 @@ export default function HomeCheckIn() {
   const showTagsStep = step === "tags" && weather !== null;
   const title = isClosed ? "OGGI HAI SEGNATO:" : "COM'È IL TEMPO DENTRO OGGI?";
   const savedMood = savedRow ? moodByKey(savedRow.weather) : null;
+  const SavedIcon = savedMood ? MOOD_ICON_BY_KEY[savedMood.key] : null;
 
   function onPickWeather(next: MoodKey) {
     setHasError(false);
@@ -179,14 +182,14 @@ export default function HomeCheckIn() {
               <div>
                 <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
                   <p className="flex min-w-0 items-center gap-2 text-sm text-cream">
-                    <span
-                      className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
-                      style={{
-                        background: savedMood.color,
-                        boxShadow: "inset 0 1px 0 rgba(255,255,255,0.15)",
-                      }}
-                      aria-hidden
-                    />
+                    {SavedIcon ? (
+                      <span
+                        className="shrink-0"
+                        style={{ color: moodIconColor(savedMood.key) }}
+                      >
+                        <SavedIcon size={18} />
+                      </span>
+                    ) : null}
                     <span className="min-w-0">{summaryLine(savedRow)}</span>
                   </p>
                   <button
@@ -221,6 +224,7 @@ export default function HomeCheckIn() {
             <div className="flex flex-wrap justify-start gap-2">
               {MOODS.map((m) => {
                 const active = weather === m.key;
+                const Icon = MOOD_ICON_BY_KEY[m.key];
                 return (
                   <button
                     key={m.key}
@@ -229,7 +233,7 @@ export default function HomeCheckIn() {
                     aria-pressed={active}
                     tabIndex={isOpen ? 0 : -1}
                     className={
-                      "rounded-full px-4 py-2 text-sm transition-colors " +
+                      "inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm transition-colors " +
                       (active
                         ? "border text-cream"
                         : "border border-cream/20 bg-cream/[0.06] text-cream/85 hover:bg-cream/10")
@@ -245,6 +249,12 @@ export default function HomeCheckIn() {
                         : undefined
                     }
                   >
+                    <span
+                      className="shrink-0"
+                      style={{ color: active ? "#5DCAA5" : undefined }}
+                    >
+                      <Icon size={15} />
+                    </span>
                     {m.label}
                   </button>
                 );

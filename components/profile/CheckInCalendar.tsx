@@ -3,12 +3,22 @@
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import {
+  MOOD_ICON_BY_KEY,
   localDateISO,
   moodByKey,
+  moodIconColor,
   tagByKey,
   type MoodKey,
   type MoodTagKey,
 } from "@/lib/moods";
+
+function hexToRgba(hex: string, alpha: number): string {
+  const h = hex.replace("#", "");
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
 import { getCheckinHistory } from "@/lib/check-in-rpc";
 import { createClient } from "@/lib/supabase/client";
 
@@ -105,6 +115,9 @@ export default function CheckInCalendar() {
           }
           const mood = cell.weather ? moodByKey(cell.weather) : null;
           const filled = mood !== null;
+          const Icon = filled ? MOOD_ICON_BY_KEY[mood.key] : null;
+          const darkWash =
+            mood?.key === "storm" || mood?.key === "cloudy";
           return (
             <button
               key={cell.iso}
@@ -118,16 +131,18 @@ export default function CheckInCalendar() {
                   : formatDateItalian(cell.date)
               }
               className={
-                "aspect-square rounded-full transition-transform " +
+                "flex aspect-square items-center justify-center rounded-full transition-transform motion-reduce:transition-none " +
                 (filled ? "active:scale-95 cursor-pointer" : "cursor-default")
               }
               style={{
-                background: filled ? mood!.color : "rgba(245,239,227,0.18)",
-                boxShadow: filled
-                  ? "inset 0 1px 0 rgba(255,255,255,0.15)"
-                  : undefined,
+                background: filled
+                  ? hexToRgba(mood.color, darkWash ? 0.28 : 0.15)
+                  : "rgba(245,239,227,0.18)",
+                color: filled ? moodIconColor(mood.key) : undefined,
               }}
-            />
+            >
+              {Icon ? <Icon size={17} /> : null}
+            </button>
           );
         })}
       </div>
@@ -162,6 +177,7 @@ function CheckInSheet({ cell, onClose }: { cell: Cell; onClose: () => void }) {
   if (typeof document === "undefined") return null;
 
   const mood = cell.weather ? moodByKey(cell.weather) : null;
+  const SheetIcon = mood ? MOOD_ICON_BY_KEY[mood.key] : null;
 
   return createPortal(
     <div
@@ -179,16 +195,14 @@ function CheckInSheet({ cell, onClose }: { cell: Cell; onClose: () => void }) {
           {formatDateItalian(cell.date)}
         </p>
 
-        {mood ? (
+        {mood && SheetIcon ? (
           <div className="mt-3 flex items-center gap-3">
             <span
-              className="inline-block h-3.5 w-3.5 rounded-full"
-              style={{
-                background: mood.color,
-                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.15)",
-              }}
-              aria-hidden
-            />
+              className="shrink-0"
+              style={{ color: moodIconColor(mood.key) }}
+            >
+              <SheetIcon size={20} />
+            </span>
             <span className="text-[17px] text-cream">{mood.label}</span>
           </div>
         ) : null}
