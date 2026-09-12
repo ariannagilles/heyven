@@ -7,11 +7,13 @@ import {
   MOODS,
   MOOD_TAGS,
   localDateISO,
+  tagByKey,
   type MoodKey,
   type MoodTagKey,
 } from "@/lib/moods";
 import {
   getCheckinForDate,
+  getPopularMoodTags,
   submitCheckin,
   type DailyCheckin,
 } from "@/lib/check-in-rpc";
@@ -28,11 +30,17 @@ export default function HomeCheckIn() {
   const [loaded, setLoaded] = useState(false);
   const [saving, setSaving] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [tagOrder, setTagOrder] = useState<MoodTagKey[]>(() =>
+    MOOD_TAGS.map((t) => t.key),
+  );
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const { data } = await getCheckinForDate(supabase, localDateISO());
+      const [{ data }, popular] = await Promise.all([
+        getCheckinForDate(supabase, localDateISO()),
+        getPopularMoodTags(supabase),
+      ]);
       if (cancelled) return;
       if (data) {
         setSavedRow(data);
@@ -40,12 +48,18 @@ export default function HomeCheckIn() {
         setTags(data.tags);
         setStep("tags");
       }
+      setTagOrder(popular);
       setLoaded(true);
     })();
     return () => {
       cancelled = true;
     };
   }, [supabase]);
+
+  const orderedTags = useMemo(
+    () => tagOrder.map(tagByKey).filter((t) => t != null),
+    [tagOrder],
+  );
 
   function onPickWeather(next: MoodKey) {
     setHasError(false);
@@ -151,7 +165,7 @@ export default function HomeCheckIn() {
               </button>
             </div>
             <div className="flex flex-wrap justify-start gap-2">
-              {MOOD_TAGS.map((t) => {
+              {orderedTags.map((t) => {})
                 const active = tags.includes(t.key);
                 return (
                   <button

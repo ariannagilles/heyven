@@ -1,5 +1,15 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { isMoodKey, isMoodTagKey, type MoodKey, type MoodTagKey } from "./moods";
+import {
+  MOOD_TAGS,
+  isMoodKey,
+  isMoodTagKey,
+  type MoodKey,
+  type MoodTagKey,
+} from "./moods";
+
+function defaultTagOrder(): MoodTagKey[] {
+  return MOOD_TAGS.map((t) => t.key);
+}
 
 export type DailyCheckin = {
   id: string;
@@ -72,6 +82,31 @@ export async function getCheckinForDate(
     .maybeSingle();
   if (error) return { data: null, error };
   return { data: normalizeRow((data as Record<string, unknown>) ?? null), error: null };
+}
+
+export async function getPopularMoodTags(
+  supabase: SupabaseClient,
+): Promise<MoodTagKey[]> {
+  const fallback = defaultTagOrder();
+  try {
+    const { data, error } = await supabase.rpc("get_popular_mood_tags");
+    if (error || !Array.isArray(data)) return fallback;
+
+    const ordered: MoodTagKey[] = [];
+    for (const row of data) {
+      const tag = (row as { tag?: unknown } | null)?.tag;
+      if (isMoodTagKey(tag) && !ordered.includes(tag)) {
+        ordered.push(tag);
+      }
+    }
+    if (ordered.length === 0) return fallback;
+    for (const key of fallback) {
+      if (!ordered.includes(key)) ordered.push(key);
+    }
+    return ordered;
+  } catch {
+    return fallback;
+  }
 }
 
 export async function getCheckinHistory(
