@@ -84,7 +84,7 @@ const ONBOARDING_PRIMARY_BTN =
   "w-full rounded-full bg-cream py-4 text-[15px] font-semibold text-petrolio transition active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50";
 const ONBOARDING_SECONDARY_TEXT = "text-center text-sm text-cream/55";
 const ONBOARDING_SECONDARY_LINK =
-  "font-semibold text-cream/70 underline underline-offset-2 hover:text-cream/85";
+  "rounded-sm font-semibold text-cream/70 underline underline-offset-2 hover:text-cream/85 focus:outline-none focus-visible:ring-2 focus-visible:ring-mint focus-visible:ring-offset-2 focus-visible:ring-offset-petrolio";
 const ONBOARDING_ERROR =
   "rounded-xl bg-[#D4EDE5] px-3 py-2 text-sm text-[#04342C]";
 const ONBOARDING_INFO =
@@ -261,17 +261,17 @@ function IntroPhase({
   onSlideChange,
   onStart,
   onSkip,
+  next,
 }: {
   slideIndex: number;
   nickname: string;
   onSlideChange: (index: number) => void;
   onStart: () => void;
   onSkip: () => void;
+  next: string;
 }) {
   void nickname;
   void onSkip;
-
-  const router = useRouter();
   const viewportRef = useRef<HTMLDivElement>(null);
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -421,7 +421,7 @@ function IntroPhase({
       <div className="flex min-h-0 flex-1 flex-col justify-center py-4">
         <div
           ref={viewportRef}
-          className="relative z-10 w-full shrink-0 touch-pan-y overflow-hidden select-none"
+          className="relative w-full shrink-0 touch-pan-y overflow-hidden select-none"
           style={{ touchAction: "pan-y" }}
         >
           <div
@@ -453,7 +453,7 @@ function IntroPhase({
         </div>
       </div>
 
-      <div className="mt-auto flex shrink-0 flex-col gap-6">
+      <div className="relative z-20 mt-auto flex shrink-0 flex-col gap-6">
         <div className="flex items-center justify-center gap-2">
           {INTRO_SLIDES.map((_, index) => (
             <div
@@ -472,13 +472,12 @@ function IntroPhase({
         </button>
         <p className={ONBOARDING_SECONDARY_TEXT}>
           Hai già un account?{" "}
-          <button
-            type="button"
-            onClick={() => router.push("/login")}
+          <Link
+            href={`/login?next=${encodeURIComponent(next)}`}
             className={ONBOARDING_SECONDARY_LINK}
           >
             Accedi
-          </button>
+          </Link>
         </p>
       </div>
     </main>
@@ -792,6 +791,7 @@ export default function RegisterForm() {
         onSlideChange={setIntroSlide}
         onStart={() => setPhase("step1")}
         onSkip={() => setPhase("step1")}
+        next={next}
       />
     );
   }
@@ -873,7 +873,7 @@ export default function RegisterForm() {
           </button>
         </form>
 
-        <p className={`mt-5 ${ONBOARDING_SECONDARY_TEXT}`}>
+        <p className={`relative z-10 mt-5 ${ONBOARDING_SECONDARY_TEXT}`}>
           Hai già un account?{" "}
           <Link
             href={`/login?next=${encodeURIComponent(next)}`}
