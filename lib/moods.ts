@@ -1,9 +1,35 @@
 export const MOODS = [
-  { key: "storm", label: "temporale", color: "#04342C" },
-  { key: "cloudy", label: "nuvolo", color: "#0B3F34" },
-  { key: "variable", label: "variabile", color: "#0F6E56" },
-  { key: "clear", label: "sereno", color: "#1D9E75" },
-  { key: "sunny", label: "sole pieno", color: "#5DCAA5" },
+  {
+    key: "storm",
+    label: "temporale",
+    color: "#04342C",
+    phrase:
+      "Giornata di tempesta. Qui c'è un riparo dove aspettare che passi, e qualcuno con cui ballare sotto la pioggia.",
+  },
+  {
+    key: "cloudy",
+    label: "nuvolo",
+    color: "#0B3F34",
+    phrase: "Giornata un po' grigia. Se ti va, raccontala.",
+  },
+  {
+    key: "variable",
+    label: "variabile",
+    color: "#0F6E56",
+    phrase: "Su e giù, capita. Se ti va di scriverne, ci siamo.",
+  },
+  {
+    key: "clear",
+    label: "sereno",
+    color: "#1D9E75",
+    phrase: "Una buona giornata. Bello leggerlo.",
+  },
+  {
+    key: "sunny",
+    label: "sole pieno",
+    color: "#5DCAA5",
+    phrase: "Oggi si respira. Goditela.",
+  },
 ] as const;
 
 export const MOOD_TAGS = [

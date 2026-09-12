@@ -176,25 +176,30 @@ export default function HomeCheckIn() {
         <div className={panelClass(isClosed)} aria-hidden={!isClosed}>
           <div className="min-h-0 overflow-hidden">
             {savedRow && savedMood ? (
-              <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
-                <p className="flex min-w-0 items-center gap-2 text-sm text-cream">
-                  <span
-                    className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
-                    style={{
-                      background: savedMood.color,
-                      boxShadow: "inset 0 1px 0 rgba(255,255,255,0.15)",
-                    }}
-                    aria-hidden
-                  />
-                  <span className="min-w-0">{summaryLine(savedRow)}</span>
+              <div>
+                <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+                  <p className="flex min-w-0 items-center gap-2 text-sm text-cream">
+                    <span
+                      className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
+                      style={{
+                        background: savedMood.color,
+                        boxShadow: "inset 0 1px 0 rgba(255,255,255,0.15)",
+                      }}
+                      aria-hidden
+                    />
+                    <span className="min-w-0">{summaryLine(savedRow)}</span>
+                  </p>
+                  <button
+                    type="button"
+                    onClick={openEdit}
+                    className="shrink-0 text-sm font-medium text-mint hover:underline"
+                  >
+                    modifica
+                  </button>
+                </div>
+                <p className="mt-3 text-[16px] leading-relaxed text-cream/80">
+                  {savedMood.phrase}
                 </p>
-                <button
-                  type="button"
-                  onClick={openEdit}
-                  className="shrink-0 text-sm font-medium text-mint hover:underline"
-                >
-                  modifica
-                </button>
               </div>
             ) : null}
             {confirm !== "hidden" ? (
